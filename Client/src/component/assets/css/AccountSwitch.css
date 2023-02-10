@@ -1,0 +1,31 @@
+.account-info {
+  line-height: 40px;
+  margin-right: 0px;
+}
+.info-switch {
+  display: flex;
+  justify-content: space-between;
+  width: 200px;
+}
+.img-switch img {
+  width: 40px;
+}
+
+.account-switch {
+  line-height: 40px;
+  position: fixed;
+  right: 1em;
+  margin-top: 25px;
+  width: 300px !important;
+  display: flex;
+}
+@media only screen and (max-width: 990px) {
+  .img-switch img {
+    width: 36px;
+  }
+}
+@media only screen and (max-width: 640px) {
+  .account-switch {
+    display: none;
+  }
+}
