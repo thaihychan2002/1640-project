@@ -17,12 +17,16 @@ export const loginUsers = async (req, res) => {
     if (bcrypt.compareSync(req.body.password, user.password)) {
       res.send({
         _id: user._id,
+        fullName: user.fullName,
+        department: user.department,
+        avatar: user.avatar,
         role: user.role,
         token: generateToken(user),
       });
       return;
     }
   }
+  res.status(401).send({ message: "Invalid email or password" });
 };
 
 export const registerUsers = async (req, res) => {
@@ -38,6 +42,9 @@ export const registerUsers = async (req, res) => {
     const user = await newUser.save();
     res.send({
       _id: user._id,
+      fullName: user.fullName,
+      department: user.department,
+      avatar: user.avatar,
       role: user.role,
       token: generateToken(user),
     });

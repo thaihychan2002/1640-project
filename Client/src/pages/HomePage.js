@@ -4,7 +4,7 @@ import Header from "../component/header";
 import PostList from "../component/PostList";
 import Navigation from "../component/Navigation/Navigation";
 import { Grid } from "@material-ui/core";
-import Accountmanage from "../component/Account/AccountSwitch";
+import AccountManage from "../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
 
 export default function HomePage() {
@@ -13,16 +13,16 @@ export default function HomePage() {
       <Helmet>
         <title>Homepage</title>
       </Helmet>
-      <Header></Header>
+      <Header />
       <Grid container spacing={2} alignItems="stretch">
         <Grid item xs={2} sm={2}>
-          {/* <Navigation/> */}
+          <Navigation />
         </Grid>
         <Grid item xs={7} sm={7}>
           <PostList></PostList>
         </Grid>
         <Grid item xs={3} sm={3}>
-          <Accountmanage></Accountmanage>
+          <AccountManage />
         </Grid>
       </Grid>
     </Container>

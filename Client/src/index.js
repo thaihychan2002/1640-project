@@ -9,6 +9,7 @@ import { createStore, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import reducers from "./redux/reducers";
 import mysaga from "./redux/sagas";
+import { BrowserRouter } from "react-router-dom";
 
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducers, applyMiddleware(sagaMiddleware));
@@ -19,7 +20,9 @@ root.render(
   <Provider store={store}>
     <StoreProvider>
       <HelmetProvider>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </HelmetProvider>
     </StoreProvider>
   </Provider>
