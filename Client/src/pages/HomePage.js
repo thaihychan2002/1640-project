@@ -1,17 +1,22 @@
-import React from 'react'
-import { Container } from '@material-ui/core'
-import Header from '../component/header'
-import PostList from '../component/PostList'
-import Navigation from '../component/Navigation/Navigation'
-import { Grid } from '@material-ui/core'
-import Accountmanage from'../component/Account/AccountSwitch';
+import React from "react";
+import { Container } from "@material-ui/core";
+import Header from "../component/header";
+import PostList from "../component/PostList";
+import Navigation from "../component/Navigation/Navigation";
+import { Grid } from "@material-ui/core";
+import Accountmanage from "../component/Account/AccountSwitch";
+import { Helmet } from "react-helmet-async";
+
 export default function HomePage() {
   return (
-    <Container maxWidth='100vw' className='{}'>
+    <Container maxWidth="100vw" className="{}">
+      <Helmet>
+        <title>Homepage</title>
+      </Helmet>
       <Header></Header>
-      <Grid container spacing={2} alignItems='stretch'>
+      <Grid container spacing={2} alignItems="stretch">
         <Grid item xs={2} sm={2}>
-          <Navigation></Navigation>
+          {/* <Navigation/> */}
         </Grid>
         <Grid item xs={7} sm={7}>
           <PostList></PostList>
@@ -21,5 +26,5 @@ export default function HomePage() {
         </Grid>
       </Grid>
     </Container>
-  )
+  );
 }
