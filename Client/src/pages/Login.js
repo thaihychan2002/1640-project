@@ -6,24 +6,34 @@ import { Store } from "../Store";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
 import { useLocation, useNavigate } from "react-router-dom";
+import { URL } from "../api/index.js";
 
 const Login = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get("redirect");
-  const redirect = redirectInUrl ? redirectInUrl : "/homepage";
+  const redirect = redirectInUrl ? redirectInUrl : "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const { dispatch: ctxDispatch } = useContext(Store);
 
-  const submitHandler = async (e) => {
+  const submitHandler = async () => {
     try {
-      const { data } = await axios.post(`${URL}/users/login/`, {});
+      const { data } = await axios.post(`${URL}/users/login/`, {
+        email,
+        password,
+      });
+      ctxDispatch({ type: "USER_LOGIN", payload: data });
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      navigate(redirect || "/");
     } catch (err) {
       toast.error(getError(err));
     }
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
   };
   return (
     <Form
@@ -40,24 +50,24 @@ const Login = () => {
       initialValues={{
         remember: true,
       }}
-      //   onFinish={onFinish}
-      //   onFinishFailed={onFinishFailed}
+      onFinish={submitHandler}
+      onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
       <Helmet>
-        <title>Register</title>
+        <title>Login</title>
       </Helmet>
       <Form.Item
-        label="Username"
-        name="username"
+        label="Email"
+        name="email"
         rules={[
           {
             required: true,
-            message: "Please input your username!",
+            message: "Please input your email!",
           },
         ]}
       >
-        <Input />
+        <Input onChange={(e) => setEmail(e.target.value)} />
       </Form.Item>
 
       <Form.Item
@@ -70,7 +80,7 @@ const Login = () => {
           },
         ]}
       >
-        <Input.Password />
+        <Input.Password onChange={(e) => setPassword(e.target.value)} />
       </Form.Item>
 
       <Form.Item

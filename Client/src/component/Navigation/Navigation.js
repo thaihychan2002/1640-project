@@ -1,20 +1,31 @@
 import {
-  UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
+  HomeOutlined,
+  ApartmentOutlined,
+  BarsOutlined,
+  LineChartOutlined,
 } from "@ant-design/icons";
 import "../assets/css/Navigation.css";
 import { Layout, Menu, theme } from "antd";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
-
-const { Header, Content, Footer, Sider } = Layout;
+import { Store } from "../../Store";
+const { Sider } = Layout;
 
 export default function Navigation() {
+  const { state } = useContext(Store);
+  const { userInfo } = state;
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const [collapsed, setCollapsed] = useState(false);
+  const navName = [
+    "Home",
+    "Department",
+    "Categories",
+    "Dashboard",
+    "User Manage",
+  ];
 
   // Hide navbar when route === /login or /register
   const withOutNavbarRoutes = ["/login", "/register"];
@@ -36,16 +47,17 @@ export default function Navigation() {
       <Menu
         className="menu-style"
         mode="inline"
-        defaultSelectedKeys={["4"]}
+        defaultSelectedKeys={["0"]}
         items={[
-          UserOutlined,
-          VideoCameraOutlined,
-          UploadOutlined,
+          HomeOutlined,
+          ApartmentOutlined,
+          BarsOutlined,
+          LineChartOutlined,
           UserOutlined,
         ].map((icon, index) => ({
           key: String(index + 1),
           icon: React.createElement(icon),
-          label: `nav ${index + 1}`,
+          label: `${navName[index]}`,
         }))}
       />
     </Sider>
