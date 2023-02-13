@@ -1,12 +1,13 @@
 import React from "react";
 import { Container } from "@material-ui/core";
-import Header from "../component/header";
+import Header from "../component/header/index";
 import PostList from "../component/PostList";
 import Navigation from "../component/Navigation/Navigation";
 import { Grid } from "@material-ui/core";
 import AccountManage from "../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
-
+import { BackTop, FloatButton } from "antd";
+import { CustomerServiceOutlined } from "@ant-design/icons";
 export default function HomePage() {
   return (
     <Container maxWidth="100vw" className="{}">
@@ -25,6 +26,8 @@ export default function HomePage() {
           <AccountManage />
         </Grid>
       </Grid>
+      {/* <BackTop /> */}
+      <FloatButton.BackTop />
     </Container>
   );
 }

@@ -7,14 +7,16 @@ import {
 } from "@ant-design/icons";
 import "../assets/css/Navigation.css";
 import { Layout, Menu, theme } from "antd";
-import React, { useState, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { Store } from "../../Store";
+import jwtDecode from "jwt-decode";
+import { getError } from "../../utils";
+import { toast } from "react-toastify";
+import { fetchUserByID } from "../../api/index";
 const { Sider } = Layout;
 
 export default function Navigation() {
-  const { state } = useContext(Store);
-  const { userInfo } = state;
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -26,7 +28,30 @@ export default function Navigation() {
     "Dashboard",
     "User Manage",
   ];
-
+  const linkRoutes = [
+    "/home",
+    "/department",
+    "/categories",
+    "/dashboard",
+    "/usermanage",
+  ];
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  useEffect(() => {
+    const fetchUser = async () => {
+      let token = localStorage.getItem("userInfo");
+      let userID = jwtDecode(token)._id;
+      if (userID) {
+        try {
+          const { data } = await fetchUserByID(userID);
+          ctxDispatch({ type: "GET_USER", payload: data });
+        } catch (err) {
+          toast.error(getError(err));
+        }
+      }
+      return;
+    };
+    fetchUser();
+  }, []);
   // Hide navbar when route === /login or /register
   const withOutNavbarRoutes = ["/login", "/register"];
   const { pathname } = useLocation();
@@ -37,12 +62,12 @@ export default function Navigation() {
       className="sider-style"
       breakpoint="lg"
       collapsedWidth="80"
-      onBreakpoint={(broken) => {
-        console.log(broken);
-      }}
-      onCollapse={(collapsed, type) => {
-        console.log(collapsed, type);
-      }}
+      // onBreakpoint={(broken) => {
+      //   console.log(broken);
+      // }}
+      // onCollapse={(collapsed, type) => {
+      //   console.log(collapsed, type);
+      // }}
     >
       <Menu
         className="menu-style"
@@ -57,7 +82,11 @@ export default function Navigation() {
         ].map((icon, index) => ({
           key: String(index + 1),
           icon: React.createElement(icon),
-          label: `${navName[index]}`,
+          label: (
+            <Link style={{ textDecoration: "none" }} to={linkRoutes[index]}>
+              {navName[index]}
+            </Link>
+          ),
         }))}
       />
     </Sider>
