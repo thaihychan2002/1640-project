@@ -1,17 +1,16 @@
 import React, { createContext, useReducer } from "react";
 export const Store = createContext();
 const initialState = {
-  userInfo: localStorage.getItem("userInfo")
-    ? JSON.parse(localStorage.getItem("userInfo"))
-    : null,
+  userInfo: "",
 };
-
 const reducer = (state, action) => {
   switch (action.type) {
     case "USER_LOGIN":
       return { ...state, userInfo: action.payload };
     case "USER_LOGOUT":
       return { ...state, userInfo: null };
+    case "GET_USER":
+      return { ...state, userInfo: action.payload };
     default:
       return state;
   }

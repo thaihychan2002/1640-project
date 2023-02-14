@@ -1,21 +1,17 @@
 import { useDispatch } from "react-redux";
-import Navigation from "./component/Navigation/Navigation";
-import AccountSwitch from "./component/Account/AccountSwitch";
 import * as actions from "./redux/actions";
 import { useRoutes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Routes } from "./routes/Routes";
-
+import { AllRoutes } from "./routes/AllRoutes";
 function App() {
   const dispatch = useDispatch();
   dispatch(actions.getPosts.getPostsRequest());
-  const router = useRoutes(Routes);
-
+  const allRoutes = useRoutes(AllRoutes);
   return (
     <>
       <ToastContainer position="bottom-center" limit={5} />
-      {router}
+      {allRoutes}
     </>
   );
 }
