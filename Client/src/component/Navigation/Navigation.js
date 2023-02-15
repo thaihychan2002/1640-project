@@ -29,29 +29,13 @@ export default function Navigation() {
     "User Manage",
   ];
   const linkRoutes = [
-    "/home",
+    "/",
     "/department",
     "/categories",
     "/dashboard",
     "/usermanage",
   ];
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  useEffect(() => {
-    const fetchUser = async () => {
-      let token = localStorage.getItem("userInfo");
-      let userID = jwtDecode(token)._id;
-      if (userID) {
-        try {
-          const { data } = await fetchUserByID(userID);
-          ctxDispatch({ type: "GET_USER", payload: data });
-        } catch (err) {
-          toast.error(getError(err));
-        }
-      }
-      return;
-    };
-    fetchUser();
-  }, []);
   // Hide navbar when route === /login or /register
   const withOutNavbarRoutes = ["/login", "/register"];
   const { pathname } = useLocation();

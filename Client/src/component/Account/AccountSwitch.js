@@ -18,7 +18,9 @@ export default function AccountSwitch() {
         <Col lg={24} md={18}>
           <Row>
             <Col lg={10} md={6} className="img-switch">
-              <img alt={user?.fullName} src={user?.avatar} />
+              <Link to="/profile">
+                <img alt={user?.fullName} src={user?.avatar} />
+              </Link>
             </Col>
             <div className="info-switch">
               <Col lg={10} md={10} className="account-info">

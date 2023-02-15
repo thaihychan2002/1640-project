@@ -22,6 +22,7 @@ const Login = () => {
   const submitHandler = async () => {
     try {
       const { data } = await loginUser(email, password);
+      console.log(data);
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");
@@ -48,20 +49,23 @@ const Login = () => {
   };
 
   useEffect(() => {
-    window.google.accounts.id.initialize({
-      client_id:
-        "524537065604-pfst28oopm5kq31je7u6qtjcb22td9h6.apps.googleusercontent.com",
-      callback: handleCallbackResponse,
-      context: "singin",
-    });
-    const parent = document.getElementById("loginDiv");
-    window.google.accounts.id.renderButton(parent, {
-      type: "standard",
-      width: 400,
-      text: "signin_with",
-      locale: "en-US",
-    });
-    window.google.accounts.id.prompt();
+    const googleService = () => {
+      window?.google?.accounts?.id?.initialize({
+        client_id:
+          "524537065604-pfst28oopm5kq31je7u6qtjcb22td9h6.apps.googleusercontent.com",
+        callback: handleCallbackResponse,
+        context: "singin",
+      });
+      const parent = document.getElementById("loginDiv");
+      window?.google?.accounts?.id?.renderButton(parent, {
+        type: "standard",
+        width: 400,
+        text: "signin_with",
+        locale: "en-US",
+      });
+      window?.google?.accounts?.id?.prompt();
+    };
+    googleService();
   }, []);
 
   return (
