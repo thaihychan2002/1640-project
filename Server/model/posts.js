@@ -14,7 +14,15 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    attactment: String,
+    department:{
+      type: String,
+      required:true,
+    },
+    categories:{
+      type: String,
+      required:false,
+    },
+    attachment: String,
     likeCount: {
       type: Number,
       default: 0,

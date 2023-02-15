@@ -18,13 +18,13 @@ export default function PostList() {
       <Grid item xs={12} sm={12}>
         <IdeaBox></IdeaBox>
       </Grid>
-      <Grid item xs={12} sm={12}>
+      <Grid item xs={12} sm={12} key={post._id}>
         {isLoading ? (
           <LoadingBox />
         ) : (
           <>
             {posts.map((post) => (
-              <Post key={post._id} post={post} />
+              <Post  post={post} />
             ))}
           </>
         )}

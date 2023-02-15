@@ -3,7 +3,10 @@ import axios from "axios";
 export const URL = "http://localhost:5000";
 // posts
 export const fetchPosts = () => axios.get(`${URL}/posts`);
-
+export const createPosts = (payload) => axios.post(`${URL}/posts/create`,payload);
+export const updatePosts = (payload) => axios.post(`${URL}/posts/update`,payload);
+// department
+export const fetchDepartments = () => axios.get(`${URL}/departments`);
 // fetch user
 export const fetchUsers = (token) =>
   axios.get(`${URL}/users/`, { headers: { Authorization: `Bearer ${token}` } });
