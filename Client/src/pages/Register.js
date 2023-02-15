@@ -1,12 +1,12 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import { Helmet } from "react-helmet-async";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Store } from "../Store";
 import { getError } from "../utils";
-import axios from "axios";
-import { URL } from "../api/index.js";
+import { registerUser, registerGoogleUser } from "../api/index.js";
+import jwtDecode from "jwt-decode";
 const Register = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -26,13 +26,9 @@ const Register = () => {
       return;
     }
     try {
-      const { data } = await axios.post(`${URL}/users/register`, {
-        fullName,
-        email,
-        password,
-      });
+      const { data } = await registerUser(fullName, email, password);
       ctxDispatch({ type: "USER_LOGIN", payload: data });
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");
     } catch (err) {
       toast.error(getError(err));
@@ -42,6 +38,52 @@ const Register = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
+  const handleCallbackResponse = async (response) => {
+    let user = jwtDecode(response.credential);
+    let email = user.email;
+    let isVerified = user.email_verified;
+    let fullName = user.name;
+    let avatar = user.picture;
+    let password = email + fullName;
+    if (isVerified) {
+      try {
+        const { data } = await registerGoogleUser(
+          fullName,
+          email,
+          avatar,
+          password
+        );
+        ctxDispatch({ type: "USER_LOGIN", payload: data });
+        localStorage.setItem("userToken", JSON.stringify(data));
+        navigate(redirect || "/");
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    } else {
+      toast.error("Your email is not verified");
+    }
+  };
+  useEffect(() => {
+    const googleService = () => {
+      window?.google?.accounts?.id?.initialize({
+        client_id:
+          "524537065604-pfst28oopm5kq31je7u6qtjcb22td9h6.apps.googleusercontent.com",
+        callback: handleCallbackResponse,
+        context: "signup",
+      });
+      const parent = document.getElementById("registerDiv");
+      window?.google?.accounts?.id?.renderButton(parent, {
+        type: "standard",
+        width: 400,
+        text: "signup_with",
+        locale: "en-US",
+      });
+      window?.google?.accounts?.id?.prompt();
+    };
+    googleService();
+  }, []);
+
   return (
     <Form
       name="basic"
@@ -54,7 +96,7 @@ const Register = () => {
       style={{
         maxWidth: 600,
       }}
-      autoComplete="off"
+      // autoComplete="on"
       onFinish={(e) => submitHandler(e)}
       onFinishFailed={onFinishFailed}
     >
@@ -119,7 +161,14 @@ const Register = () => {
         <Button type="primary" htmlType="submit">
           Register
         </Button>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <p>Already have an account?</p>
+          <p>
+            <Link to="/login">Go to Login</Link>
+          </p>
+        </div>
       </Form.Item>
+      <div id="registerDiv" style={{ marginLeft: "200px" }}></div>
     </Form>
   );
 };
