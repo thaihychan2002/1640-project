@@ -65,20 +65,23 @@ const Register = () => {
     }
   };
   useEffect(() => {
-    window.google.accounts.id.initialize({
-      client_id:
-        "524537065604-pfst28oopm5kq31je7u6qtjcb22td9h6.apps.googleusercontent.com",
-      callback: handleCallbackResponse,
-      context: "signup",
-    });
-    const parent = document.getElementById("registerDiv");
-    window.google.accounts.id.renderButton(parent, {
-      type: "standard",
-      width: 400,
-      text: "signup_with",
-      locale: "en-US",
-    });
-    window.google.accounts.id.prompt();
+    const googleService = () => {
+      window?.google?.accounts?.id?.initialize({
+        client_id:
+          "524537065604-pfst28oopm5kq31je7u6qtjcb22td9h6.apps.googleusercontent.com",
+        callback: handleCallbackResponse,
+        context: "signup",
+      });
+      const parent = document.getElementById("registerDiv");
+      window?.google?.accounts?.id?.renderButton(parent, {
+        type: "standard",
+        width: 400,
+        text: "signup_with",
+        locale: "en-US",
+      });
+      window?.google?.accounts?.id?.prompt();
+    };
+    googleService();
   }, []);
 
   return (
@@ -93,7 +96,7 @@ const Register = () => {
       style={{
         maxWidth: 600,
       }}
-      autoComplete="off"
+      // autoComplete="on"
       onFinish={(e) => submitHandler(e)}
       onFinishFailed={onFinishFailed}
     >

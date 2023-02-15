@@ -2,12 +2,10 @@ import React from "react";
 import { Container } from "@material-ui/core";
 import Header from "../component/header/index";
 import PostList from "../component/PostList";
-import Navigation from "../component/Navigation/Navigation";
 import { Grid } from "@material-ui/core";
 import AccountManage from "../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
-import { BackTop, FloatButton } from "antd";
-import { CustomerServiceOutlined } from "@ant-design/icons";
+import { FloatButton } from "antd";
 export default function HomePage() {
   return (
     <Container maxWidth="100vw" className="{}">
@@ -16,9 +14,7 @@ export default function HomePage() {
       </Helmet>
       <Header />
       <Grid container spacing={2} alignItems="stretch">
-        <Grid item xs={2} sm={2}>
-          <Navigation />
-        </Grid>
+        <Grid item xs={2} sm={2}></Grid>
         <Grid item xs={7} sm={7}>
           <PostList></PostList>
         </Grid>

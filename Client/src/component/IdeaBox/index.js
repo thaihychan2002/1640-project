@@ -1,50 +1,52 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import {
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
-} from '@ant-design/icons'
-import { Layout, Menu, theme, Col, Row, Avatar, Button, Modal } from 'antd'
-import '../assets/css/HomeScreen.css'
-import { FileImageOutlined } from '@ant-design/icons'
-const { Header, Content, Footer, Sider } = Layout
+} from "@ant-design/icons";
+import { Layout, Menu, theme, Col, Row, Avatar, Button, Modal } from "antd";
+import "../assets/css/HomeScreen.css";
+import { FileImageOutlined } from "@ant-design/icons";
+const { Header, Content, Footer, Sider } = Layout;
 
 export default function IdeaBox() {
   const privacyClick = (e) => {
-    e.preventDefault()
-    const container = document.querySelector('.container')
-    const privacy = document.querySelector('.container .post .privacy')
-    privacy.addEventListener('click', () => {
-      container.classList.add('active')
-    })
-  }
+    e.preventDefault();
+    const container = document.querySelector(".container");
+    const privacy = document.querySelector(".container .post .privacy");
+    privacy.addEventListener("click", () => {
+      container.classList.add("active");
+    });
+  };
   const arrowBackClick = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const container = document.querySelector('.container')
-    const arrowBack = document.querySelector('.container .audience .arrow-back')
-    arrowBack.addEventListener('click', () => {
-      container.classList.remove('active')
-    })
-  }
+    const container = document.querySelector(".container");
+    const arrowBack = document.querySelector(
+      ".container .audience .arrow-back"
+    );
+    arrowBack.addEventListener("click", () => {
+      container.classList.remove("active");
+    });
+  };
   const {
     token: { colorBgContainer },
-  } = theme.useToken()
+  } = theme.useToken();
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
-    console.log('show')
-    setIsModalOpen(true)
-  }
+    console.log("show");
+    setIsModalOpen(true);
+  };
 
   const handleOk = () => {
-    setIsModalOpen(false)
-  }
+    setIsModalOpen(false);
+  };
 
   const handleCancel = () => {
-    setIsModalOpen(false)
-  }
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="content-container">
@@ -52,7 +54,7 @@ export default function IdeaBox() {
         <Col span={10}>
           <Row className="row-create">
             <Col className="icon-create">
-              <img src="https://scontent.fsgn5-12.fna.fbcdn.net/v/t39.30808-6/324846632_1180845109493400_1898232937473416056_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=OeRAxQ4TIwAAX9kMi_3&_nc_ht=scontent.fsgn5-12.fna&oh=00_AfABN2MSyBQf_bS8VD9vrPkVj9p52E3jYqfc_GZ-1gzKlg&oe=63DDAD4F" />
+              <img src="https://scontent.fsgn5-12.fna.fbcdn.net/v/t39.30808-6/324846632_1180845109493400_1898232937473416056_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=VmM90HL_viIAX_GrSHl&_nc_ht=scontent.fsgn5-12.fna&oh=00_AfA8Ql99zw24jf-iCRcsWWPhI8K43QdFkju0BhODzIZYFQ&oe=63F173CF" />
               <div className="idea-create" onClick={showModal}>
                 &nbsp; What's on your mind?
               </div>
@@ -73,7 +75,7 @@ export default function IdeaBox() {
             <form action="#">
               <div className="content">
                 <img
-                  src="https://scontent.fsgn5-12.fna.fbcdn.net/v/t39.30808-6/324846632_1180845109493400_1898232937473416056_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=OeRAxQ4TIwAAX9kMi_3&_nc_ht=scontent.fsgn5-12.fna&oh=00_AfABN2MSyBQf_bS8VD9vrPkVj9p52E3jYqfc_GZ-1gzKlg&oe=63DDAD4F"
+                  src="https://scontent.fsgn5-12.fna.fbcdn.net/v/t39.30808-6/324846632_1180845109493400_1898232937473416056_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=VmM90HL_viIAX_GrSHl&_nc_ht=scontent.fsgn5-12.fna&oh=00_AfA8Ql99zw24jf-iCRcsWWPhI8K43QdFkju0BhODzIZYFQ&oe=63F173CF"
                   alt="logo"
                 />
                 <div className="details">
@@ -166,5 +168,5 @@ export default function IdeaBox() {
         </div>
       </Modal>
     </div>
-  )
+  );
 }
