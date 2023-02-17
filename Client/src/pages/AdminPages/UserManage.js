@@ -13,7 +13,6 @@ import { updateUser } from "../../api/index";
 import { Select } from "antd";
 const { Option } = Select;
 const UserManage = () => {
-  const navigate = useNavigate();
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
