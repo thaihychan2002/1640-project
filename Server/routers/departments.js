@@ -1,8 +1,14 @@
-import express from 'express';
-import { deleteDepartment,createDepartment, getDepartment } from '../controller/departments.js';
-const router = express.Router();
-router.get('/',getDepartment);
-router.post('/create',createDepartment);
-router.post('/delete',deleteDepartment);
+import express from 'express'
+import {
+  deleteDepartment,
+  createDepartment,
+  getDepartment,
+} from '../controller/departments.js'
+import { isAuth, isAdmin } from '../utils.js'
 
-export default router;
+const router = express.Router()
+router.get('/', isAuth, getDepartment)
+router.post('/create', isAdmin, createDepartment)
+router.post('/delete', isAdmin, deleteDepartment)
+
+export default router

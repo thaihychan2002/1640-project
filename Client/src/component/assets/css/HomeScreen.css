@@ -32,6 +32,7 @@
 }
 img {
   width: 36px;
+  height: 36px;
   border-radius: 24px;
 }
 .idea-create {
@@ -144,4 +145,7 @@ center {
 }
 .user-mg {
   margin-bottom: 15px;
+}
+.idea {
+  display: flex;
 }

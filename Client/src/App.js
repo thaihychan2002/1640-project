@@ -13,10 +13,10 @@ function App() {
   return (
     <>
       <ToastContainer position="bottom-center" limit={5} />
-
       <Grid item xs={2} sm={2}>
         <Navigation />
       </Grid>
+
       {allRoutes}
     </>
   );

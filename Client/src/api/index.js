@@ -1,15 +1,31 @@
 import axios from "axios";
 
 export const URL = "http://localhost:5000";
+export const token = localStorage.getItem("userInfo");
 // posts
-export const fetchPosts = () => axios.get(`${URL}/posts`);
-export const createPosts = (payload) => axios.post(`${URL}/posts/create`,payload);
-export const updatePosts = (payload) => axios.post(`${URL}/posts/update`,payload);
+export const fetchPosts = () =>
+  axios.get(`${URL}/posts`, {
+    headers: { Authorization: `Bearer ${token} ` },
+  });
+export const createPosts = (payload) =>
+  axios.post(`${URL}/posts/create`, payload, {
+    headers: { Authorization: `Bearer ${token} ` },
+  });
+export const updatePosts = (payload) =>
+  axios.post(`${URL}/posts/update`, payload, {
+    headers: { Authorization: `Bearer ${token} ` },
+  });
 // department
-export const fetchDepartments = () => axios.get(`${URL}/departments`);
-// fetch user
-export const fetchUsers = (token) =>
-  axios.get(`${URL}/users/`, { headers: { Authorization: `Bearer ${token}` } });
+export const fetchDepartments = () =>
+  axios.get(`${URL}/departments`, {
+    headers: { Authorization: `Bearer ${token} ` },
+  });
+
+// fetch usertoken
+export const fetchUsers = () =>
+  axios.get(`${URL}/users/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 export const fetchUserByID = (userID) =>
   axios.get(`${URL}/users/getUserById/${userID}`);
 //login user
@@ -27,8 +43,23 @@ export const registerGoogleUser = (fullName, email, avatar, password) =>
     avatar,
     password,
   });
+// update user
+export const updateUser = (userID, role) =>
+  axios.put(
+    `${URL}/users/updateUser/${userID}`,
+    { role },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+export const updateUserProfile = (userID, fullName, data) =>
+  axios.put(
+    `${URL}/users/updateUserProfile/${userID}`,
+    { fullName, data },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 //delete user
-export const deleteUser = (userID, token) =>
+export const deleteUser = (userID) =>
   axios.delete(`${URL}/users/deleteUser/${userID}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
