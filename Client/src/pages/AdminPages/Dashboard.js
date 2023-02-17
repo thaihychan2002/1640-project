@@ -1,16 +1,17 @@
 import { Tabs } from "antd";
 import UserManage from "./UserManage";
 import DepartmentManage from "./DepartmentManage";
-import { UserOutlined, ApartmentOutlined } from "@ant-design/icons";
+import PostManage from "./PostManage";
+import {
+  UserOutlined,
+  ApartmentOutlined,
+  FormOutlined,
+} from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
 const DashBoard = () => {
-  const children = [<UserManage />, <DepartmentManage />, ""];
-  const tabName = [
-    <span>User Manage</span>,
-    "Department Manage",
-    "Ongoing Development",
-  ];
-  const icon = [<UserOutlined />, <ApartmentOutlined />, ""];
+  const children = [<UserManage />, <DepartmentManage />, <PostManage />];
+  const tabName = ["Users Manage", "Departments Manage", "Posts Manage"];
+  const icon = [<UserOutlined />, <ApartmentOutlined />, <FormOutlined />];
   return (
     <div>
       <Helmet>
