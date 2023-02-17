@@ -5,6 +5,7 @@
   background-color: #3ba0e9;
   position: fixed;
   margin-top: 52px;
+  z-index: 1;
 }
 .menu-style {
   height: 100vh;

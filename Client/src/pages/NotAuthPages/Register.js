@@ -1,28 +1,32 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import { Helmet } from "react-helmet-async";
-import { useState, useContext, useEffect } from "react";
-import { Store } from "../Store";
-import { toast } from "react-toastify";
-import { getError } from "../utils";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { loginUser, loginGoogleUser } from "../api/index.js";
+import React, { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { Store } from "../../Store";
+import { getError } from "../../utils";
+import { registerUser, registerGoogleUser } from "../../api/index.js";
 import jwtDecode from "jwt-decode";
-
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get("redirect");
   const redirect = redirectInUrl ? redirectInUrl : "/";
 
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const { dispatch: ctxDispatch } = useContext(Store);
+  const [rePassword, setRePassword] = useState("");
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { userInfo } = state;
 
   const submitHandler = async () => {
+    if (password !== rePassword) {
+      toast.error("Password do not match");
+      return;
+    }
     try {
-      const { data } = await loginUser(email, password);
-      console.log(data);
+      const { data } = await registerUser(fullName, email, password);
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");
@@ -30,37 +34,49 @@ const Login = () => {
       toast.error(getError(err));
     }
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
   const handleCallbackResponse = async (response) => {
     let user = jwtDecode(response.credential);
     let email = user.email;
+    let isVerified = user.email_verified;
     let fullName = user.name;
     let avatar = user.picture;
-    try {
-      const { data } = await loginGoogleUser(email, fullName, avatar);
-      ctxDispatch({ type: "USER_LOGIN", payload: data });
-      localStorage.setItem("userInfo", data.token);
-      navigate(redirect || "/");
-    } catch (err) {
-      toast.error(getError(err));
+    let password = email + fullName;
+    if (isVerified) {
+      try {
+        const { data } = await registerGoogleUser(
+          fullName,
+          email,
+          avatar,
+          password
+        );
+        ctxDispatch({ type: "USER_LOGIN", payload: data });
+        localStorage.setItem("userToken", JSON.stringify(data));
+        navigate(redirect || "/");
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    } else {
+      toast.error("Your email is not verified");
     }
   };
-
   useEffect(() => {
     const googleService = () => {
       window?.google?.accounts?.id?.initialize({
         client_id:
           "524537065604-pfst28oopm5kq31je7u6qtjcb22td9h6.apps.googleusercontent.com",
         callback: handleCallbackResponse,
-        context: "singin",
+        context: "signup",
       });
-      const parent = document.getElementById("loginDiv");
+      const parent = document.getElementById("registerDiv");
       window?.google?.accounts?.id?.renderButton(parent, {
         type: "standard",
         width: 400,
-        text: "signin_with",
+        text: "signup_with",
         locale: "en-US",
       });
       window?.google?.accounts?.id?.prompt();
@@ -80,15 +96,12 @@ const Login = () => {
       style={{
         maxWidth: 600,
       }}
-      initialValues={{
-        remember: true,
-      }}
-      onFinish={submitHandler}
+      // autoComplete="on"
+      onFinish={(e) => submitHandler(e)}
       onFinishFailed={onFinishFailed}
-      autoComplete="off"
     >
       <Helmet>
-        <title>Login</title>
+        <title>Register</title>
       </Helmet>
       <Form.Item
         label="Email"
@@ -102,7 +115,18 @@ const Login = () => {
       >
         <Input onChange={(e) => setEmail(e.target.value)} />
       </Form.Item>
-
+      <Form.Item
+        label="Fullname"
+        name="fullname"
+        rules={[
+          {
+            required: true,
+            message: "Please input your fullname!",
+          },
+        ]}
+      >
+        <Input onChange={(e) => setFullName(e.target.value)} />
+      </Form.Item>
       <Form.Item
         label="Password"
         name="password"
@@ -115,16 +139,17 @@ const Login = () => {
       >
         <Input.Password onChange={(e) => setPassword(e.target.value)} />
       </Form.Item>
-
       <Form.Item
-        name="remember"
-        valuePropName="checked"
-        wrapperCol={{
-          offset: 8,
-          span: 16,
-        }}
+        label="Re-Password"
+        name="rePassword"
+        rules={[
+          {
+            required: true,
+            message: "Please input your re-password!",
+          },
+        ]}
       >
-        <Checkbox>Remember me</Checkbox>
+        <Input.Password onChange={(e) => setRePassword(e.target.value)} />
       </Form.Item>
 
       <Form.Item
@@ -134,17 +159,17 @@ const Login = () => {
         }}
       >
         <Button type="primary" htmlType="submit">
-          Login
+          Register
         </Button>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <p>Create an account?</p>
+          <p>Already have an account?</p>
           <p>
-            <Link to="/register">Go to Register</Link>
+            <Link to="/login">Go to Login</Link>
           </p>
         </div>
       </Form.Item>
-      <div id="loginDiv" style={{ marginLeft: "200px" }}></div>
+      <div id="registerDiv" style={{ marginLeft: "200px" }}></div>
     </Form>
   );
 };
-export default Login;
+export default Register;

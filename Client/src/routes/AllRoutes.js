@@ -1,9 +1,10 @@
-import HomePage from "../pages/HomePage";
-import NotFound from "../pages/NotFound";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import Profile from "../pages/Profile";
-import UserManage from "../pages/UserManage";
+import HomePage from "../pages/AuthPages/HomePage";
+import NotFound from "../pages/NotAuthPages/NotFound";
+import Login from "../pages/NotAuthPages/Login";
+import Register from "../pages/NotAuthPages/Register";
+import Profile from "../pages/AuthPages/Profile";
+import DashBoard from "../pages/AdminPages/Dashboard";
+import UserManage from "../pages/AdminPages/UserManage";
 import UserRoute from "../component/ProtectedRoute/UserRoute";
 import AdminRoute from "../component/ProtectedRoute/AdminRoute";
 export const AllRoutes = [
@@ -25,19 +26,19 @@ export const AllRoutes = [
     element: <NotFound />,
   },
   {
-    path: "/usermanage",
-    element: (
-      <AdminRoute>
-        <UserManage />
-      </AdminRoute>
-    ),
-  },
-  {
     path: "/profile",
     element: (
       <UserRoute>
         <Profile />
       </UserRoute>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <AdminRoute>
+        <DashBoard />
+      </AdminRoute>
     ),
   },
 ];

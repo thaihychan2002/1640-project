@@ -14,18 +14,22 @@
 .account-switch {
   line-height: 40px;
   position: fixed;
-  right: 1em;
   margin-top: 25px;
-  width: 300px !important;
-  display: flex;
+  width: 25% !important;
 }
 @media only screen and (max-width: 990px) {
   .img-switch img {
     width: 36px;
+    height: 36px;
   }
 }
 @media only screen and (max-width: 640px) {
   .account-switch {
     display: none;
   }
+}
+.as-flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }

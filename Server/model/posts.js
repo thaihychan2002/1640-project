@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const schema = new mongoose.Schema(
   {
@@ -14,13 +14,13 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    department:{
+    department: {
       type: String,
-      required:true,
+      required: true,
     },
-    categories:{
+    categories: {
       type: String,
-      required:false,
+      required: false,
     },
     attachment: String,
     likeCount: {
@@ -29,5 +29,5 @@ const schema = new mongoose.Schema(
     },
   },
   { timestamps: true }
-);
-export const PostModel = mongoose.model("Post", schema);
+)
+export const PostModel = mongoose.model('Post', schema)

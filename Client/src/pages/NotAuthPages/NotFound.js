@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../component/assets/css/NotFound.css";
+import "../../component/assets/css/NotFound.css";
 import { Helmet } from "react-helmet-async";
 const NotFound = () => {
   return (
