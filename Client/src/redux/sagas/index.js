@@ -35,7 +35,6 @@ function* updatePostSaga(action) {
     try {
         console.log('updatePostSaga',{action})
         const updatedPost = yield call(api.updatePosts, action.payload);
-        console.log('[updatePostSaga - post]',updatedPost)
         yield put(actions.updatePosts.updatePostsSuccess(updatedPost.data));
     } catch (err) {
         console.error(err);

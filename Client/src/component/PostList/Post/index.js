@@ -78,7 +78,7 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   return (
-    <Card>
+    <Card className={classes.card}>
       <CardHeader
         avatar={<Avatar>A</Avatar>}
         title={post.author}

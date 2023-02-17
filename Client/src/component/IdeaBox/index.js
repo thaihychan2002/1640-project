@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { hideModal, showModal, createPosts } from "../../redux/actions";
 import FileBase64 from "react-file-base64";
 import { departmentsState$, modalState$ } from "../../redux/seclectors";
-import Department from "../DepartmentList/Department/index.js";
 import * as actions from "../../redux/actions";
 import { PictureOutlined, SendOutlined } from "@ant-design/icons";
 import { Input, Select, Button } from "antd";
