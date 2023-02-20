@@ -1,14 +1,15 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { categoriesLoading$, categoriesState$, modalState$ } from "../../redux/seclectors";
-import * as actions from "../../redux/actions";
+import { categoriesLoading$, categoriesState$, modalState$ } from "../../../redux/seclectors";
+import * as actions from "../../../redux/actions";
 import React from "react";
 import { Link } from "react-router-dom";
 import { Space, Table, Button, Modal, Input } from "antd";
-import LoadingBox from "../../component/LoadingBox/LoadingBox";
+import LoadingBox from "../../../component/LoadingBox/LoadingBox";
+import Category from "./category";
 
 const { TextArea } = Input;
-export default function DepartmentManage() {
+export default function CategoryManage() {
 
   const dispatch = useDispatch()
   const categories = useSelector(categoriesState$)
@@ -21,20 +22,17 @@ export default function DepartmentManage() {
     dispatch(actions.getCategories.getCategoriesRequest());
   }, [dispatch]);
   const category = categories?.map((category) => ({
-    key: category._id,
-    category: category.name,
+    _id: category._id,
+    name: category.name,
   }));
-  const updatedepartHandler = React.useCallback((record) => {
-    dispatch(actions.updateDepartments.updateDepartmentsRequest({ ...record, }))
-  }, [dispatch])
   const deletedepartHandler = React.useCallback((record) => {
-    dispatch(actions.deleteDepartments.deleteDepartmentsRequest(record.key))
+    dispatch(actions.deleteCategories.deleteCategoriesRequest(record.key))
   }, [dispatch])
   const columns = [
     {
       title: "Category",
-      dataIndex: "category",
-      key: "category",
+      dataIndex: "name",
+      key: "name",
       width: "10%",
     },
     {
@@ -43,7 +41,7 @@ export default function DepartmentManage() {
       width: "20%",
       render: (_, record) => (
         <Space size="middle">
-          <Link onClick={() => updatedepartHandler(record)}>Update </Link>
+          <Category key={record._id} record={record}></Category>
           <Link onClick={() => deletedepartHandler(record)}>Delete</Link>
         </Space>
       ),
@@ -56,10 +54,10 @@ export default function DepartmentManage() {
     dispatch(actions.hideModal());
   }, [dispatch]);
   const onSubmit = React.useCallback(() => {
-    dispatch(actions.createDepartments.createDepartmentsRequest(data));
+    dispatch(actions.createCategories.createCategoriesRequest(data));
     handleOk();
   }, [data, dispatch, handleOk]);
-  const checkToDepartment = () => {
+  const checkToCate = () => {
     return data.name === "";
   };
   return (
@@ -92,7 +90,7 @@ export default function DepartmentManage() {
                 required
               />
               <Button
-                disabled={checkToDepartment()}
+                disabled={checkToCate()}
                 type="primary"
                 block
                 onClick={onSubmit}

@@ -16,7 +16,7 @@ export const updatePosts = (payload) =>
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const deletePosts = (payload) =>
-  axios.post(`${URL}/posts/delete`, payload, {
+  axios.post(`${URL}/posts/delete/${payload}`, payload, {
     headers: { Authorization: `Bearer ${token} ` },
   });
 // department
@@ -38,7 +38,7 @@ export const deleteDepartments = (payload) =>
   });
 // category
 export const fetchCategories = () =>
-  axios.get(`${URL}/s`, {
+  axios.get(`${URL}/categories`, {
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const createCategories = (payload) =>
@@ -46,11 +46,11 @@ export const createCategories = (payload) =>
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const updateCategories = (payload) =>
-  axios.post(`${URL}/categories/update`,payload, {
+  axios.post(`${URL}/categories/update`,console.log(payload),payload, {
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const deleteCategories = (payload) =>
-  axios.post(`${URL}/categories/delete`, payload,{
+  axios.post(`${URL}/categories/delete/${payload}`, payload,{
     headers: { Authorization: `Bearer ${token} ` },
   });
 // fetch usertoken

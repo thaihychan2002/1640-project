@@ -10,7 +10,7 @@ import { isAuth, isAdmin } from '../utils.js'
 const router = express.Router()
 router.get('/', isAuth, getDepartment)
 router.post('/create', isAdmin, createDepartment)
-router.post('/delete/:id', deleteDepartment)
+router.post('/delete/:id',isAdmin, deleteDepartment)
 router.post('/update',isAdmin,updateDepartment)
 
 export default router

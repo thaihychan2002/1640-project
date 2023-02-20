@@ -35,7 +35,6 @@ function* deletePostSaga(action) {
   try {
     console.log("deletePostSaga", { action });
     const deletedPost = yield call(api.deletePosts, action.payload);
-    console.log("[updatePostSaga - post]", deletedPost);
     yield put(actions.deletePosts.deletePostsSuccess(deletedPost.data));
   } catch (err) {
     console.error(err);
@@ -63,8 +62,10 @@ function* createDepartmentSaga(action) {
 }
 function* updateDepartmentSaga(action) {
   try {
+    console.log("deleteDepartmentSaga", { action });
     const departments = yield call(api.updateDepartments,action.payload);
     yield put(actions.updateDepartments.updateDepartmentsSuccess(departments.data));
+    console.log("[updateDepartmentSaga - department]", departments);
   } catch (err) {
     console.log(err);
     yield put(actions.updateDepartments.updateDepartmentsFailure(err));
