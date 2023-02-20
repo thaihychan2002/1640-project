@@ -1,10 +1,12 @@
-import { UserModel } from "../model/users.js";
-import { generateToken } from "../utils.js";
-import bcrypt from "bcryptjs";
-import { registerUserSchema } from "../helpers/validation_schema.js";
+import { UserModel } from '../model/users.js'
+import { generateToken } from '../utils.js'
+import bcrypt from 'bcryptjs'
+import { registerUserSchema } from '../helpers/validation_schema.js'
+import { v2 as cloudinary } from 'cloudinary'
+
 export const getUsers = async (req, res) => {
   try {
-    const users = await UserModel.find();
+    const users = await UserModel.find()
     // const today = moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a");
     // const expDate = moment(new Date(req.user.exp * 1000)).format(
     //   "dddd, MMMM Do YYYY, h:mm:ss a"
@@ -12,90 +14,75 @@ export const getUsers = async (req, res) => {
     // console.log(today);
     // console.log(expDate);
     // console.log(today < expDate);
-    res.send(users);
+    res.send(users)
   } catch (err) {
-    res.status(500).json({ error: err });
+    res.status(500).json({ error: err })
   }
-};
+}
 export const getUserById = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id);
+    const user = await UserModel.findById(req.params.id)
     if (user) {
       res.send({
         fullName: user.fullName,
         department: user.department,
         avatar: user.avatar,
         role: user.role,
-      });
+      })
     }
   } catch (err) {
-    res.status(500).json({ error: err });
+    res.status(500).json({ error: err })
   }
-};
+}
 export const loginUsers = async (req, res) => {
-  const user = await UserModel.findOne({ email: req.body.email });
+  const user = await UserModel.findOne({ email: req.body.email })
   if (user) {
     if (bcrypt.compareSync(req.body.password, user.password)) {
       res.send({
         _id: user._id,
-        fullName: user.fullName,
-        department: user.department,
-        avatar: user.avatar,
-        role: user.role,
         token: generateToken(user),
-      });
-      return;
+      })
+      return
     }
   }
-  res.status(401).send({ message: "Invalid email or password" });
-};
+  res.status(401).send({ message: 'Invalid email or password' })
+}
 
 export const loginGoogleUsers = async (req, res) => {
-  const user = await UserModel.findOne({ email: req.body.email });
+  const user = await UserModel.findOne({ email: req.body.email })
   if (user) {
-    user.fullName = req.body.fullName;
-    user.avatar = req.body.avatar;
-    await user.save();
     res.send({
       _id: user._id,
-      // fullName: user.fullName,
-      // department: user.department,
-      // avatar: user.avatar,
-      // role: user.role,
       token: generateToken(user),
-    });
-    return;
+    })
+    return
   }
   res
     .status(401)
-    .send({ message: "Cannot find your email! Please sign up a new one" });
-};
+    .send({ message: 'Cannot find your email! Please sign up a new one' })
+}
 
 export const registerUsers = async (req, res, next) => {
   try {
-    await registerUserSchema.validateAsync(req.body);
+    await registerUserSchema.validateAsync(req.body)
     // console.log(result);
     const newUser = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
       password: bcrypt.hashSync(req.body.password),
-    });
-    const user = await newUser.save();
+    })
+    const user = await newUser.save()
     res.send({
       _id: user._id,
-      fullName: user.fullName,
-      department: user.department,
-      avatar: user.avatar,
-      role: user.role,
       token: generateToken(user),
-    });
+    })
   } catch (err) {
     if (err.isJoi === true) {
-      res.status(422).send({ message: `${err.details[0].message}` });
+      res.status(422).send({ message: `${err.details[0].message}` })
     }
-    next(err);
+    next(err)
   }
-};
+}
 export const registerGoogleUsers = async (req, res) => {
   try {
     // const result = await userSchema.validateAsync(req.body);
@@ -105,48 +92,66 @@ export const registerGoogleUsers = async (req, res) => {
       fullName: req.body.fullName,
       avatar: req.body.avatar,
       password: bcrypt.hashSync(req.body.password),
-    });
-    const user = await newUser.save();
+    })
+    const user = await newUser.save()
     res.send({
       _id: user._id,
-      fullName: user.fullName,
-      department: user.department,
-      avatar: user.avatar,
-      role: user.role,
       token: generateToken(user),
-    });
+    })
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message })
   }
-};
+}
 export const deleteUser = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id);
+    const user = await UserModel.findById(req.params.id)
     if (user) {
-      if (user.role === "Admin") {
-        res.send({ message: "Can not delete admin" });
-        return;
+      if (user.role === 'Admin') {
+        res.send({ message: 'Can not delete admin' })
+        return
       }
-      await user.remove();
-      res.send({ message: "User Deleted" });
+      await user.remove()
+      res.send({ message: 'User Deleted' })
     } else {
-      res.status(404).send({ message: "User Not Found" });
+      res.status(404).send({ message: 'User Not Found' })
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message })
   }
-};
+}
 export const updateUser = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id);
-    console.log(user);
+    const user = await UserModel.findById(req.params.id)
     if (user) {
-      user.department = req.body.department || user.department;
-      await user.save();
+      user.role = req.body.role || user.role
+      await user.save()
+      res.send({ message: 'User updated' })
     } else {
-      res.status(404).send({ message: "User Not Found" });
+      res.status(404).send({ message: 'User Not Found' })
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message })
   }
-};
+}
+
+export const updateUserProfile = async (req, res) => {
+  const user = await UserModel.findById(req.params.id)
+  if (user) {
+    const fileStr = req.body.data || req.data
+    if (fileStr) {
+      // Destroy old image
+      // user.publicID = req.body.publicID || user.publicID
+      // if (user.publicIDd) {
+      //   await cloudinary.uploader.destroy(user.publicID)
+      // }
+      const uploadedResponse = await cloudinary.uploader.upload(fileStr)
+      user.avatar = uploadedResponse.url
+      user.publicID = uploadedResponse.public_id
+    }
+    user.fullName = req.body.fullName || user.fullName
+    await user.save()
+    res.status(200).send({ message: 'User Updated' })
+  } else {
+    res.status(404).send({ message: 'User Not Found' })
+  }
+}
