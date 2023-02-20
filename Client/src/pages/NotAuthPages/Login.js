@@ -1,32 +1,45 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import { Helmet } from "react-helmet-async";
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import React, { useContext, useEffect, useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { Store } from "../../Store";
 import { toast } from "react-toastify";
-import { Store } from "../Store";
-import { getError } from "../utils";
-import { registerUser, registerGoogleUser } from "../api/index.js";
+import { getError } from "../../utils";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import { loginUser, loginGoogleUser } from "../../api/index.js";
 import jwtDecode from "jwt-decode";
-const Register = () => {
+
+const Login = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get("redirect");
   const redirect = redirectInUrl ? redirectInUrl : "/";
 
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rePassword, setRePassword] = useState("");
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo } = state;
+
+  const { dispatch: ctxDispatch } = useContext(Store);
 
   const submitHandler = async () => {
-    if (password !== rePassword) {
-      toast.error("Password do not match");
-      return;
-    }
     try {
-      const { data } = await registerUser(fullName, email, password);
+      const { data } = await loginUser(email, password);
+      console.log(data);
+      ctxDispatch({ type: "USER_LOGIN", payload: data });
+      localStorage.setItem("userInfo", data.token);
+      navigate(redirect || "/");
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+  const handleCallbackResponse = async (response) => {
+    let user = jwtDecode(response.credential);
+    let email = user.email;
+    let fullName = user.name;
+    let avatar = user.picture;
+    try {
+      const { data } = await loginGoogleUser(email, fullName, avatar);
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");
@@ -35,48 +48,19 @@ const Register = () => {
     }
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
-  const handleCallbackResponse = async (response) => {
-    let user = jwtDecode(response.credential);
-    let email = user.email;
-    let isVerified = user.email_verified;
-    let fullName = user.name;
-    let avatar = user.picture;
-    let password = email + fullName;
-    if (isVerified) {
-      try {
-        const { data } = await registerGoogleUser(
-          fullName,
-          email,
-          avatar,
-          password
-        );
-        ctxDispatch({ type: "USER_LOGIN", payload: data });
-        localStorage.setItem("userToken", JSON.stringify(data));
-        navigate(redirect || "/");
-      } catch (err) {
-        toast.error(getError(err));
-      }
-    } else {
-      toast.error("Your email is not verified");
-    }
-  };
   useEffect(() => {
     const googleService = () => {
       window?.google?.accounts?.id?.initialize({
         client_id:
           "524537065604-pfst28oopm5kq31je7u6qtjcb22td9h6.apps.googleusercontent.com",
         callback: handleCallbackResponse,
-        context: "signup",
+        context: "singin",
       });
-      const parent = document.getElementById("registerDiv");
+      const parent = document.getElementById("loginDiv");
       window?.google?.accounts?.id?.renderButton(parent, {
         type: "standard",
         width: 400,
-        text: "signup_with",
+        text: "signin_with",
         locale: "en-US",
       });
       window?.google?.accounts?.id?.prompt();
@@ -96,12 +80,15 @@ const Register = () => {
       style={{
         maxWidth: 600,
       }}
-      // autoComplete="on"
-      onFinish={(e) => submitHandler(e)}
+      initialValues={{
+        remember: true,
+      }}
+      onFinish={submitHandler}
       onFinishFailed={onFinishFailed}
+      autoComplete="off"
     >
       <Helmet>
-        <title>Register</title>
+        <title>Login</title>
       </Helmet>
       <Form.Item
         label="Email"
@@ -115,18 +102,7 @@ const Register = () => {
       >
         <Input onChange={(e) => setEmail(e.target.value)} />
       </Form.Item>
-      <Form.Item
-        label="Fullname"
-        name="fullname"
-        rules={[
-          {
-            required: true,
-            message: "Please input your fullname!",
-          },
-        ]}
-      >
-        <Input onChange={(e) => setFullName(e.target.value)} />
-      </Form.Item>
+
       <Form.Item
         label="Password"
         name="password"
@@ -139,17 +115,16 @@ const Register = () => {
       >
         <Input.Password onChange={(e) => setPassword(e.target.value)} />
       </Form.Item>
+
       <Form.Item
-        label="Re-Password"
-        name="rePassword"
-        rules={[
-          {
-            required: true,
-            message: "Please input your re-password!",
-          },
-        ]}
+        name="remember"
+        valuePropName="checked"
+        wrapperCol={{
+          offset: 8,
+          span: 16,
+        }}
       >
-        <Input.Password onChange={(e) => setRePassword(e.target.value)} />
+        <Checkbox>Remember me</Checkbox>
       </Form.Item>
 
       <Form.Item
@@ -159,17 +134,17 @@ const Register = () => {
         }}
       >
         <Button type="primary" htmlType="submit">
-          Register
+          Login
         </Button>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <p>Already have an account?</p>
+          <p>Create an account?</p>
           <p>
-            <Link to="/login">Go to Login</Link>
+            <Link to="/register">Go to Register</Link>
           </p>
         </div>
       </Form.Item>
-      <div id="registerDiv" style={{ marginLeft: "200px" }}></div>
+      <div id="loginDiv" style={{ marginLeft: "200px" }}></div>
     </Form>
   );
 };
-export default Register;
+export default Login;

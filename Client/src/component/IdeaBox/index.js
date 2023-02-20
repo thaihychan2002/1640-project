@@ -10,6 +10,7 @@ import { departmentsState$, modalState$ } from "../../redux/seclectors";
 import * as actions from "../../redux/actions";
 import { PictureOutlined, SendOutlined } from "@ant-design/icons";
 import { Input, Select, Button } from "antd";
+import { Link } from "react-router-dom";
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -31,25 +32,7 @@ export default function IdeaBox() {
     categories: "",
     attachment: "",
   });
-  const privacyClick = (e) => {
-    e.preventDefault();
-    const container = document.querySelector(".container");
-    const privacy = document.querySelector(".container .post .privacy");
-    privacy.addEventListener("click", () => {
-      container.classList.add("active");
-    });
-  };
-  const arrowBackClick = (e) => {
-    e.preventDefault();
 
-    const container = document.querySelector(".container");
-    const arrowBack = document.querySelector(
-      ".container .audience .arrow-back"
-    );
-    arrowBack.addEventListener("click", () => {
-      container.classList.remove("active");
-    });
-  };
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
@@ -70,19 +53,19 @@ export default function IdeaBox() {
   const user = state.userInfo;
   const holder = "What's on your mind " + user.fullName + "?";
   return (
-    <div className="content-container">
-      <Row id="content-style" className="content-style">
-        <Col span={10}>
-          <Row className="row-create">
-            <Col className="icon-create">
-              <img src={user.avatar} alt="logo" />
-              <div className="idea-create" onClick={viewModal}>
-                &nbsp; What's on your mind?
-              </div>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+    <div>
+      <Grid container spacing={2} alignItems="stretch">
+        <Grid item xs={12} lg={12} className="idea">
+          <div>
+            <Link to="/profile">
+              <img alt={user?.fullName} src={user?.avatar} />
+            </Link>
+          </div>
+          <div className="idea-create" onClick={viewModal}>
+            &nbsp; What's on your mind?
+          </div>
+        </Grid>
+      </Grid>
       <Modal
         open={isShow}
         onOk={handleOk}
@@ -129,12 +112,18 @@ export default function IdeaBox() {
           </Grid>
           <Grid item xs={5} lg={5} className="user-fill">
             <div className="user-container">
-              <div className="post-user user-mg">
-                <span>
-                  <img src={user.avatar} alt={user.fullName} />
-                </span>
-                <span>{user.fullName}</span>
-              </div>
+              <Link
+                to="/profile"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <div className="post-user user-mg">
+                  <span>
+                    <img src={user.avatar} alt={user.fullName} />
+                  </span>
+                  <span>{user.fullName}</span>
+                </div>
+              </Link>
+
               <div className="user-mg">
                 <Input
                   allowClear

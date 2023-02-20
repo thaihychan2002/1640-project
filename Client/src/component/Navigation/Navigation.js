@@ -25,7 +25,7 @@ export default function Navigation() {
     "Home",
     "Department",
     "Categories",
-    "Dashboard",
+    "Admin Dashboard",
     "User Manage",
   ];
   const linkRoutes = [
