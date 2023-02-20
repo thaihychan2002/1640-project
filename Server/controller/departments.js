@@ -32,7 +32,7 @@ export const deleteDepartment = async (req, res) => {
 export const updateDepartment = async (req, res) => {
     try {
         const updateDepartments = req.body
-        const Department = await DepartmentModel.findOneAndUpdate(
+        const Department = await DepartmentModel.findByIdAndUpdate(
             { _id: updateDepartments._id },
             updateDepartments,
             { new: true }

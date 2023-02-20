@@ -11,6 +11,7 @@ import * as actions from "../../redux/actions";
 import { PictureOutlined, SendOutlined } from "@ant-design/icons";
 import { Input, Select, Button } from "antd";
 import { Link } from "react-router-dom";
+
 const { TextArea } = Input;
 const { Option } = Select;
 

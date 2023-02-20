@@ -22,20 +22,20 @@ export default function DepartmentManage() {
     dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
   const depart = departments?.map((department) => ({
-    key: department._id,
-    department: department.name,
+    _id: department._id,
+    name: department.name,
   }));
   const viewModal = React.useCallback(() => {
     dispatch(actions.showModal());
   }, [dispatch])
   const deletedepartHandler = React.useCallback((record) => {
-    dispatch(actions.deleteDepartments.deleteDepartmentsRequest(record.key))
+    dispatch(actions.deleteDepartments.deleteDepartmentsRequest(record._id))
   }, [dispatch])
   const columns = [
     {
       title: "Department",
-      dataIndex: "department",
-      key: "department",
+      dataIndex: "name",
+      key: "name",
       width: "10%",
     },
     {
@@ -44,7 +44,7 @@ export default function DepartmentManage() {
       width: "20%",
       render: (_, record) => (
         <Space size="middle">
-          <Department depart={record}></Department>
+          <Department key={record._id} record={record}></Department>
           <Link onClick={() => deletedepartHandler(record)}>Delete</Link>
         </Space>
       ),
@@ -103,7 +103,7 @@ export default function DepartmentManage() {
         {loading ? (
           <LoadingBox />
         ) : (
-          <Table columns={columns} dataSource={depart} />
+          <Table columns={columns} dataSource={depart}/>
         )}
       </Grid>
     </Grid>

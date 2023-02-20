@@ -19,9 +19,8 @@ export const createCate = async (req, res) => {
 };
 export const deleteCate = async (req, res) => {
     try {
-        const deleteCategory = req.body;
-        const category = await CategoriesModel.findOneAndDelete(
-            { _id: deleteCategory._id },
+        const deleteCategory = req.params._id;
+        const category = await CategoriesModel.findByIdAndDelete(
             deleteCategory,
             { new: true }
         );
@@ -33,7 +32,7 @@ export const deleteCate = async (req, res) => {
 export const updateCate = async (req, res) => {
     try {
         const updateCategory = req.body
-        const Category = await CategoriesModel.findOneAndUpdate(
+        const Category = await CategoriesModel.findByIdAndUpdate(
             { _id: updateCategory._id },
             updateCategory,
             { new: true }

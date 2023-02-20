@@ -1,70 +1,42 @@
 import { Grid } from "@material-ui/core";
-import { useDispatch, useSelector } from "react-redux";
-import { modalState$ } from "../../../../redux/seclectors";
+import { useDispatch } from "react-redux";
 import * as actions from "../../../../redux/actions";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button, Modal, Input } from "antd";
+import { Input } from "antd";
 
 const { TextArea } = Input;
-export default function DepartmentManage({record}) {
-
+export default function Department({ record }) {
   const dispatch = useDispatch()
-  const { isShow } = useSelector(modalState$);
   const [data, setdata] = React.useState({
-    name: "",
+    _id: '',
+    name: '',
   });
-  const viewModal = React.useCallback(() => {
-    dispatch(actions.showModal());
-  }, [dispatch])
-  const handleOk = React.useCallback(() => {
-    dispatch(actions.hideModal());
-  }, [dispatch]);
-  const onSubmit = React.useCallback(() => {
-    dispatch(actions.updateDepartments.updateDepartmentsRequest({ ...record, department: data.name }))
-    handleOk();
-  }, [data, dispatch, handleOk,record]);
-  const checkToDepartment = () => {
-    return data.name === "";
-  };
+  const onUpdateHandler = React.useCallback(() => {
+    dispatch(actions.updateDepartments.updateDepartmentsRequest({ _id: data._id, name: data.name }))
+    setdata({ _id: '', name: '' })
+  }, [data, dispatch]);
   return (
     <Grid container spacing={2} alignItems="stretch">
-     <Link onClick={viewModal}>Update</Link>
-        <Modal open={isShow}
-          onOk={handleOk}
-          onCancel={handleOk}
-          footer={null}
-          className="container">
-          <Grid container spacing={2} alignItems="stretch">
-            <Grid item xs={12} lg={12} className="row-new-post">
-              <center>Create new department</center>
-            </Grid>
-            <Grid item xs={12} lg={12} className="row-new-post">
-              <TextArea
-                allowClear
-                autoSize={{
-                  minRows: 3,
-                  maxRows: 5,
-                }}
-                placeholder='Write the name of department'
-                size="large"
-                value={data.name}
-                onChange={(e) =>
-                  setdata({ ...data, name: e.target.value })
-                }
-                required
-              />
-              <Button
-                disabled={checkToDepartment()}
-                type="primary"
-                block
-                onClick={onSubmit}
-              >
-                Update information
-              </Button>
-            </Grid>
-          </Grid>
-        </Modal>
+      <Grid item xs={8} lg={8} className="row-new-post">
+        <TextArea
+          allowClear
+          autoSize={{
+            minRows: 1,
+            maxRows: 1,
+          }}
+          placeholder='Write the updated name'
+          size="large"
+          value={data.name}
+          onChange={(e) =>
+            setdata({ ...data, name: e.target.value, _id: record._id })
+          }
+          required
+        />
       </Grid>
+      <Grid item xs={4} lg={4} className="row-new-post">
+        <Link onClick={onUpdateHandler}>Update department</Link>
+      </Grid>
+    </Grid >
   );
 }
