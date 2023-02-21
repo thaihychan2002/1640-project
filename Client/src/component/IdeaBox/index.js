@@ -87,7 +87,6 @@ export default function IdeaBox() {
           <Grid item xs={12} lg={12} className="row-new-post">
             <center>Create new post</center>
           </Grid>
-          {console.log(data)}
           <Grid item xs={7} lg={7} className="upload">
             {data.attachment ? (
               <div className="upload-file">
@@ -145,7 +144,7 @@ export default function IdeaBox() {
                     setdata({
                       ...data,
                       title: e.target.value,
-                      author: userInfo.fullName,
+                      author: userInfo._id,
                     })
                   }
                   required

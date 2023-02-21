@@ -17,7 +17,11 @@ import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 import { updatePosts, deletePosts } from "../../../redux/actions/index.js";
 import { hideModal, showModal } from "../../../redux/actions";
-import { modalState$, departmentsState$ } from "../../../redux/seclectors";
+import {
+  modalState$,
+  departmentsState$,
+  postsState$,
+} from "../../../redux/seclectors";
 import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined, SendOutlined } from "@ant-design/icons";
@@ -26,127 +30,131 @@ import { Link } from "react-router-dom";
 const { TextArea } = Input;
 const { Option } = Select;
 
-export default function Post({ post }) {
+export default function Post() {
   const dispatch = useDispatch();
   const { state } = useContext(Store);
   const { userInfo } = state;
   const user = state.userInfo;
   const departments = useSelector(departmentsState$);
+  const posts = useSelector(postsState$);
+  console.log([posts]);
   const { isShow } = useSelector(modalState$);
   const departmentref = useRef(null);
   const holder = "What's on your mind " + user.fullName + "?";
-  const [data, setdata] = React.useState({
-    title: post.title,
-    author: post.author,
-    content: post.content,
-    department: post.department,
-    categories: post.categories,
-    attachment: post.attachment,
-  });
-  const checkToPost = () => {
-    return data.title === "" || data.content === "" || data.attachment === "";
-  };
-  const departget = (e) => {
-    setdata({ ...data, department: e });
-    data.department = departmentref.current.value;
-  };
-  const handleOk = React.useCallback(() => {
-    dispatch(hideModal());
-  }, [dispatch]);
-  const viewModal_2 = React.useCallback(() => {
-    console.log(post);
-    dispatch(showModal());
-  }, [dispatch, post]);
+  // const [data, setdata] = React.useState({
+  //   title: post.title,
+  //   author: post.author || "none",
+  //   content: post.content,
+  //   department: post.department,
+  //   categories: post.categories,
+  //   attachment: post.attachment,
+  // });
+  // console.log(post);
+  // const checkToPost = () => {
+  //   return data.title === "" || data.content === "" || data.attachment === "";
+  // };
+  // const departget = (e) => {
+  //   setdata({ ...data, department: e });
+  //   data.department = departmentref.current.value;
+  // };
+  // const handleOk = React.useCallback(() => {
+  //   dispatch(hideModal());
+  // }, [dispatch]);
+  // const viewModal_2 = React.useCallback(() => {
+  //   console.log(post);
+  //   dispatch(showModal());
+  // }, [dispatch, post]);
   const classes = useStyles();
-  const [likeActive, setLikeActive] = React.useState(false);
-  const [dislikeActive, setDislikeActive] = React.useState(false);
-  const onLikeBtnClick = React.useCallback(() => {
-    if (likeActive) {
-      setLikeActive(false);
-      dispatch(
-        updatePosts.updatePostsRequest({
-          ...post,
-          likeCount: post.likeCount - 1,
-        })
-      );
-    } else {
-      setLikeActive(true);
-      dispatch(
-        updatePosts.updatePostsRequest({
-          ...post,
-          likeCount: post.likeCount + 1,
-        })
-      );
-      if (dislikeActive) {
-        setDislikeActive(false);
-        dispatch(
-          updatePosts.updatePostsRequest({
-            ...post,
-            likeCount: post.likeCount + 2,
-          })
-        );
-      }
-    }
-  }, [dispatch, post, likeActive, dislikeActive]);
-  const updatehandler = React.useCallback(() => {
-    dispatch(updatePosts.updatePostsRequest({ _id: post._id, ...data }));
-  }, [dispatch, data, post]);
-  const onDislikeBtnClick = React.useCallback(() => {
-    if (dislikeActive) {
-      setDislikeActive(false);
-      dispatch(
-        updatePosts.updatePostsRequest({
-          ...post,
-          likeCount: post.likeCount + 1,
-        })
-      );
-    } else {
-      setDislikeActive(true);
-      dispatch(
-        updatePosts.updatePostsRequest({
-          ...post,
-          likeCount: post.likeCount - 1,
-        })
-      );
-      if (likeActive) {
-        setLikeActive(false);
-        dispatch(
-          updatePosts.updatePostsRequest({
-            ...post,
-            likeCount: post.likeCount - 2,
-          })
-        );
-      }
-    }
-  }, [dispatch, post, likeActive, dislikeActive]);
+  // const [likeActive, setLikeActive] = React.useState(false);
+  // const [dislikeActive, setDislikeActive] = React.useState(false);
+  // const onLikeBtnClick = React.useCallback(() => {
+  //   if (likeActive) {
+  //     setLikeActive(false);
+  //     dispatch(
+  //       updatePosts.updatePostsRequest({
+  //         ...post,
+  //         likeCount: post.likeCount - 1,
+  //       })
+  //     );
+  //   } else {
+  //     setLikeActive(true);
+  //     dispatch(
+  //       updatePosts.updatePostsRequest({
+  //         ...post,
+  //         likeCount: post.likeCount + 1,
+  //       })
+  //     );
+  //     if (dislikeActive) {
+  //       setDislikeActive(false);
+  //       dispatch(
+  //         updatePosts.updatePostsRequest({
+  //           ...post,
+  //           likeCount: post.likeCount + 2,
+  //         })
+  //       );
+  //     }
+  //   }
+  // }, [dispatch, post, likeActive, dislikeActive]);
+  // const updatehandler = React.useCallback(() => {
+  //   dispatch(updatePosts.updatePostsRequest({ _id: post._id, ...data }));
+  // }, [dispatch, data, post]);
+  // const onDislikeBtnClick = React.useCallback(() => {
+  //   if (dislikeActive) {
+  //     setDislikeActive(false);
+  //     dispatch(
+  //       updatePosts.updatePostsRequest({
+  //         ...post,
+  //         likeCount: post.likeCount + 1,
+  //       })
+  //     );
+  //   } else {
+  //     setDislikeActive(true);
+  //     dispatch(
+  //       updatePosts.updatePostsRequest({
+  //         ...post,
+  //         likeCount: post.likeCount - 1,
+  //       })
+  //     );
+  //     if (likeActive) {
+  //       setLikeActive(false);
+  //       dispatch(
+  //         updatePosts.updatePostsRequest({
+  //           ...post,
+  //           likeCount: post.likeCount - 2,
+  //         })
+  //       );
+  //     }
+  //   }
+  // }, [dispatch, post, likeActive, dislikeActive]);
   return (
     <>
-      <Card className={classes.card}>
-        <CardHeader
-          avatar={<Avatar></Avatar>}
-          title={post.author}
-          subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
-          action={
-            <IconButton title="Delete post">
-              <MoreVertIcon onClick={viewModal_2} />
-            </IconButton>
-          }
-        ></CardHeader>
-        <CardMedia
-          image={post.attachment || ""}
-          title="image"
-          className={classes.media}
-        ></CardMedia>
-        <CardContent>
-          <Typography variant="h5" color="textPrimary">
-            {post.title}
-          </Typography>
-          <Typography variant="body2" component="p" color="textSecondary">
-            {post.content}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <IconButton
+      {posts.map((post) => (
+        <Card className={classes.card}>
+          <CardHeader
+            avatar={<Avatar></Avatar>}
+            title={post.author}
+            subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
+            action={
+              <IconButton title="Delete post">
+                {/* <MoreVertIcon onClick={viewModal_2} /> */}
+              </IconButton>
+            }
+          ></CardHeader>
+          <CardMedia
+            image={post.attachment || ""}
+            title="image"
+            className={classes.media}
+          ></CardMedia>
+          <CardContent>
+            <Typography variant="h5" color="textPrimary">
+              {post.title}
+            </Typography>
+            <Typography variant="body2" component="p" color="textSecondary">
+              {post.content}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            {/* <IconButton
             onClick={onLikeBtnClick}
             style={{ color: likeActive ? "red" : "" }}
           >
@@ -159,10 +167,12 @@ export default function Post({ post }) {
           >
             -<FavoriteIcon />
             <Typography component="span" color="textSecondary"></Typography>
-          </IconButton>
-          {`${post.likeCount} likes`}
-        </CardActions>
-      </Card>
+          </IconButton> */}
+            {/* {`${post.likeCount} likes`} */}
+          </CardActions>
+        </Card>
+      ))}
+
       {/* <Modal
         open={isShow}
         onOk={handleOk}
