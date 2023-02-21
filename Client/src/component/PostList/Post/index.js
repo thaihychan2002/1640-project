@@ -7,7 +7,7 @@ import {
   CardMedia,
   IconButton,
   Typography,
-  Grid
+  Grid,
 } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import FavoriteIcon from "@material-ui/icons/Favorite";
@@ -56,12 +56,11 @@ export default function Post({ post }) {
   const viewModal_2 = React.useCallback(() => {
     console.log(post);
     dispatch(showModal());
-  }, [dispatch,post]);
+  }, [dispatch, post]);
   const classes = useStyles();
   const [likeActive, setLikeActive] = React.useState(false);
   const [dislikeActive, setDislikeActive] = React.useState(false);
   const onLikeBtnClick = React.useCallback(() => {
-    
     if (likeActive) {
       setLikeActive(false);
       dispatch(
@@ -90,9 +89,8 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   const updatehandler = React.useCallback(() => {
-    
-    dispatch(updatePosts.updatePostsRequest({_id:post._id,...data}))
-  }, [dispatch, data,post])
+    dispatch(updatePosts.updatePostsRequest({ _id: post._id, ...data }));
+  }, [dispatch, data, post]);
   const onDislikeBtnClick = React.useCallback(() => {
     if (dislikeActive) {
       setDislikeActive(false);
@@ -165,7 +163,7 @@ export default function Post({ post }) {
           {`${post.likeCount} likes`}
         </CardActions>
       </Card>
-      <Modal
+      {/* <Modal
         open={isShow}
         onOk={handleOk}
         onCancel={handleOk}
@@ -176,6 +174,7 @@ export default function Post({ post }) {
           <Grid item xs={12} lg={12} className="row-new-post">
             <center>Update post</center>
           </Grid>
+          {console.log(data)}
           <Grid item xs={7} lg={7} className="upload">
             {data.attachment ? (
               <div className="upload-file">
@@ -283,6 +282,7 @@ export default function Post({ post }) {
             </div>
           </Grid>
         </Grid>
-      </Modal>
-    </>);
+      </Modal> */}
+    </>
+  );
 }
