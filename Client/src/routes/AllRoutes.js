@@ -4,7 +4,7 @@ import Login from "../pages/NotAuthPages/Login";
 import Register from "../pages/NotAuthPages/Register";
 import Profile from "../pages/AuthPages/Profile";
 import DashBoard from "../pages/AdminPages/Dashboard";
-import UserManage from "../pages/AdminPages/UserManage";
+import QA from "../pages/QAPages/QA";
 import UserRoute from "../component/ProtectedRoute/UserRoute";
 import AdminRoute from "../component/ProtectedRoute/AdminRoute";
 export const AllRoutes = [
@@ -40,6 +40,10 @@ export const AllRoutes = [
         <DashBoard />
       </AdminRoute>
     ),
+  },
+  {
+    path: "/qa",
+    element: <QA />,
   },
 ];
 export default AllRoutes;

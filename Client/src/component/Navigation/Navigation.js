@@ -26,15 +26,9 @@ export default function Navigation() {
     "Department",
     "Categories",
     "Admin Dashboard",
-    "User Manage",
+    "QA Coordinator",
   ];
-  const linkRoutes = [
-    "/",
-    "/department",
-    "/categories",
-    "/dashboard",
-    "/usermanage",
-  ];
+  const linkRoutes = ["/", "/department", "/categories", "/dashboard", "/qa"];
   const { state, dispatch: ctxDispatch } = useContext(Store);
   // Hide navbar when route === /login or /register
   const withOutNavbarRoutes = ["/login", "/register"];

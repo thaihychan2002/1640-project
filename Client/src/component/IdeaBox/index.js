@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, useState } from "react";
 import { TextField, Grid } from "@material-ui/core";
 import { Col, Row, Modal } from "antd";
 import { Store } from "../../Store";
@@ -10,7 +10,7 @@ import { departmentsState$, modalState$ } from "../../redux/seclectors";
 import Department from "../DepartmentList/Department/index.js";
 import * as actions from "../../redux/actions";
 import { PictureOutlined, SendOutlined } from "@ant-design/icons";
-import { Input, Select, Button } from "antd";
+import { Input, Select, Button, Checkbox } from "antd";
 import { Link } from "react-router-dom";
 const { TextArea } = Input;
 const { Option } = Select;
@@ -21,6 +21,10 @@ export default function IdeaBox() {
   React.useEffect(() => {
     dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
+  const [checked, setChecked] = useState(false);
+  const onChange = (e) => {
+    setChecked(e.target.checked);
+  };
   const departmentref = useRef(null);
   const { isShow } = useSelector(modalState$);
   const { state } = useContext(Store);
@@ -49,7 +53,12 @@ export default function IdeaBox() {
     handleOk();
   }, [data, dispatch, handleOk]);
   const checkToPost = () => {
-    return data.title === "" || data.content === "" || data.attachment === "";
+    return (
+      data.title === "" ||
+      data.content === "" ||
+      data.attachment === "" ||
+      checked === false
+    );
   };
   const user = state.userInfo;
   const holder = "What's on your mind " + user.fullName + "?";
@@ -173,15 +182,19 @@ export default function IdeaBox() {
                   ))}
                 </Select>
               </div>
-              <Button
-                disabled={checkToPost()}
-                type="primary"
-                block
-                style={{ bottom: "-65%" }}
-                onClick={onSubmit}
-              >
-                Post
-              </Button>
+              <div style={{ marginTop: "55%" }}>
+                <Checkbox onChange={onChange}>
+                  I agree to the <a>GreFeed Agreement</a>
+                </Checkbox>
+                <Button
+                  disabled={checkToPost()}
+                  type="primary"
+                  block
+                  onClick={onSubmit}
+                >
+                  Post
+                </Button>
+              </div>
             </div>
           </Grid>
         </Grid>

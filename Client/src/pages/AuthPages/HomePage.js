@@ -15,7 +15,7 @@ export default function HomePage() {
         <title>Homepage</title>
       </Helmet>
       <Header />
-      <Grid container spacing={2} alignItems="stretch">
+      <Grid container alignItems="stretch">
         <Grid item xs={2} sm={2} />
 
         <Grid item xs={7} sm={7}>
