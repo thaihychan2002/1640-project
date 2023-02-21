@@ -1,9 +1,14 @@
 import React from "react";
 import "../assets/css/LoadingBox.css";
+import { Skeleton } from "antd";
+
 export default function LoadingBox() {
   return (
-    <div className="loading-box">
-      <div className="spinner"></div>
+    <div>
+      <Skeleton active />
+      <Skeleton active />
+      <Skeleton active />
+      <Skeleton active />
     </div>
   );
 }
