@@ -4,4 +4,7 @@ export default makeStyles(()=>({
     media:{
         height:300
     },
+    card:{
+        marginBottom:40
+    }
 }))

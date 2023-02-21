@@ -9,5 +9,9 @@ export const INIT_STATE={
     departments:{
         isLoading: false,
         data: [],
+    },
+    categories:{
+        isLoading: false,
+        data: [],
     }
 };

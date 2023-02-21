@@ -38,12 +38,28 @@ export const createPosts = async (req, res) => {
 export const updatePosts = async (req, res) => {
   try {
     const updatePosts = req.body
-    const post = await PostModel.findOneAndUpdate(
+    const post = await PostModel.findByIdAndUpdate(
       { _id: updatePosts._id },
-      updatePosts,
+      {updatePosts},
       { new: true }
     )
     res.status(200).json(post)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
+export const deletePosts = async (req, res) => {
+  try {
+    const post = await PostModel.findById(req.params._id)
+    if (post) {
+      if (post.author === req.body.author) {
+        await post.remove()
+        res.send({ message: 'User Deleted' })
+      }
+    } else {
+      res.status(404).send({ message: 'Cannot delete other post' })
+    }
+    res.status(200).json(post);
   } catch (err) {
     res.status(500).json({ error: err })
   }
