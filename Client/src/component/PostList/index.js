@@ -23,7 +23,11 @@ export default function PostList() {
         <IdeaBox />
       </Grid>
       <Grid item xs={12} sm={12}>
-        {isLoading ? <LoadingBox /> : <Post />}
+        {isLoading ? (
+          <LoadingBox />
+        ) : (
+          posts?.map((post) => <Post key={post._id} post={post} />)
+        )}
       </Grid>
     </Grid>
   );

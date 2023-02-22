@@ -10,7 +10,7 @@ import Navigation from "../../component/Navigation/Navigation";
 
 export default function HomePage() {
   return (
-    <Container maxWidth="100vw" className="{}">
+    <Container style={{ maxWidth: "100vw" }} className="{}">
       <Helmet>
         <title>Homepage</title>
       </Helmet>

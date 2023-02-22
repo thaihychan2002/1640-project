@@ -4,7 +4,7 @@ import joi from 'joi'
 import { DepartmentModel } from '../model/departments.js'
 export const getPosts = async (req, res) => {
   try {
-    const posts = await PostModel.find()
+    const posts = await PostModel.find().populate('author').exec()
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
