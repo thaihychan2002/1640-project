@@ -26,11 +26,7 @@ export default function PostList() {
         {isLoading ? (
           <LoadingBox />
         ) : (
-          <>
-            {posts?.map((post) => (
-              <Post key={post._id} post={post} />
-            ))}
-          </>
+          posts?.map((post) => <Post key={post._id} post={post} />)
         )}
       </Grid>
     </Grid>

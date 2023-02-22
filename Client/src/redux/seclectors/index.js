@@ -5,4 +5,4 @@ export const modalState$ = (state) => state.modal;
 export const departmentsState$ = (state) => state.departments.data;
 export const departmentsLoading$ = (state) => state.departments.isLoading;
 export const categoriesState$ = (state) => state.categories.data;
-export const categoriesLoading$=(state)=>state.categories.isLoading;
+export const categoriesLoading$ = (state) => state.categories.isLoading;
