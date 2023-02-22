@@ -47,7 +47,6 @@ export default function Post({ post }) {
     categories: post.categories,
     attachment: post.attachment,
   });
-  console.log(post.content);
   const checkToPost = () => {
     return data.title === "" || data.content === "" || data.attachment === "";
   };

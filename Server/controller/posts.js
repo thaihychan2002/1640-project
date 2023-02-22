@@ -1,6 +1,8 @@
 import { PostModel } from '../model/posts.js'
 import { transporter } from '../utils.js'
 import joi from 'joi'
+import { v2 as cloudinary } from 'cloudinary'
+
 import { DepartmentModel } from '../model/departments.js'
 export const getPosts = async (req, res) => {
   try {
@@ -30,7 +32,11 @@ export const createPosts = async (req, res, next) => {
     await postValidateSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
-    // console.log(post)
+    const fileStr = post.attachment
+    if (fileStr) {
+      const uploadedResponse = await cloudinary.uploader.upload(fileStr)
+      post.attachment = uploadedResponse.url
+    }
     await post.save()
     // send email
     let mailOptions = {
