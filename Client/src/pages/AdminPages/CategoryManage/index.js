@@ -7,27 +7,26 @@ import { Link } from "react-router-dom";
 import { Space, Table, Button, Modal, Input } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 import Category from "./category";
-
 const { TextArea } = Input;
 export default function CategoryManage() {
 
-  const dispatch = useDispatch()
+  const dispatch_ca = useDispatch()
   const categories = useSelector(categoriesState$)
   const loading = useSelector(categoriesLoading$)
   const { isShow } = useSelector(modalState$);
-  const [data, setdata] = React.useState({
+  const [cat_data, setcat_data] = React.useState({
     name: "",
   });
   React.useEffect(() => {
-    dispatch(actions.getCategories.getCategoriesRequest());
-  }, [dispatch]);
+    dispatch_ca(actions.getCategories.getCategoriesRequest());
+  }, [dispatch_ca]);
   const category = categories?.map((category) => ({
     _id: category._id,
     name: category.name,
   }));
-  const deletedepartHandler = React.useCallback((record) => {
-    dispatch(actions.deleteCategories.deleteCategoriesRequest(record.key))
-  }, [dispatch])
+  const deletedepartHandler = React.useCallback((record_cat) => {
+    dispatch_ca(actions.deleteCategories.deleteCategoriesRequest(record_cat._id))
+  }, [dispatch_ca])
   const columns = [
     {
       title: "Category",
@@ -39,26 +38,26 @@ export default function CategoryManage() {
       title: "Action",
       key: "action",
       width: "20%",
-      render: (_, record) => (
+      render: (_, record_cat) => (
         <Space size="middle">
-          <Category key={record._id} record={record}></Category>
-          <Link onClick={() => deletedepartHandler(record)}>Delete</Link>
+          <Category key={record_cat._id} record_cat={record_cat}></Category>
+          <Link onClick={() => deletedepartHandler(record_cat)}>Delete</Link>
         </Space>
       ),
     },
   ]
   const viewModal = React.useCallback(() => {
-    dispatch(actions.showModal());
-  }, [dispatch])
+    dispatch_ca(actions.showModal());
+  }, [dispatch_ca])
   const handleOk = React.useCallback(() => {
-    dispatch(actions.hideModal());
-  }, [dispatch]);
+    dispatch_ca(actions.hideModal());
+  }, [dispatch_ca]);
   const onSubmit = React.useCallback(() => {
-    dispatch(actions.createCategories.createCategoriesRequest(data));
+    dispatch_ca(actions.createCategories.createCategoriesRequest(cat_data));
     handleOk();
-  }, [data, dispatch, handleOk]);
+  }, [cat_data, dispatch_ca, handleOk]);
   const checkToCate = () => {
-    return data.name === "";
+    return cat_data.name === "";
   };
   return (
     <Grid container spacing={2} alignItems="stretch">
@@ -83,9 +82,9 @@ export default function CategoryManage() {
                 }}
                 placeholder='Write the name of department'
                 size="large"
-                value={data.name}
+                value={cat_data.name}
                 onChange={(e) =>
-                  setdata({ ...data, name: e.target.value })
+                  setcat_data({ ...cat_data, name: e.target.value })
                 }
                 required
               />

@@ -6,16 +6,16 @@ import { Link } from "react-router-dom";
 import { Input } from "antd";
 
 const { TextArea } = Input;
-export default function Category({ record }) {
-    const dispatch = useDispatch()
+export default function Category({ record_cat }) {
+    const dispatch_ca = useDispatch()
     const [data, setdata] = React.useState({
         _id: '',
         name: '',
     });
     const onUpdateHandler = React.useCallback(() => {
-        dispatch(actions.updateCategories.updateCategoriesRequest({ _id: data._id, name: data.name }))
+        dispatch_ca(actions.updateCategories.updateCategoriesRequest({ _id: data._id, name: data.name }))
         setdata({ _id: '', name: '' })
-    }, [data, dispatch]);
+    }, [data, dispatch_ca]);
     return (
         <Grid container spacing={2} alignItems="stretch">
             <Grid item xs={8} lg={8} className="row-new-post">
@@ -29,7 +29,7 @@ export default function Category({ record }) {
                     size="large"
                     value={data.name}
                     onChange={(e) =>
-                        setdata({ ...data, name: e.target.value, _id: record._id })
+                        setdata({ ...data, name: e.target.value, _id: record_cat._id })
                     }
                     required
                 />

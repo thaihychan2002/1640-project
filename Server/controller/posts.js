@@ -54,7 +54,7 @@ export const deletePosts = async (req, res) => {
     if (post) {
       if (post.author === req.body.author) {
         await post.remove()
-        res.send({ message: 'User Deleted' })
+        res.send({ message: 'Post Deleted' })
       }
     } else {
       res.status(404).send({ message: 'Cannot delete other post' })

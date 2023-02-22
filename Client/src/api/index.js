@@ -12,11 +12,11 @@ export const createPosts = (payload) =>
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const updatePosts = (payload) =>
-  axios.post(`${URL}/posts/update`, payload, {
+  axios.put(`${URL}/posts/update`, payload, {
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const deletePosts = (payload) =>
-  axios.post(`${URL}/posts/delete/${payload}`, payload, {
+  axios.delete(`${URL}/posts/delete/${payload}`, payload, {
     headers: { Authorization: `Bearer ${token} ` },
   });
 // department
@@ -29,11 +29,11 @@ export const createDepartments = (payload) =>
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const updateDepartments = (payload) =>
-  axios.post(`${URL}/departments/update`, payload, {
+  axios.put(`${URL}/departments/update`, payload, {
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const deleteDepartments = (payload) =>
-  axios.post(`${URL}/departments/delete/${payload}`,payload, {
+  axios.delete(`${URL}/departments/delete/${payload}`,payload, {
     headers: { Authorization: `Bearer ${token} ` },
   });
 // category
@@ -46,11 +46,11 @@ export const createCategories = (payload) =>
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const updateCategories = (payload) =>
-  axios.post(`${URL}/categories/update`,console.log(payload),payload, {
+  axios.put(`${URL}/categories/update`,payload, {
     headers: { Authorization: `Bearer ${token} ` },
   });
 export const deleteCategories = (payload) =>
-  axios.post(`${URL}/categories/delete/${payload}`, payload,{
+  axios.delete(`${URL}/categories/delete/${payload}`,payload ,{
     headers: { Authorization: `Bearer ${token} ` },
   });
 // fetch usertoken

@@ -7,11 +7,10 @@ import { Link } from "react-router-dom";
 import Department from './department'
 import { Space, Table, Button, Modal, Input } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
-
 const { TextArea } = Input;
 export default function DepartmentManage() {
 
-  const dispatch = useDispatch()
+  const dispatch_de = useDispatch()
   const departments = useSelector(departmentsState$)
   const loading = useSelector(departmentsLoading$)
   const { isShow } = useSelector(modalState$);
@@ -19,18 +18,18 @@ export default function DepartmentManage() {
     name: "",
   });
   React.useEffect(() => {
-    dispatch(actions.getDepartments.getDepartmentsRequest());
-  }, [dispatch]);
+    dispatch_de(actions.getDepartments.getDepartmentsRequest());
+  }, [dispatch_de]);
   const depart = departments?.map((department) => ({
     _id: department._id,
     name: department.name,
   }));
   const viewModal = React.useCallback(() => {
-    dispatch(actions.showModal());
-  }, [dispatch])
-  const deletedepartHandler = React.useCallback((record) => {
-    dispatch(actions.deleteDepartments.deleteDepartmentsRequest(record._id))
-  }, [dispatch])
+    dispatch_de(actions.showModal());
+  }, [dispatch_de])
+  const deletedepartHandler = React.useCallback((record_dep) => {
+    dispatch_de(actions.deleteDepartments.deleteDepartmentsRequest(record_dep._id))
+  }, [dispatch_de])
   const columns = [
     {
       title: "Department",
@@ -42,21 +41,21 @@ export default function DepartmentManage() {
       title: "Action",
       key: "action",
       width: "20%",
-      render: (_, record) => (
+      render: (_, record_dep) => (
         <Space size="middle">
-          <Department key={record._id} record={record}></Department>
-          <Link onClick={() => deletedepartHandler(record)}>Delete</Link>
+          <Department key={record_dep._id} record_dep={record_dep}></Department>
+          <Link onClick={() => deletedepartHandler(record_dep)}>Delete</Link>
         </Space>
       ),
     },
   ]
   const handleOk = React.useCallback(() => {
-    dispatch(actions.hideModal());
-  }, [dispatch]);
+    dispatch_de(actions.hideModal());
+  }, [dispatch_de]);
   const onSubmit = React.useCallback(() => {
-    dispatch(actions.createDepartments.createDepartmentsRequest(data));
+    dispatch_de(actions.createDepartments.createDepartmentsRequest(data));
     handleOk();
-  }, [data, dispatch, handleOk]);
+  }, [data, dispatch_de, handleOk]);
   const checkToDepartment = () => {
     return data.name === "";
   };

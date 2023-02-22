@@ -1,7 +1,7 @@
 import { INIT_STATE } from "../../constant";
 import { getCategories, getType, updateCategories, deleteCategories, createCategories } from "../actions";
 
-export default function DepartmentsReducers(state = INIT_STATE.departments, action) {
+export default function DepartmentsReducers(state = INIT_STATE.categories, action) {
     switch (action.type) {
         case getType(getCategories.getCategoriesRequest):
             return {

@@ -73,9 +73,11 @@ function* updateDepartmentSaga(action) {
 }
 function* deleteDepartmentSaga(action) {
   try {
+    console.log("deleteDepartmentSaga", { action });
     const departments = yield call(api.deleteDepartments,action.payload);
     yield put(actions.deleteDepartments.deleteDepartmentsSuccess(departments.data));
-    console.log(departments)
+    console.log(api.deleteDepartments)
+    console.log(action.payload)
   } catch (err) {
     console.log(err);
     yield put(actions.deleteDepartments.deleteDepartmentsFailure(err));
@@ -113,6 +115,9 @@ function* deleteCategorySaga(action) {
   try {
     const categories = yield call(api.deleteCategories,action.payload);
     yield put(actions.deleteCategories.deleteCategoriesSuccess(categories.data));
+    console.log(categories)
+    console.log(api.deleteCategories)
+    console.log(action.payload)
   } catch (err) {
     console.log(err);
     yield put(actions.deleteCategories.deleteCategoriesFailure(err));
