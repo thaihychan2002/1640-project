@@ -27,6 +27,8 @@ import { Store } from "../../../Store";
 import { PictureOutlined, SendOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
 import { Link } from "react-router-dom";
+import { animalList } from "./anonymousAnimal.js";
+
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -41,12 +43,20 @@ export default function Post({ post }) {
   const holder = "What's on your mind " + user.fullName + "?";
   const [data, setdata] = React.useState({
     title: post.title,
-    author: post.author || "none",
+    // author: post.author.fullName,
     content: post.content,
     department: post.department,
     categories: post.categories,
     attachment: post.attachment,
   });
+  // Anonymous Animals
+  const getRandomAnimal = () => {
+    const randomIndex = Math.floor(Math.random() * animalList.length);
+    return animalList[randomIndex];
+  };
+
+  const animal = getRandomAnimal();
+
   const checkToPost = () => {
     return data.title === "" || data.content === "" || data.attachment === "";
   };
@@ -126,16 +136,34 @@ export default function Post({ post }) {
   return (
     <>
       <Card className={classes.card} key={post._id}>
-        <CardHeader
-          avatar={<Avatar></Avatar>}
-          title={post.author.fullName}
-          subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
-          action={
-            <IconButton onClick={viewModal_2} title="Delete post">
-              <MoreVertIcon />
-            </IconButton>
-          }
-        ></CardHeader>
+        {post.isAnonymous ? (
+          <CardHeader
+            avatar={<img src={animal.avatar} alt={`${animal.name} Avatar`} />}
+            title={`Anonymous ${animal.name}`}
+            subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
+            action={
+              <IconButton onClick={viewModal_2} title="Delete post">
+                <MoreVertIcon />
+              </IconButton>
+            }
+          />
+        ) : (
+          <CardHeader
+            avatar={
+              <Avatar>
+                <img src={post.author.avatar} alt={post.author.fullName} />
+              </Avatar>
+            }
+            title={post.author.fullName}
+            subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
+            action={
+              <IconButton onClick={viewModal_2} title="Delete post">
+                <MoreVertIcon />
+              </IconButton>
+            }
+          />
+        )}
+
         <CardMedia
           image={post.attachment || ""}
           title="image"

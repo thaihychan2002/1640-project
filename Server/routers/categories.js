@@ -3,7 +3,7 @@ import {
   getCate,
   createCate,
   deleteCate,
-  updateCate
+  updateCate,
 } from '../controller/categories.js'
 import { isAuth, isAdmin } from '../utils.js'
 

@@ -1,6 +1,6 @@
 import React, { useRef, useContext, useState } from "react";
 import { TextField, Grid } from "@material-ui/core";
-import { Col, Row, Modal } from "antd";
+import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
 import "../assets/css/HomeScreen.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,8 +39,8 @@ export default function IdeaBox() {
     department: "",
     categories: "",
     attachment: "",
+    isAnonymous: false,
   });
-
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
@@ -216,6 +216,20 @@ export default function IdeaBox() {
                     </Option>
                   ))}
                 </Select>
+              </div>
+
+              <div>
+                <Switch
+                  style={{ width: "100%" }}
+                  checkedChildren="Anonymous"
+                  unCheckedChildren={user.fullName}
+                  onChange={() =>
+                    setdata({
+                      ...data,
+                      isAnonymous: !data.isAnonymous,
+                    })
+                  }
+                ></Switch>
               </div>
               <div style={{ marginTop: "52%", fontSize: "18px" }}>
                 Click to view{" "}
