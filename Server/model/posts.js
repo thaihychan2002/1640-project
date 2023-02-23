@@ -30,6 +30,10 @@ const schema = new mongoose.Schema(
       type: String,
       default: 'Pending',
     },
+    isAnonymous: {
+      type: Boolean,
+      required: true,
+    },
   },
   { timestamps: true }
 )

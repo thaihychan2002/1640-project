@@ -32,6 +32,7 @@ const schema = new mongoose.Schema(
       required: true,
       default: 'None',
     },
+
     posts: { type: Schema.Types.ObjectId, ref: 'Post' },
   },
   { timestamps: true }

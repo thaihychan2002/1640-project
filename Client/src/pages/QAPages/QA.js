@@ -12,7 +12,7 @@ export default function QA() {
   const posts = useSelector(postsState$);
   const [departments, setDepartments] = useState([]);
 
-  const options = useMemo(() => {
+  const optionsPie = useMemo(() => {
     return {
       chart: {
         type: "donut",
@@ -35,6 +35,8 @@ export default function QA() {
   }, [departments]);
 
   const [series, setSeries] = useState([]);
+  const [seriesPie, setSeriesPie] = useState([]);
+  const [options, setOptions] = useState({});
 
   const getPostsByDepartment = useCallback(
     (department) => {
@@ -50,6 +52,42 @@ export default function QA() {
     [getPostsByDepartment]
   );
 
+  // const getPostCountsByDay = useCallback(() => {
+  //   const postCountsByDay = {};
+  //   posts.forEach((post) => {
+  //     const date = new Date(post.createdAt).toDateString();
+  //     const department = post.department;
+  //     if (!postCountsByDay[date]) {
+  //       postCountsByDay[date] = {};
+  //     }
+  //     if (!postCountsByDay[date][department]) {
+  //       postCountsByDay[date][department] = 0;
+  //     }
+  //     postCountsByDay[date][department]++;
+  //   });
+  //   return postCountsByDay;
+  // }, [posts]);
+  const getPostCountsByDay = useCallback(() => {
+    const postCountsByDay = {};
+    const now = Date.now();
+    const lastWeek = now - 7 * 24 * 60 * 60 * 1000; // 7 days ago
+    posts.forEach((post) => {
+      const date = new Date(post.createdAt).toDateString();
+      if (new Date(post.createdAt).getTime() >= lastWeek) {
+        // only count posts from last 7 days
+        const department = post.department;
+        if (!postCountsByDay[date]) {
+          postCountsByDay[date] = {};
+        }
+        if (!postCountsByDay[date][department]) {
+          postCountsByDay[date][department] = 0;
+        }
+        postCountsByDay[date][department]++;
+      }
+    });
+    return postCountsByDay;
+  }, [posts]);
+
   useEffect(() => {
     const departments = posts.reduce((accumulator, post) => {
       if (!accumulator.includes(post.department)) {
@@ -63,8 +101,52 @@ export default function QA() {
     const series = departments.map((department) =>
       getPostCountByDepartment(department)
     );
-    setSeries(series);
+    setSeriesPie(series);
   }, [departments, getPostCountByDepartment]);
+
+  useEffect(() => {
+    const postCountsByDay = getPostCountsByDay();
+    const dates = Object.keys(postCountsByDay).sort();
+    const series = departments.map((department) => {
+      const data = dates.map((date) => {
+        return postCountsByDay[date][department] || 0;
+      });
+      return {
+        name: department,
+        data: data,
+      };
+    });
+    setSeries(series);
+  }, [departments, getPostCountsByDay]);
+
+  useEffect(() => {
+    const postCountsByDay = getPostCountsByDay();
+    const dates = Object.keys(postCountsByDay).sort();
+    const series = departments.map((department) => {
+      const data = dates.map((date) => {
+        return postCountsByDay[date][department] || 0;
+      });
+      return {
+        name: department,
+        data: data,
+      };
+    });
+    const options = {
+      chart: {
+        type: "bar", // Change type to "bar"
+      },
+      xaxis: {
+        categories: dates,
+      },
+      yaxis: {
+        title: {
+          text: "Number of Posts",
+        },
+      },
+    };
+    setSeries(series);
+    setOptions(options);
+  }, [departments, getPostCountsByDay]);
 
   React.useEffect(() => {
     dispatch(actions.getDepartments.getDepartmentsRequest());
@@ -73,7 +155,8 @@ export default function QA() {
     <Grid container>
       <Grid item xs={2} sm={2} />
       <Grid item xs={8} sm={8}>
-        <ReactApexChart options={options} series={series} type="donut" />
+        <ReactApexChart options={optionsPie} series={seriesPie} type="donut" />
+        <ReactApexChart options={options} series={series} type="bar" />
       </Grid>
     </Grid>
   );
