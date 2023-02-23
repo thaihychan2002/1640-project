@@ -43,7 +43,11 @@ export const AllRoutes = [
   },
   {
     path: "/qa",
-    element: <QA />,
+    element: (
+      <AdminRoute>
+        <QA />
+      </AdminRoute>
+    ),
   },
 ];
 export default AllRoutes;

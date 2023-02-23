@@ -1,19 +1,23 @@
 import { Store } from "../../Store";
 import react, { useContext, useState } from "react";
-import { Grid } from "@material-ui/core";
+import { useSelector } from "react-redux";
+import { Grid, Card, CardMedia } from "@material-ui/core";
 import { Helmet } from "react-helmet-async";
-import { Form, Input, Button } from "antd";
-import ImgCrop from "antd-img-crop";
-import { UploadOutlined } from "@ant-design/icons";
-import { Upload } from "antd";
+import { Form, Input, Button, Divider } from "antd";
+import { BulbOutlined } from "@ant-design/icons";
+
 import "../../component/assets/css/Profile.css";
-import { Divider } from "antd";
 import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { updateUserProfile } from "../../api/index";
-import axios from "axios";
+import { postsState$ } from "../../redux/seclectors";
+import { token } from "../../api/config";
 export default function Profile() {
+  // fetch user posts
+  const posts = useSelector(postsState$);
+  const userID = jwtDecode(token)._id;
+  //
   const { state } = useContext(Store);
   const user = state.userInfo;
   const [fileInputState, setFileInputState] = useState("");
@@ -49,6 +53,9 @@ export default function Profile() {
       toast.error(getError(err));
     }
   };
+
+  const filteredPosts = posts.filter((post) => post.author._id === userID);
+
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Helmet>
@@ -144,7 +151,40 @@ export default function Profile() {
       </Grid>
       <Divider>Posts</Divider>
       {/* Post item */}
-      <Grid item xs={3} sm={3} />
+      <Grid item xs={2} sm={2} />
+      <Grid container item xs={10} sm={10}>
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map((post) => (
+            <Grid item xs={12} sm={4} key={post._id}>
+              <Card>
+                <CardMedia
+                  style={{
+                    height: "200px",
+                    width: "75%",
+                    marginBottom: "25px",
+                  }}
+                  image={post.attachment}
+                  title="image"
+                />
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Grid item xs={12} sm={9}>
+            <div className="no-post">
+              <img
+                style={{ height: "100px", width: "100px" }}
+                src="https://thumbs.dreamstime.com/b/pictograph-light-bulb-icon-circle-vector-iconic-design-symbol-white-background-98493546.jpg"
+                alt="icon"
+              />
+            </div>
+            <h1 className="no-post">Share ideas</h1>
+            <h3 className="no-post">
+              When you share photos, they will appear on your profile.
+            </h3>
+          </Grid>
+        )}
+      </Grid>
     </Grid>
   );
 }

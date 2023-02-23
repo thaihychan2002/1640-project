@@ -30,6 +30,7 @@ const Register = () => {
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");
+      navigate(0);
     } catch (err) {
       toast.error(getError(err));
     }
@@ -57,6 +58,7 @@ const Register = () => {
         ctxDispatch({ type: "USER_LOGIN", payload: data });
         localStorage.setItem("userToken", JSON.stringify(data));
         navigate(redirect || "/");
+        navigate(0);
       } catch (err) {
         toast.error(getError(err));
       }
