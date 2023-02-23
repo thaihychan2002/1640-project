@@ -16,16 +16,17 @@ import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 import { updatePosts, deletePosts } from "../../../redux/actions/index.js";
-import { hideModal, showModal } from "../../../redux/actions";
 import {
   departmentsState$,
-  postsState$,
+  categoriesState$
 } from "../../../redux/seclectors";
 import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined, SendOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
 import { Link } from "react-router-dom";
+import { animalList } from "./anonymousAnimal.js";
+
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -35,6 +36,7 @@ export default function Post({ post }) {
   const { userInfo } = state;
   const user = state.userInfo;
   const departments = useSelector(departmentsState$);
+  const category =useSelector(categoriesState$);
   const[Modalupdate,setModalUpdate]=useState(false);
   const departmentref = useRef(null);
   const holder = "What's on your mind " + user.fullName + "?";
@@ -46,7 +48,14 @@ export default function Post({ post }) {
     categories: '',
     attachment: '',
   });
-  console.log(post.content);
+  // Anonymous Animals
+  const getRandomAnimal = () => {
+    const randomIndex = Math.floor(Math.random() * animalList.length);
+    return animalList[randomIndex];
+  };
+
+  const animal = getRandomAnimal();
+
   const checkToPost = () => {
     return data.title === "" || data.content === "" || data.department === "";
   };
@@ -125,16 +134,34 @@ export default function Post({ post }) {
   return (
     <>
       <Card className={classes.card} key={post._id}>
-        <CardHeader
-          avatar={<Avatar></Avatar>}
-          title={post.author.fullName}
-          subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
-          action={
-            <IconButton onClick={viewModal} title="Delete post">
-              <MoreVertIcon />
-            </IconButton>
-          }
-        ></CardHeader>
+        {post.isAnonymous ? (
+          <CardHeader
+            avatar={<img src={animal.avatar} alt={`${animal.name} Avatar`} />}
+            title={`Anonymous ${animal.name}`}
+            subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
+            action={
+              <IconButton onClick={viewModal} title="Delete post">
+                <MoreVertIcon />
+              </IconButton>
+            }
+          />
+        ) : (
+          <CardHeader
+            avatar={
+              <Avatar>
+                <img src={post.author.avatar} alt={post.author.fullName} />
+              </Avatar>
+            }
+            title={post.author.fullName}
+            subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
+            action={
+              <IconButton onClick={viewModal} title="Delete post">
+                <MoreVertIcon />
+              </IconButton>
+            }
+          />
+        )}
+
         <CardMedia
           image={post.attachment || ""}
           title="image"

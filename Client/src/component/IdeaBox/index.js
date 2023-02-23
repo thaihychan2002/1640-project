@@ -1,6 +1,6 @@
 import React, { useRef, useContext, useState } from "react";
 import { TextField, Grid } from "@material-ui/core";
-import { Col, Row, Modal } from "antd";
+import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
 import "../assets/css/HomeScreen.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,9 +8,10 @@ import { hideModal, showModal, createPosts } from "../../redux/actions";
 import FileBase64 from "react-file-base64";
 import { departmentsState$, modalState$ } from "../../redux/seclectors";
 import * as actions from "../../redux/actions";
-import { PictureOutlined, SendOutlined } from "@ant-design/icons";
-import { Input, Select, Button, Checkbox } from "antd";
+import { PictureOutlined, CloseOutlined } from "@ant-design/icons";
+import { Input, Select, Button, Checkbox, Drawer } from "antd";
 import { Link } from "react-router-dom";
+import DrawExpand from "./Drawer";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -21,10 +22,12 @@ export default function IdeaBox() {
   React.useEffect(() => {
     dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
-  const [checked, setChecked] = useState(false);
-  const onChange = (e) => {
-    setChecked(e.target.checked);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckChange = (isChecked) => {
+    setIsChecked(isChecked);
   };
+
   const departmentref = useRef(null);
   const { isShow } = useSelector(modalState$);
   const { state } = useContext(Store);
@@ -36,8 +39,8 @@ export default function IdeaBox() {
     department: "",
     categories: "",
     attachment: "",
+    isAnonymous: false,
   });
-
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
@@ -52,16 +55,38 @@ export default function IdeaBox() {
     dispatch(createPosts.createPostsRequest(data));
     handleOk();
   }, [data, dispatch, handleOk]);
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+
   const checkToPost = () => {
     return (
       data.title === "" ||
       data.content === "" ||
       data.attachment === "" ||
-      checked === false
+      isChecked === false
     );
   };
+  const [fileInputState, setFileInputState] = useState("");
+  const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+    previewFile(file);
+  };
+  const previewFile = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setdata({ ...data, attachment: reader.result });
+    };
+  };
+
   const user = state.userInfo;
   const holder = "What's on your mind " + user.fullName + "?";
+
   return (
     <div>
       <Grid container spacing={2} alignItems="stretch">
@@ -95,6 +120,12 @@ export default function IdeaBox() {
                   src={data.attachment}
                   alt="a"
                 />
+                {data.attachment && (
+                  <CloseOutlined
+                    onClick={() => setdata({ ...data, attachment: "" })}
+                    className="close-upload"
+                  />
+                )}
               </div>
             ) : (
               <div className="upload-file">
@@ -106,14 +137,19 @@ export default function IdeaBox() {
                   />
                 </div>
                 <div className="input-file">
-                  <FileBase64
+                  {/* <FileBase64
                     accept="image/*"
                     multiple={false}
                     type="file"
                     // value={data.attachment}
-                    onDone={({ base64 }) =>
-                      setdata({ ...data, attachment: base64 })
-                    }
+                    // onDone={({ base64 }) =>
+                    //   setdata({ ...data, attachment: base64 })
+                    // }
+                  /> */}
+                  <input
+                    type="file"
+                    onChange={handleFileInputChange}
+                    value={fileInputState}
                   />
                 </div>
                 <div className="already-uploaded"></div>
@@ -133,7 +169,6 @@ export default function IdeaBox() {
                   <span>{user.fullName}</span>
                 </div>
               </Link>
-
               <div className="user-mg">
                 <Input
                   allowClear
@@ -182,10 +217,30 @@ export default function IdeaBox() {
                   ))}
                 </Select>
               </div>
-              <div style={{ marginTop: "55%" }}>
-                <Checkbox onChange={onChange}>
-                  I agree to the <a>GreFeed Agreement</a>
-                </Checkbox>
+
+              <div>
+                <Switch
+                  style={{ width: "100%" }}
+                  checkedChildren="Anonymous"
+                  unCheckedChildren={user.fullName}
+                  onChange={() =>
+                    setdata({
+                      ...data,
+                      isAnonymous: !data.isAnonymous,
+                    })
+                  }
+                ></Switch>
+              </div>
+              <div style={{ marginTop: "52%", fontSize: "18px" }}>
+                Click to view{" "}
+                <span className="term" onClick={showDrawer}>
+                  GreFeed Terms and Conditions
+                </span>
+                <DrawExpand
+                  onClose={onClose}
+                  open={open}
+                  onCheckChange={handleCheckChange}
+                />
                 <Button
                   disabled={checkToPost()}
                   type="primary"

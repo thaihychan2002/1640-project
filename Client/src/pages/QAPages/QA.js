@@ -1,55 +1,92 @@
 import { Grid } from "@material-ui/core";
 import { postsState$, departmentsState$ } from "../../redux/seclectors";
 import { useSelector, useDispatch } from "react-redux";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { Store } from "../../Store";
 import React from "react";
 import * as actions from "../../redux/actions";
 import ReactApexChart from "react-apexcharts";
 
 export default function QA() {
-  const { state } = useContext(Store);
-  const user = state.userInfo;
-  const [options, setOptions] = useState({
-    chart: {
-      type: "donut",
-    },
-    labels: ["Phong cong tac sinh vien", "Phong tu van tuyen sinh"],
-
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200,
-          },
-          legend: {
-            position: "bottom",
-          },
-        },
-      },
-    ],
-  });
-
   const dispatch = useDispatch();
   const posts = useSelector(postsState$);
   const [departments, setDepartments] = useState([]);
 
-  // const departments = useSelector(departmentsState$);
-  let count = 0;
-  const ctsvLength = posts.filter(
-    (post) => post.department === "phong cong tac sinh vien"
-  ).length;
-  const tvtsLength = posts.filter(
-    (post) => post.department === "phong tu van tuyen sinh"
-  ).length;
-  const [series, setSeries] = useState([ctsvLength, tvtsLength]);
-  // posts.filter((post) =>
-  //   departments.map(
-  //     (department) => post.department === department.name && count++
-  //   )
-  // );
-  // console.log(count);
+  const optionsPie = useMemo(() => {
+    return {
+      chart: {
+        type: "donut",
+      },
+      labels: departments,
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    };
+  }, [departments]);
+
+  const [series, setSeries] = useState([]);
+  const [seriesPie, setSeriesPie] = useState([]);
+  const [options, setOptions] = useState({});
+
+  const getPostsByDepartment = useCallback(
+    (department) => {
+      return posts.filter((post) => post.department === department);
+    },
+    [posts]
+  );
+
+  const getPostCountByDepartment = useCallback(
+    (department) => {
+      return getPostsByDepartment(department).length;
+    },
+    [getPostsByDepartment]
+  );
+
+  // const getPostCountsByDay = useCallback(() => {
+  //   const postCountsByDay = {};
+  //   posts.forEach((post) => {
+  //     const date = new Date(post.createdAt).toDateString();
+  //     const department = post.department;
+  //     if (!postCountsByDay[date]) {
+  //       postCountsByDay[date] = {};
+  //     }
+  //     if (!postCountsByDay[date][department]) {
+  //       postCountsByDay[date][department] = 0;
+  //     }
+  //     postCountsByDay[date][department]++;
+  //   });
+  //   return postCountsByDay;
+  // }, [posts]);
+  const getPostCountsByDay = useCallback(() => {
+    const postCountsByDay = {};
+    const now = Date.now();
+    const lastWeek = now - 7 * 24 * 60 * 60 * 1000; // 7 days ago
+    posts.forEach((post) => {
+      const date = new Date(post.createdAt).toDateString();
+      if (new Date(post.createdAt).getTime() >= lastWeek) {
+        // only count posts from last 7 days
+        const department = post.department;
+        if (!postCountsByDay[date]) {
+          postCountsByDay[date] = {};
+        }
+        if (!postCountsByDay[date][department]) {
+          postCountsByDay[date][department] = 0;
+        }
+        postCountsByDay[date][department]++;
+      }
+    });
+    return postCountsByDay;
+  }, [posts]);
 
   useEffect(() => {
     const departments = posts.reduce((accumulator, post) => {
@@ -60,12 +97,57 @@ export default function QA() {
     }, []);
     setDepartments(departments);
   }, [posts]);
-  const getPostsByDepartment = (department) => {
-    return posts.filter((post) => post.department === department);
-  };
-  const getPostCountByDepartment = (department) => {
-    return getPostsByDepartment(department).length;
-  };
+  useEffect(() => {
+    const series = departments.map((department) =>
+      getPostCountByDepartment(department)
+    );
+    setSeriesPie(series);
+  }, [departments, getPostCountByDepartment]);
+
+  useEffect(() => {
+    const postCountsByDay = getPostCountsByDay();
+    const dates = Object.keys(postCountsByDay).sort();
+    const series = departments.map((department) => {
+      const data = dates.map((date) => {
+        return postCountsByDay[date][department] || 0;
+      });
+      return {
+        name: department,
+        data: data,
+      };
+    });
+    setSeries(series);
+  }, [departments, getPostCountsByDay]);
+
+  useEffect(() => {
+    const postCountsByDay = getPostCountsByDay();
+    const dates = Object.keys(postCountsByDay).sort();
+    const series = departments.map((department) => {
+      const data = dates.map((date) => {
+        return postCountsByDay[date][department] || 0;
+      });
+      return {
+        name: department,
+        data: data,
+      };
+    });
+    const options = {
+      chart: {
+        type: "bar", // Change type to "bar"
+      },
+      xaxis: {
+        categories: dates,
+      },
+      yaxis: {
+        title: {
+          text: "Number of Posts",
+        },
+      },
+    };
+    setSeries(series);
+    setOptions(options);
+  }, [departments, getPostCountsByDay]);
+
   React.useEffect(() => {
     dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
@@ -73,22 +155,8 @@ export default function QA() {
     <Grid container>
       <Grid item xs={2} sm={2} />
       <Grid item xs={8} sm={8}>
-        {departments.map((department) => (
-          <div key={department}>
-            <h3>{department}</h3>
-            <p>{getPostCountByDepartment(department)} posts</p>
-
-            <ul>
-              {getPostsByDepartment(department).map((post) => (
-                <li key={post._id}>
-                  <h4>{post.title}</h4>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-
-        <ReactApexChart options={options} series={series} type="donut" />
+        <ReactApexChart options={optionsPie} series={seriesPie} type="donut" />
+        <ReactApexChart options={options} series={series} type="bar" />
       </Grid>
     </Grid>
   );

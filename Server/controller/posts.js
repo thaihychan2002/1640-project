@@ -1,6 +1,8 @@
 import { PostModel } from '../model/posts.js'
 import { transporter } from '../utils.js'
 import joi from 'joi'
+import { v2 as cloudinary } from 'cloudinary'
+
 import { DepartmentModel } from '../model/departments.js'
 export const getPosts = async (req, res) => {
   try {
@@ -24,13 +26,18 @@ export const createPosts = async (req, res, next) => {
         .required(),
       categories: joi.allow(),
       attachment: joi.allow(),
+      isAnonymous: joi.boolean().required(),
       // categories: joi.string(),
       // likeCount: joi.string(),
     })
     await postValidateSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
-    // console.log(post)
+    const fileStr = post.attachment
+    if (fileStr) {
+      const uploadedResponse = await cloudinary.uploader.upload(fileStr)
+      post.attachment = uploadedResponse.url
+    }
     await post.save()
     // send email
     let mailOptions = {
@@ -74,12 +81,11 @@ export const deletePosts = async (req, res) => {
     if (post) {
       // if (post.author === req.body.author) {
       await post.remove()
-      res.send({ message: 'Post Deleted' })
+      // res.status(200).send({ message: 'Post Deleted' })
       // }
     } else {
       res.status(404).send({ message: 'Cannot delete other post' })
     }
-    res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })
   }
