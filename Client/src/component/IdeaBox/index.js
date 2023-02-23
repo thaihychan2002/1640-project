@@ -110,7 +110,7 @@ export default function IdeaBox() {
                     accept="image/*"
                     multiple={false}
                     type="file"
-                    value={data.attachment}
+                    // value={data.attachment}
                     onDone={({ base64 }) =>
                       setdata({ ...data, attachment: base64 })
                     }
@@ -139,12 +139,12 @@ export default function IdeaBox() {
                   allowClear
                   placeholder="Any good title?"
                   size="large"
-                  value={data.title}
+                  // value={data.title}
                   onChange={(e) =>
                     setdata({
                       ...data,
                       title: e.target.value,
-                      author: userInfo.fullName,
+                      author: userInfo._id,
                     })
                   }
                   required
@@ -159,7 +159,7 @@ export default function IdeaBox() {
                   }}
                   placeholder={holder}
                   size="large"
-                  value={data.content}
+                  // value={data.content}
                   onChange={(e) =>
                     setdata({ ...data, content: e.target.value })
                   }
@@ -198,88 +198,6 @@ export default function IdeaBox() {
             </div>
           </Grid>
         </Grid>
-        {/* <div className="wrapper">
-          <section className="post">
-            <header>Create Post</header>
-            <form noValidate autoComplete="false">
-              <div className="content">
-                <img src={user.avatar} alt="logo" />
-                <div className="details">
-                  <p>{user.fullName}</p>
-                  <div className="privacy" onClick={(e) => privacyClick(e)}>
-                    <i className="fas fa-user-friends"></i>
-                    <span>Departments</span>
-                    <i className="fas fa-caret-down"></i>
-                  </div>
-                </div>
-              </div>
-              <TextField
-                required
-                label="Title"
-                value={data.title}
-                onChange={(e) =>
-                  setdata({
-                    ...data,
-                    title: e.target.value,
-                    author: userInfo.fullName,
-                  })
-                }
-              ></TextField>
-              <textarea
-                value={data.content}
-                onChange={(e) => setdata({ ...data, content: e.target.value })}
-                placeholder={holder}
-                required
-              />
-              <div className="options">
-                <ul className="list">
-                  <FileBase64
-                    accept="image/*"
-                    multiple={false}
-                    type="file"
-                    value={data.attachment}
-                    onDone={({ base64 }) =>
-                      setdata({ ...data, attachment: base64 })
-                    }
-                  />
-                </ul>
-              </div>
-              <Button
-                variant="contained"
-                className="button"
-                fullWidth
-                onClick={onSubmit}
-                style={{ marginBottom: "20px" }}
-              >
-                Post
-              </Button>
-            </form>
-          </section>
-          <section className="audience">
-            <header>
-              <div className="arrow-back" onClick={(e) => arrowBackClick(e)}>
-                <i className="fas fa-arrow-left"></i>
-              </div>
-              <p>Select Department</p>
-            </header>
-            <div className="content">
-              <span>
-                Your post will show up in News Feed, on your profile and in
-                search results.
-              </span>
-            </div>
-            <select onChange={departget} ref={departmentref}>
-              <option>Select department</option>
-              {departments.map((department) => (
-                <option>
-                  <Grid item xs={12} sm={12}>
-                    <Department key={department._id} department={department} />
-                  </Grid>
-                </option>
-              ))}
-            </select>
-          </section>
-        </div> */}
       </Modal>
     </div>
   );

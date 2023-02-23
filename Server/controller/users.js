@@ -24,6 +24,7 @@ export const getUserById = async (req, res) => {
     const user = await UserModel.findById(req.params.id)
     if (user) {
       res.send({
+        _id: user._id,
         fullName: user.fullName,
         department: user.department,
         avatar: user.avatar,

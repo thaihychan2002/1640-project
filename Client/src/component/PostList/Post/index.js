@@ -7,17 +7,20 @@ import {
   CardMedia,
   IconButton,
   Typography,
-  Grid
+  Grid,
 } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import moment from "moment";
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 import { updatePosts, deletePosts } from "../../../redux/actions/index.js";
 import { hideModal, showModal } from "../../../redux/actions";
-import { modalState$, departmentsState$ } from "../../../redux/seclectors";
+import {
+  departmentsState$,
+  postsState$,
+} from "../../../redux/seclectors";
 import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined, SendOutlined } from "@ant-design/icons";
@@ -32,36 +35,35 @@ export default function Post({ post }) {
   const { userInfo } = state;
   const user = state.userInfo;
   const departments = useSelector(departmentsState$);
-  const { isShow } = useSelector(modalState$);
+  const[Modalupdate,setModalUpdate]=useState(false);
   const departmentref = useRef(null);
   const holder = "What's on your mind " + user.fullName + "?";
   const [data, setdata] = React.useState({
-    title: post.title,
-    author: post.author,
-    content: post.content,
-    department: post.department,
-    categories: post.categories,
-    attachment: post.attachment,
+    title: '',
+    author: '' || "none",
+    content: '',
+    department: '',
+    categories: '',
+    attachment: '',
   });
+  console.log(post.content);
   const checkToPost = () => {
-    return data.title === "" || data.content === "" || data.attachment === "";
+    return data.title === "" || data.content === "" || data.department === "";
   };
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
   };
   const handleOk = React.useCallback(() => {
-    dispatch(hideModal());
-  }, [dispatch]);
-  const viewModal_2 = React.useCallback(() => {
-    console.log(post);
-    dispatch(showModal());
-  }, [dispatch,post]);
+    setModalUpdate(false);
+  }, []);
+  const viewModal = React.useCallback(() => {
+    setModalUpdate(true);
+  }, []);
   const classes = useStyles();
   const [likeActive, setLikeActive] = React.useState(false);
   const [dislikeActive, setDislikeActive] = React.useState(false);
   const onLikeBtnClick = React.useCallback(() => {
-    
     if (likeActive) {
       setLikeActive(false);
       dispatch(
@@ -90,9 +92,8 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   const updatehandler = React.useCallback(() => {
-    
-    dispatch(updatePosts.updatePostsRequest({_id:post._id,...data}))
-  }, [dispatch, data,post])
+    dispatch(updatePosts.updatePostsRequest({ _id: post._id, ...data }));
+  }, [dispatch, data, post]);
   const onDislikeBtnClick = React.useCallback(() => {
     if (dislikeActive) {
       setDislikeActive(false);
@@ -123,14 +124,14 @@ export default function Post({ post }) {
   }, [dispatch, post, likeActive, dislikeActive]);
   return (
     <>
-      <Card className={classes.card}>
+      <Card className={classes.card} key={post._id}>
         <CardHeader
           avatar={<Avatar></Avatar>}
-          title={post.author}
+          title={post.author.fullName}
           subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
           action={
-            <IconButton title="Delete post">
-              <MoreVertIcon onClick={viewModal_2} />
+            <IconButton onClick={viewModal} title="Delete post">
+              <MoreVertIcon />
             </IconButton>
           }
         ></CardHeader>
@@ -165,8 +166,8 @@ export default function Post({ post }) {
           {`${post.likeCount} likes`}
         </CardActions>
       </Card>
-      <Modal
-        open={isShow}
+     <Modal
+        open={Modalupdate}
         onOk={handleOk}
         onCancel={handleOk}
         footer={null}
@@ -176,6 +177,7 @@ export default function Post({ post }) {
           <Grid item xs={12} lg={12} className="row-new-post">
             <center>Update post</center>
           </Grid>
+          {console.log(data)}
           <Grid item xs={7} lg={7} className="upload">
             {data.attachment ? (
               <div className="upload-file">
@@ -283,6 +285,7 @@ export default function Post({ post }) {
             </div>
           </Grid>
         </Grid>
-      </Modal>
-    </>);
+      </Modal> 
+    </>
+  );
 }

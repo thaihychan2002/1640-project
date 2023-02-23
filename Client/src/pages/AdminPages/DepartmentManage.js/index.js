@@ -1,8 +1,8 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { departmentsLoading$, departmentsState$, modalState$ } from "../../../redux/seclectors";
+import { departmentsLoading$, departmentsState$ } from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Department from './department'
 import { Space, Table, Button, Modal, Input } from "antd";
@@ -13,7 +13,7 @@ export default function DepartmentManage() {
   const dispatch_de = useDispatch()
   const departments = useSelector(departmentsState$)
   const loading = useSelector(departmentsLoading$)
-  const { isShow } = useSelector(modalState$);
+  const [ModaldepOpen, setModaldepOpen] = useState(false);
   const [data, setdata] = React.useState({
     name: "",
   });
@@ -25,8 +25,8 @@ export default function DepartmentManage() {
     name: department.name,
   }));
   const viewModal = React.useCallback(() => {
-    dispatch_de(actions.showModal());
-  }, [dispatch_de])
+   setModaldepOpen(true);
+  },[])
   const deletedepartHandler = React.useCallback((record_dep) => {
     dispatch_de(actions.deleteDepartments.deleteDepartmentsRequest(record_dep._id))
   }, [dispatch_de])
@@ -49,24 +49,25 @@ export default function DepartmentManage() {
       ),
     },
   ]
-  const handleOk = React.useCallback(() => {
-    dispatch_de(actions.hideModal());
-  }, [dispatch_de]);
+  const handleclose = React.useCallback(() => {
+    setModaldepOpen(false);
+  }, []);
   const onSubmit = React.useCallback(() => {
     dispatch_de(actions.createDepartments.createDepartmentsRequest(data));
-    handleOk();
-  }, [data, dispatch_de, handleOk]);
+    handleclose();
+  }, [data, dispatch_de, handleclose]);
   const checkToDepartment = () => {
     return data.name === "";
   };
+
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
         <Button type="primary" onClick={viewModal}> Add new department</Button>
-        <Modal open={isShow}
-          onOk={handleOk}
-          onCancel={handleOk}
+        <Modal open={ModaldepOpen}
+          onOk={handleclose}
+          onCancel={handleclose}
           footer={null}
           className="container">
           <Grid container spacing={2} alignItems="stretch">
@@ -102,7 +103,7 @@ export default function DepartmentManage() {
         {loading ? (
           <LoadingBox />
         ) : (
-          <Table columns={columns} dataSource={depart}/>
+          <Table columns={columns} dataSource={depart} />
         )}
       </Grid>
     </Grid>

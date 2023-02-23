@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { categoriesLoading$, categoriesState$, modalState$ } from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Space, Table, Button, Modal, Input } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
@@ -13,6 +13,7 @@ export default function CategoryManage() {
   const dispatch_ca = useDispatch()
   const categories = useSelector(categoriesState$)
   const loading = useSelector(categoriesLoading$)
+  const [ModalcatOpen, setModalcatOpen] = useState(false);
   const { isShow } = useSelector(modalState$);
   const [cat_data, setcat_data] = React.useState({
     name: "",
@@ -47,15 +48,15 @@ export default function CategoryManage() {
     },
   ]
   const viewModal = React.useCallback(() => {
-    dispatch_ca(actions.showModal());
-  }, [dispatch_ca])
-  const handleOk = React.useCallback(() => {
-    dispatch_ca(actions.hideModal());
-  }, [dispatch_ca]);
+    setModalcatOpen(true);
+  }, [])
+  const handleclose = React.useCallback(() => {
+    setModalcatOpen(false);
+  }, []);
   const onSubmit = React.useCallback(() => {
     dispatch_ca(actions.createCategories.createCategoriesRequest(cat_data));
-    handleOk();
-  }, [cat_data, dispatch_ca, handleOk]);
+    handleclose();
+  }, [cat_data, dispatch_ca, handleclose]);
   const checkToCate = () => {
     return cat_data.name === "";
   };
@@ -64,9 +65,9 @@ export default function CategoryManage() {
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
         <Button type="primary" onClick={viewModal}> Add new category</Button>
-        <Modal open={isShow}
-          onOk={handleOk}
-          onCancel={handleOk}
+        <Modal open={ModalcatOpen}
+          onOk={handleclose}
+          onCancel={handleclose}
           footer={null}
           className="container">
           <Grid container spacing={2} alignItems="stretch">
