@@ -11,12 +11,32 @@ import React, { useState, useEffect, useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Store } from "../../Store";
 import jwtDecode from "jwt-decode";
-import { getError } from "../../utils";
 import { toast } from "react-toastify";
-import { fetchUserByID } from "../../api/index";
+import { getError } from "../../utils";
+import { fetchUserByID } from "../../api";
 const { Sider } = Layout;
 
 export default function Navigation() {
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("userInfo");
+      if (token) {
+        const userID = jwtDecode(token)._id;
+        if (userID) {
+          try {
+            const { data } = await fetchUserByID(userID);
+            ctxDispatch({ type: "GET_USER", payload: data });
+          } catch (err) {
+            toast.error(getError(err));
+          }
+        }
+        return;
+      }
+      return;
+    };
+    fetchUser();
+  }, []);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -26,21 +46,16 @@ export default function Navigation() {
     "Department",
     "Categories",
     "Admin Dashboard",
-    "User Manage",
+    "QA Coordinator",
   ];
-  const linkRoutes = [
-    "/",
-    "/department",
-    "/categories",
-    "/dashboard",
-    "/usermanage",
-  ];
+  const linkRoutes = ["/", "/department", "/categories", "/dashboard", "/qa"];
   const { state, dispatch: ctxDispatch } = useContext(Store);
   // Hide navbar when route === /login or /register
   const withOutNavbarRoutes = ["/login", "/register"];
   const { pathname } = useLocation();
   if (withOutNavbarRoutes.some((item) => pathname.includes(item))) return null;
   //
+
   return (
     <Sider
       className="sider-style"

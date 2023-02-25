@@ -7,61 +7,80 @@ import {
   CardMedia,
   IconButton,
   Typography,
-  Grid
+  Grid,
 } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import moment from "moment";
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
-import { updatePosts, deletePosts } from "../../../redux/actions/index.js";
-import { hideModal, showModal } from "../../../redux/actions";
-import { modalState$, departmentsState$ } from "../../../redux/seclectors";
+import { updatePosts } from "../../../redux/actions/index.js";
+import {
+  departmentsState$,
+  categoriesState$
+} from "../../../redux/seclectors";
 import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
-import { PictureOutlined, SendOutlined } from "@ant-design/icons";
+import { PictureOutlined, } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
 import { Link } from "react-router-dom";
+import { animalList } from "./anonymousAnimal.js";
+
 const { TextArea } = Input;
 const { Option } = Select;
 
 export default function Post({ post }) {
   const dispatch = useDispatch();
   const { state } = useContext(Store);
-  const { userInfo } = state;
   const user = state.userInfo;
   const departments = useSelector(departmentsState$);
-  const { isShow } = useSelector(modalState$);
+  const categories = useSelector(categoriesState$);
+  const [Modalupdate, setModalUpdate] = useState(false);
   const departmentref = useRef(null);
-  const holder = "What's on your mind " + user.fullName + "?";
+  const caetgoryref = useRef(null)
   const [data, setdata] = React.useState({
+    title: '',
+    // author: '' || "none",
+    content: '',
+    department: '',
+    categories: '',
+    attachment: '',
+  });
+  const [defaultValue, setvalue] = React.useState({
     title: post.title,
-    author: post.author,
+    author: post.author || "none",
     content: post.content,
     department: post.department,
-    categories: post.categories,
+    category: post.categories,
     attachment: post.attachment,
-  });
-  const checkToPost = () => {
-    return data.title === "" || data.content === "" || data.attachment === "";
+  })
+  // Anonymous Animals
+  const getRandomAnimal = () => {
+    const randomIndex = Math.floor(Math.random() * animalList.length);
+    return animalList[randomIndex];
   };
+
+  const animal = getRandomAnimal();
+
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
   };
+  const categet = (e) => {
+    setdata({ ...data, categories: e });
+    data.categories = caetgoryref.current.value;
+  }
   const handleOk = React.useCallback(() => {
-    dispatch(hideModal());
-  }, [dispatch]);
-  const viewModal_2 = React.useCallback(() => {
-    console.log(post);
-    dispatch(showModal());
-  }, [dispatch,post]);
+    setModalUpdate(false);
+  }, []);
+  const viewModal = React.useCallback(() => {
+    setModalUpdate(true);
+  }, []);
   const classes = useStyles();
   const [likeActive, setLikeActive] = React.useState(false);
   const [dislikeActive, setDislikeActive] = React.useState(false);
   const onLikeBtnClick = React.useCallback(() => {
-    
     if (likeActive) {
       setLikeActive(false);
       dispatch(
@@ -90,9 +109,9 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   const updatehandler = React.useCallback(() => {
-    
-    dispatch(updatePosts.updatePostsRequest({_id:post._id,...data}))
-  }, [dispatch, data,post])
+    console.log(`data-update`,data)
+    dispatch(updatePosts.updatePostsRequest({ _id: post._id,author:post.author, ...data }));
+  }, [dispatch, data, post]);
   const onDislikeBtnClick = React.useCallback(() => {
     if (dislikeActive) {
       setDislikeActive(false);
@@ -123,20 +142,29 @@ export default function Post({ post }) {
   }, [dispatch, post, likeActive, dislikeActive]);
   return (
     <>
-      <Card className={classes.card}>
+      <Card className={classes.card} key={post._id}>
         <CardHeader
-          avatar={<Avatar></Avatar>}
-          title={post.author}
-          subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
+          avatar={
+            post.isAnonymous ? (
+              <img src={animal.avatar} alt={`${animal.name} Avatar`} />
+            ) : (
+              <img src={post.author.avatar} alt={post.author.fullName} />
+            )
+          }
+          title={
+            post.isAnonymous ? `Anonymous ${animal.name}` : post.author.fullName
+          }
+          subheader={moment(post.createdAt).format("LLL")}
           action={
-            <IconButton title="Delete post">
-              <MoreVertIcon onClick={viewModal_2} />
+            <IconButton onClick={viewModal} title="Delete post">
+              <MoreVertIcon />
             </IconButton>
           }
-        ></CardHeader>
+        />
         <CardMedia
           image={post.attachment || ""}
           title="image"
+          component="img"
           className={classes.media}
         ></CardMedia>
         <CardContent>
@@ -146,6 +174,7 @@ export default function Post({ post }) {
           <Typography variant="body2" component="p" color="textSecondary">
             {post.content}
           </Typography>
+          <Typography>{post.view} Views</Typography>
         </CardContent>
         <CardActions>
           <IconButton
@@ -166,7 +195,7 @@ export default function Post({ post }) {
         </CardActions>
       </Card>
       <Modal
-        open={isShow}
+        open={Modalupdate}
         onOk={handleOk}
         onCancel={handleOk}
         footer={null}
@@ -177,11 +206,11 @@ export default function Post({ post }) {
             <center>Update post</center>
           </Grid>
           <Grid item xs={7} lg={7} className="upload">
-            {data.attachment ? (
+            {defaultValue.attachment ? (
               <div className="upload-file">
                 <img
                   style={{ borderRadius: "0" }}
-                  src={data.attachment}
+                  src={defaultValue.attachment}
                   alt="a"
                 />
               </div>
@@ -196,6 +225,7 @@ export default function Post({ post }) {
                 </div>
                 <div className="input-file">
                   <FileBase64
+                    
                     accept="image/*"
                     multiple={false}
                     type="file"
@@ -226,14 +256,13 @@ export default function Post({ post }) {
               <div className="user-mg">
                 <Input
                   allowClear
-                  placeholder="Any good title?"
+                  placeholder={defaultValue.title}
                   size="large"
                   value={data.title}
                   onChange={(e) =>
                     setdata({
                       ...data,
                       title: e.target.value,
-                      author: userInfo.fullName,
                     })
                   }
                   required
@@ -246,7 +275,7 @@ export default function Post({ post }) {
                     minRows: 3,
                     maxRows: 5,
                   }}
-                  placeholder={holder}
+                  placeholder={defaultValue.content}
                   size="large"
                   value={data.content}
                   onChange={(e) =>
@@ -257,7 +286,7 @@ export default function Post({ post }) {
               </div>
               <div className="user-mg">
                 <Select
-                  defaultValue="Choose a department"
+                  defaultValue={defaultValue.department}
                   style={{ width: "100%" }}
                   size="large"
                   required
@@ -270,12 +299,25 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
+                <Select
+                  defaultValue={defaultValue.category}
+                  style={{ width: "100%", top: "20px" }}
+                  size="large"
+                  required
+                  onChange={(e) => categet(e)}
+                  ref={caetgoryref}
+                >
+                  {categories?.map((category) => (
+                    <Option key={category._id} value={category.name}>
+                      {category.name}
+                    </Option>
+                  ))}
+                </Select>
               </div>
               <Button
-                disabled={checkToPost()}
                 type="primary"
                 block
-                style={{ bottom: "-65%" }}
+                style={{ bottom: "-45%" }}
                 onClick={updatehandler}
               >
                 Update
@@ -284,5 +326,6 @@ export default function Post({ post }) {
           </Grid>
         </Grid>
       </Modal>
-    </>);
+    </>
+  );
 }

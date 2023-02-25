@@ -10,12 +10,12 @@ import Navigation from "../../component/Navigation/Navigation";
 
 export default function HomePage() {
   return (
-    <Container maxWidth="100vw" className="{}">
+    <Container style={{ maxWidth: "100vw" }} className="{}">
       <Helmet>
         <title>Homepage</title>
       </Helmet>
       <Header />
-      <Grid container spacing={2} alignItems="stretch">
+      <Grid container alignItems="stretch">
         <Grid item xs={2} sm={2} />
 
         <Grid item xs={7} sm={7}>

@@ -1,7 +1,7 @@
 import { INIT_STATE } from "../../constant";
 import { getCategories, getType, updateCategories, deleteCategories, createCategories } from "../actions";
 
-export default function DepartmentsReducers(state = INIT_STATE.departments, action) {
+export default function DepartmentsReducers(state = INIT_STATE.categories, action) {
     switch (action.type) {
         case getType(getCategories.getCategoriesRequest):
             return {
@@ -32,11 +32,11 @@ export default function DepartmentsReducers(state = INIT_STATE.departments, acti
                 ),
             };
         case getType(deleteCategories.deleteCategoriesSuccess):
+            const newData =state.data.filter((category)=>{ return category._id !== action.payload._id});
+            console.log(newData)
             return {
                 ...state,
-                data: state.data.map((category) =>
-                    category._id === action.payload._id ? [...state.data,state.data.filter((category)=> category._id=action.payload._id)] : category
-                ),
+                data: newData,
             };
         default:
             return state;

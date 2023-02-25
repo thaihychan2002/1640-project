@@ -3,13 +3,13 @@ import {
   getCate,
   createCate,
   deleteCate,
-  updateCate
+  updateCate,
 } from '../controller/categories.js'
 import { isAuth, isAdmin } from '../utils.js'
 
 const router = express.Router()
 router.get('/', isAuth, getCate)
 router.post('/create', isAdmin, createCate)
-router.post('/delete/:id', isAdmin, deleteCate)
-router.post('/update', isAdmin, updateCate)
+router.delete('/delete/:id', isAdmin, deleteCate)
+router.put('/update', isAdmin, updateCate)
 export default router

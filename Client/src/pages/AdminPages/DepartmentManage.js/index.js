@@ -1,36 +1,32 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { departmentsLoading$, departmentsState$, modalState$ } from "../../../redux/seclectors";
+import { departmentsLoading$, departmentsState$ } from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Department from './department'
 import { Space, Table, Button, Modal, Input } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
-
 const { TextArea } = Input;
 export default function DepartmentManage() {
 
-  const dispatch = useDispatch()
+  const dispatch_de = useDispatch()
   const departments = useSelector(departmentsState$)
   const loading = useSelector(departmentsLoading$)
-  const { isShow } = useSelector(modalState$);
+  const [ModaldepOpen, setModaldepOpen] = useState(false);
   const [data, setdata] = React.useState({
     name: "",
   });
-  React.useEffect(() => {
-    dispatch(actions.getDepartments.getDepartmentsRequest());
-  }, [dispatch]);
   const depart = departments?.map((department) => ({
     _id: department._id,
     name: department.name,
   }));
   const viewModal = React.useCallback(() => {
-    dispatch(actions.showModal());
-  }, [dispatch])
-  const deletedepartHandler = React.useCallback((record) => {
-    dispatch(actions.deleteDepartments.deleteDepartmentsRequest(record._id))
-  }, [dispatch])
+   setModaldepOpen(true);
+  },[])
+  const deletedepartHandler = React.useCallback((record_dep) => {
+    dispatch_de(actions.deleteDepartments.deleteDepartmentsRequest(record_dep._id))
+  }, [dispatch_de])
   const columns = [
     {
       title: "Department",
@@ -42,32 +38,33 @@ export default function DepartmentManage() {
       title: "Action",
       key: "action",
       width: "20%",
-      render: (_, record) => (
+      render: (_, record_dep) => (
         <Space size="middle">
-          <Department key={record._id} record={record}></Department>
-          <Link onClick={() => deletedepartHandler(record)}>Delete</Link>
+          <Department key={record_dep._id} record_dep={record_dep}></Department>
+          <Link onClick={() => deletedepartHandler(record_dep)}>Delete</Link>
         </Space>
       ),
     },
   ]
-  const handleOk = React.useCallback(() => {
-    dispatch(actions.hideModal());
-  }, [dispatch]);
+  const handleclose = React.useCallback(() => {
+    setModaldepOpen(false);
+  }, []);
   const onSubmit = React.useCallback(() => {
-    dispatch(actions.createDepartments.createDepartmentsRequest(data));
-    handleOk();
-  }, [data, dispatch, handleOk]);
+    dispatch_de(actions.createDepartments.createDepartmentsRequest(data));
+    handleclose();
+  }, [data, dispatch_de, handleclose]);
   const checkToDepartment = () => {
     return data.name === "";
   };
+
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
         <Button type="primary" onClick={viewModal}> Add new department</Button>
-        <Modal open={isShow}
-          onOk={handleOk}
-          onCancel={handleOk}
+        <Modal open={ModaldepOpen}
+          onOk={handleclose}
+          onCancel={handleclose}
           footer={null}
           className="container">
           <Grid container spacing={2} alignItems="stretch">
@@ -103,7 +100,7 @@ export default function DepartmentManage() {
         {loading ? (
           <LoadingBox />
         ) : (
-          <Table columns={columns} dataSource={depart}/>
+          <Table columns={columns} dataSource={depart} />
         )}
       </Grid>
     </Grid>

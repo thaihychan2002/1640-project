@@ -7,6 +7,8 @@ import departments from './routers/departments.js'
 import categories from './routers/categories.js'
 import mongoose from 'mongoose'
 import morgan from 'morgan'
+import { DepartmentModel } from './model/departments.js'
+import { getDepartment } from './controller/departments.js'
 import { v2 as cloudinary } from 'cloudinary'
 
 const app = express()
@@ -20,7 +22,7 @@ app.use(cors())
 app.use('/posts', posts)
 app.use('/users', users)
 app.use('/departments', departments)
-app.use('/categories',categories)
+app.use('/categories', categories)
 app.get('/', (req, res) => {
   res.send('SUCCESS')
   console.log('SUCCESS')

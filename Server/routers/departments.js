@@ -3,14 +3,14 @@ import {
   deleteDepartment,
   createDepartment,
   getDepartment,
-  updateDepartment
+  updateDepartment,
 } from '../controller/departments.js'
 import { isAuth, isAdmin } from '../utils.js'
 
 const router = express.Router()
 router.get('/', isAuth, getDepartment)
 router.post('/create', isAdmin, createDepartment)
-router.post('/delete/:id',isAdmin, deleteDepartment)
-router.post('/update',isAdmin,updateDepartment)
+router.delete('/delete/:id', isAdmin, deleteDepartment)
+router.put('/update', isAdmin, updateDepartment)
 
 export default router

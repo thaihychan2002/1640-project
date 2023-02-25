@@ -6,16 +6,16 @@ import { Link } from "react-router-dom";
 import { Input } from "antd";
 
 const { TextArea } = Input;
-export default function Department({ record }) {
-  const dispatch = useDispatch()
+export default function Department({ record_dep }) {
+  const dispatch_de = useDispatch()
   const [data, setdata] = React.useState({
     _id: '',
     name: '',
   });
   const onUpdateHandler = React.useCallback(() => {
-    dispatch(actions.updateDepartments.updateDepartmentsRequest({ _id: data._id, name: data.name }))
+    dispatch_de(actions.updateDepartments.updateDepartmentsRequest({ _id: data._id, name: data.name }))
     setdata({ _id: '', name: '' })
-  }, [data, dispatch]);
+  }, [data, dispatch_de]);
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={8} lg={8} className="row-new-post">
@@ -29,7 +29,7 @@ export default function Department({ record }) {
           size="large"
           value={data.name}
           onChange={(e) =>
-            setdata({ ...data, name: e.target.value, _id: record._id })
+            setdata({ ...data, name: e.target.value, _id: record_dep._id })
           }
           required
         />

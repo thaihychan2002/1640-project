@@ -26,6 +26,7 @@ const Login = () => {
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");
+      navigate(0);
     } catch (err) {
       toast.error(getError(err));
     }
@@ -33,6 +34,7 @@ const Login = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
   const handleCallbackResponse = async (response) => {
     let user = jwtDecode(response.credential);
     let email = user.email;
@@ -43,6 +45,7 @@ const Login = () => {
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");
+      navigate(0);
     } catch (err) {
       toast.error(getError(err));
     }
