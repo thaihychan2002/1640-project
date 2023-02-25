@@ -8,3 +8,10 @@
   margin-top: 34px;
   margin-left: 10px;
 }
+.no-post {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  color: black;
+  margin-left: 6%;
+}

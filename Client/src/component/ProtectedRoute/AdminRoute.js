@@ -1,26 +1,26 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Store } from "../../Store";
-import jwtDecode from "jwt-decode";
-import { fetchUserByID } from "../../api/index.js";
+
+import { toast } from "react-toastify";
+import { getError } from "../../utils";
 export default function AdminRoute({ children }) {
+  const { state, dispatch: ctxDispatch } = useContext(Store);
   const [navigate, setNavigate] = useState("");
   useEffect(() => {
     const fetchUser = async () => {
-      let token = localStorage.getItem("userInfo");
-      let userID = jwtDecode(token)._id;
-      if (userID) {
-        try {
-          const { data } = await fetchUserByID(userID);
-          data.role === "Admin"
-            ? setNavigate(children)
-            : setNavigate(<Navigate to="/" />);
-        } catch (err) {
-          console.log(err);
+      try {
+        const user = state?.userInfo;
+        if (user.role === "Admin") {
+          setNavigate(children);
+        } else if (user.role === "Staff") {
+          setNavigate(<Navigate to="/" />);
         }
+      } catch (err) {
+        toast.error(getError(err));
       }
     };
     fetchUser();
-  }, [children]);
+  }, [children, state?.userInfo]);
   return navigate;
 }

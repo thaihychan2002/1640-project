@@ -21,7 +21,8 @@ export const getUsers = async (req, res) => {
 }
 export const getUserById = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id)
+    const user = await UserModel.findById(req.body.userID)
+    console.log(user)
     if (user) {
       res.send({
         _id: user._id,
@@ -105,7 +106,7 @@ export const registerGoogleUsers = async (req, res) => {
 }
 export const deleteUser = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id)
+    const user = await UserModel.findById(req.body.userID)
     if (user) {
       if (user.role === 'Admin') {
         res.send({ message: 'Can not delete admin' })
@@ -122,13 +123,17 @@ export const deleteUser = async (req, res) => {
 }
 export const updateUser = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id)
-    if (user) {
-      user.role = req.body.role || user.role
-      await user.save()
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      req.body.userID,
+      {
+        $set: { role: req.body.role },
+      },
+      { new: true }
+    )
+    if (updatedUser) {
       res.send({ message: 'User updated' })
     } else {
-      res.status(404).send({ message: 'User Not Found' })
+      res.status(404).send({ message: 'User not found' })
     }
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -136,23 +141,21 @@ export const updateUser = async (req, res) => {
 }
 
 export const updateUserProfile = async (req, res) => {
-  const user = await UserModel.findById(req.params.id)
-  if (user) {
-    const fileStr = req.body.data || req.data
-    if (fileStr) {
-      // Destroy old image
-      // user.publicID = req.body.publicID || user.publicID
-      // if (user.publicIDd) {
-      //   await cloudinary.uploader.destroy(user.publicID)
-      // }
-      const uploadedResponse = await cloudinary.uploader.upload(fileStr)
-      user.avatar = uploadedResponse.url
-      user.publicID = uploadedResponse.public_id
+  try {
+    const user = await UserModel.findById(req.body.userID)
+    if (user) {
+      const fileStr = req.body.data || req.data
+      if (fileStr) {
+        const uploadedResponse = await cloudinary.uploader.upload(fileStr)
+        user.avatar = uploadedResponse.url
+      }
+      user.fullName = req.body.fullName || user.fullName
+      await user.save()
+      res.status(200).send({ message: 'User updated' })
+    } else {
+      res.status(404).send({ message: 'User not found' })
     }
-    user.fullName = req.body.fullName || user.fullName
-    await user.save()
-    res.status(200).send({ message: 'User Updated' })
-  } else {
-    res.status(404).send({ message: 'User Not Found' })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
   }
 }

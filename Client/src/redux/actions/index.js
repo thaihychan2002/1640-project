@@ -9,6 +9,11 @@ export const getPosts = createActions({
   getPostsSuccess: (payload) => payload,
   getPostsFailure: (err) => err,
 });
+export const getAllPosts = createActions({
+  getAllPostsRequest: undefined,
+  getAllPostsSuccess: (payload) => payload,
+  getAllPostsFailure: (err) => err,
+});
 export const createPosts = createActions({
   createPostsRequest: (payload) => payload,
   createPostsSuccess: (payload) => payload,

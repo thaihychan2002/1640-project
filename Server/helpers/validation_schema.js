@@ -1,5 +1,7 @@
 import joi from 'joi'
-
+// import { getDepartment } from '../controller/departments'
+// console.log(getDepartment)
+// export const ref = joi.ref()
 export const registerUserSchema = joi.object({
   email: joi.string().email().lowercase().required(),
   fullName: joi.string().min(3).required(),
