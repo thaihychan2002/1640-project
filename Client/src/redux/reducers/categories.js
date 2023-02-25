@@ -32,11 +32,11 @@ export default function DepartmentsReducers(state = INIT_STATE.categories, actio
                 ),
             };
         case getType(deleteCategories.deleteCategoriesSuccess):
+            const newData =state.data.filter((category)=>{ return category._id !== action.payload._id});
+            console.log(newData)
             return {
                 ...state,
-                data: state.data.map((category) =>
-                    category._id === action.payload._id ? [...state.data,state.data.filter((category)=> category._id=action.payload._id)] : category
-                ),
+                data: newData,
             };
         default:
             return state;

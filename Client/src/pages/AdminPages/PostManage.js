@@ -158,7 +158,6 @@ export default function PostManage() {
 
       render: (_, record) => (
         <Space size="middle">
-          <Link>Update </Link>
           <Link>Delete</Link>
         </Space>
       ),

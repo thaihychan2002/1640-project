@@ -17,6 +17,12 @@ export default function PostList() {
   React.useEffect(() => {
     dispatch(actions.getPosts.getPostsRequest());
   }, [dispatch]);
+  React.useEffect(() => {
+    dispatch(actions.getDepartments.getDepartmentsRequest());
+  }, [dispatch]);
+  React.useEffect(() => {
+    dispatch(actions.getCategories.getCategoriesRequest());
+  }, [dispatch]);
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={12} sm={12}>

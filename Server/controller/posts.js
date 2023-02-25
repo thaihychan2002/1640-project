@@ -66,7 +66,7 @@ export const updatePosts = async (req, res) => {
     const updatePosts = req.body
     const post = await PostModel.findByIdAndUpdate(
       { _id: updatePosts._id },
-      { updatePosts },
+      updatePosts,
       { new: true }
     )
     res.status(200).json(post)

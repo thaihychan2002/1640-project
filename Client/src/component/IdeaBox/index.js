@@ -1,15 +1,13 @@
 import React, { useRef, useContext, useState } from "react";
-import { TextField, Grid } from "@material-ui/core";
+import {  Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
 import "../assets/css/HomeScreen.css";
 import { useDispatch, useSelector } from "react-redux";
 import { hideModal, showModal, createPosts } from "../../redux/actions";
-import FileBase64 from "react-file-base64";
-import { departmentsState$, modalState$ } from "../../redux/seclectors";
-import * as actions from "../../redux/actions";
+import { categoriesState$, departmentsState$, modalState$ } from "../../redux/seclectors";
 import { PictureOutlined, CloseOutlined } from "@ant-design/icons";
-import { Input, Select, Button, Checkbox, Drawer } from "antd";
+import { Input, Select, Button } from "antd";
 import { Link } from "react-router-dom";
 import DrawExpand from "./Drawer";
 
@@ -19,9 +17,8 @@ const { Option } = Select;
 export default function IdeaBox() {
   const dispatch = useDispatch();
   const departments = useSelector(departmentsState$);
-  React.useEffect(() => {
-    dispatch(actions.getDepartments.getDepartmentsRequest());
-  }, [dispatch]);
+  const categories =useSelector(categoriesState$);
+  
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckChange = (isChecked) => {
@@ -29,6 +26,7 @@ export default function IdeaBox() {
   };
 
   const departmentref = useRef(null);
+  const cateref=useRef(null);
   const { isShow } = useSelector(modalState$);
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -44,6 +42,10 @@ export default function IdeaBox() {
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
+  };
+  const categet = (e) => {
+    setdata({ ...data, categories: e });
+    data.categories = cateref.current.value;
   };
   const handleOk = React.useCallback(() => {
     dispatch(hideModal());
@@ -216,11 +218,25 @@ export default function IdeaBox() {
                     </Option>
                   ))}
                 </Select>
+                <Select
+                  defaultValue="Choose a category"
+                  style={{ width: "100%" , top:"20px"}}
+                  size="large"
+                  required
+                  onChange={(e) => categet(e)}
+                  ref={cateref}
+                >
+                  {categories?.map((category) => (
+                    <Option key={category._id} value={category.name}>
+                      {category.name}
+                    </Option>
+                  ))}
+                </Select>
               </div>
 
               <div>
                 <Switch
-                  style={{ width: "100%" }}
+                  style={{ width: "100%",top:"20px" }}
                   checkedChildren="Anonymous"
                   unCheckedChildren={user.fullName}
                   onChange={() =>
@@ -231,7 +247,7 @@ export default function IdeaBox() {
                   }
                 ></Switch>
               </div>
-              <div style={{ marginTop: "52%", fontSize: "18px" }}>
+              <div style={{ marginTop: "30%", fontSize: "18px" }}>
                 Click to view{" "}
                 <span className="term" onClick={showDrawer}>
                   GreFeed Terms and Conditions

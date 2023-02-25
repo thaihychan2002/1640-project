@@ -11,6 +11,6 @@ const router = express.Router()
 router.get('/', isAuth, getPosts)
 router.post('/create',isAuth, createPosts)
 router.put('/update', isAuth, updatePosts)
-router.delete('/delete/:id', deletePosts)
+router.delete('/delete/:id',isAuth, deletePosts)
 
 export default router

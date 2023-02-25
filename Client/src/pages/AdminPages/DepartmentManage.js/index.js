@@ -17,9 +17,6 @@ export default function DepartmentManage() {
   const [data, setdata] = React.useState({
     name: "",
   });
-  React.useEffect(() => {
-    dispatch_de(actions.getDepartments.getDepartmentsRequest());
-  }, [dispatch_de]);
   const depart = departments?.map((department) => ({
     _id: department._id,
     name: department.name,
