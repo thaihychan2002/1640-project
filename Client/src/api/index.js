@@ -1,6 +1,11 @@
 import axios from "axios";
 import { URL, token } from "./config.js";
+// import jwtDecode from "jwt-decode";
 
+// // export const userID = () =>jwtDecode(token)._id;
+// export const userID = () => {
+//   if (token) return jwtDecode(token)._id;
+// };
 //config axios
 const axiosInstance = axios.create({
   baseURL: URL,
@@ -18,6 +23,19 @@ export const updatePosts = (payload) =>
   axiosInstance.put(`/posts/update`, payload);
 export const deletePosts = (payload) =>
   axiosInstance.delete(`/posts/delete/${payload}`, payload);
+
+// view posts
+export const fetchPostsByMostViews = () =>
+  axiosInstance.get("/posts/viewPostsByMostViews");
+export const fetchPostsByMostLikes = () =>
+  axiosInstance.get("/posts/viewPostsByMostLikes");
+export const fetchRecentlyPosts = () =>
+  axiosInstance.get("/posts/viewRecentlyPosts");
+export const fetchPostsByDepartment = () =>
+  axiosInstance.get("/posts/viewPostsByDepartment/:department");
+//search posts
+export const searchPostsByKeyword = () =>
+  axiosInstance.get("/posts/search/:keyword");
 
 // department
 export const fetchDepartments = () => axiosInstance.get(`/departments`);
@@ -40,7 +58,7 @@ export const deleteCategories = (payload) =>
 // fetch usertoken
 export const fetchUsers = () => axiosInstance.get(`/users`);
 export const fetchUserByID = (userID) =>
-  axios.get(`${URL}/users/getUserById/${userID}`);
+  axiosInstance.post(`/users/getUserById/`, { userID });
 //login user
 export const loginUser = (email, password) =>
   axios.post(`${URL}/users/login/`, { email, password });
@@ -58,12 +76,13 @@ export const registerGoogleUser = (fullName, email, avatar, password) =>
   });
 // update user
 export const updateUser = (userID, role) =>
-  axiosInstance.put(`/users/updateUser/${userID}`, { role });
+  axiosInstance.put(`/users/updateUser/`, { role, userID });
 export const updateUserProfile = (userID, fullName, data) =>
-  axiosInstance.put(`/users/updateUserProfile/${userID}`, {
+  axiosInstance.put(`/users/updateUserProfile/`, {
     fullName,
     data,
+    userID,
   });
 //delete user
 export const deleteUser = (userID) =>
-  axiosInstance.delete(`/users/deleteUser/${userID}`);
+  axiosInstance.delete(`/users/deleteUser/`, { userID });

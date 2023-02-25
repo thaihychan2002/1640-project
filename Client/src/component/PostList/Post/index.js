@@ -147,7 +147,7 @@ export default function Post({ post }) {
           title={
             post.isAnonymous ? `Anonymous ${animal.name}` : post.author.fullName
           }
-          subheader={moment(post.updatedAt).calendar()}
+          subheader={moment(post.createdAt).format("LLL")}
           action={
             <IconButton onClick={viewModal_2} title="Delete post">
               <MoreVertIcon />
@@ -157,6 +157,7 @@ export default function Post({ post }) {
         <CardMedia
           image={post.attachment || ""}
           title="image"
+          component="img"
           className={classes.media}
         ></CardMedia>
         <CardContent>
@@ -166,6 +167,7 @@ export default function Post({ post }) {
           <Typography variant="body2" component="p" color="textSecondary">
             {post.content}
           </Typography>
+          <Typography>{post.view} Views</Typography>
         </CardContent>
         <CardActions>
           <IconButton

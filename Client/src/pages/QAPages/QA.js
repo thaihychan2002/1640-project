@@ -1,17 +1,16 @@
 import { Grid } from "@material-ui/core";
-import { postsState$, departmentsState$ } from "../../redux/seclectors";
+import { allPostsState$, departmentsState$ } from "../../redux/seclectors";
 import { useSelector, useDispatch } from "react-redux";
 import { useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { Store } from "../../Store";
 import React from "react";
 import * as actions from "../../redux/actions";
 import ReactApexChart from "react-apexcharts";
-
+import { Helmet } from "react-helmet-async";
 export default function QA() {
   const dispatch = useDispatch();
-  const posts = useSelector(postsState$);
+  const posts = useSelector(allPostsState$);
   const [departments, setDepartments] = useState([]);
-
   const optionsPie = useMemo(() => {
     return {
       chart: {
@@ -40,7 +39,7 @@ export default function QA() {
 
   const getPostsByDepartment = useCallback(
     (department) => {
-      return posts.filter((post) => post.department === department);
+      return posts?.filter((post) => post.department === department);
     },
     [posts]
   );
@@ -71,7 +70,7 @@ export default function QA() {
     const postCountsByDay = {};
     const now = Date.now();
     const lastWeek = now - 7 * 24 * 60 * 60 * 1000; // 7 days ago
-    posts.forEach((post) => {
+    posts?.forEach((post) => {
       const date = new Date(post.createdAt).toDateString();
       if (new Date(post.createdAt).getTime() >= lastWeek) {
         // only count posts from last 7 days
@@ -89,7 +88,7 @@ export default function QA() {
   }, [posts]);
 
   useEffect(() => {
-    const departments = posts.reduce((accumulator, post) => {
+    const departments = posts?.reduce((accumulator, post) => {
       if (!accumulator.includes(post.department)) {
         accumulator.push(post.department);
       }
@@ -98,7 +97,7 @@ export default function QA() {
     setDepartments(departments);
   }, [posts]);
   useEffect(() => {
-    const series = departments.map((department) =>
+    const series = departments?.map((department) =>
       getPostCountByDepartment(department)
     );
     setSeriesPie(series);
@@ -107,8 +106,8 @@ export default function QA() {
   useEffect(() => {
     const postCountsByDay = getPostCountsByDay();
     const dates = Object.keys(postCountsByDay).sort();
-    const series = departments.map((department) => {
-      const data = dates.map((date) => {
+    const series = departments?.map((department) => {
+      const data = dates?.map((date) => {
         return postCountsByDay[date][department] || 0;
       });
       return {
@@ -122,8 +121,8 @@ export default function QA() {
   useEffect(() => {
     const postCountsByDay = getPostCountsByDay();
     const dates = Object.keys(postCountsByDay).sort();
-    const series = departments.map((department) => {
-      const data = dates.map((date) => {
+    const series = departments?.map((department) => {
+      const data = dates?.map((date) => {
         return postCountsByDay[date][department] || 0;
       });
       return {
@@ -151,8 +150,14 @@ export default function QA() {
   React.useEffect(() => {
     dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
+  React.useEffect(() => {
+    dispatch(actions.getAllPosts.getAllPostsRequest());
+  }, [dispatch]);
   return (
     <Grid container>
+      <Helmet>
+        <title>QA Coordinator</title>
+      </Helmet>
       <Grid item xs={2} sm={2} />
       <Grid item xs={8} sm={8}>
         <ReactApexChart options={optionsPie} series={seriesPie} type="donut" />

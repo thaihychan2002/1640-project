@@ -1,23 +1,18 @@
 import React, { useContext, useState, useEffect } from "react";
-import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
-import { fetchUserByID } from "../../api/index";
 import { Navigate } from "react-router-dom";
 import { Store } from "../../Store";
+
 export default function UserRoute({ children }) {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const [navigate, setNavigate] = useState("");
-
+  const [navigate, setNavigate] = useState(null);
   useEffect(() => {
     const fetchUser = async () => {
-      let token = localStorage.getItem("userInfo");
-      let userID = jwtDecode(token)._id;
-      if (userID) {
+      const user = state?.userInfo;
+      if (user) {
         try {
-          const { data } = await fetchUserByID(userID);
-          ctxDispatch({ type: "GET_USER", payload: data });
-          token ? setNavigate(children) : setNavigate(<Navigate to="/login" />);
+          !user ? setNavigate(<Navigate to="/login" />) : setNavigate(children);
         } catch (err) {
           toast.error(getError(err));
         }
@@ -25,6 +20,6 @@ export default function UserRoute({ children }) {
       return;
     };
     fetchUser();
-  }, [children, ctxDispatch]);
+  }, [children, state?.userInfo]);
   return navigate;
 }

@@ -56,7 +56,7 @@ const Register = () => {
           password
         );
         ctxDispatch({ type: "USER_LOGIN", payload: data });
-        localStorage.setItem("userToken", JSON.stringify(data));
+        localStorage.setItem("userInfo", JSON.stringify(data));
         navigate(redirect || "/");
         navigate(0);
       } catch (err) {

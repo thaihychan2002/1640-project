@@ -7,16 +7,17 @@ import { Form, Input, Button, Divider } from "antd";
 import { BulbOutlined } from "@ant-design/icons";
 
 import "../../component/assets/css/Profile.css";
-import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { updateUserProfile } from "../../api/index";
 import { postsState$ } from "../../redux/seclectors";
 import { token } from "../../api/config";
+import jwtDecode from "jwt-decode";
 export default function Profile() {
   // fetch user posts
   const posts = useSelector(postsState$);
   const userID = jwtDecode(token)._id;
+
   //
   const { state } = useContext(Store);
   const user = state.userInfo;
@@ -43,9 +44,8 @@ export default function Profile() {
 
   const updateUserProfileHandler = async (e) => {
     e.preventDefault();
-    let token = localStorage.getItem("userInfo");
-    let userID = jwtDecode(token)._id;
     let data = previewSource;
+
     try {
       await updateUserProfile(userID, fullName, data);
       toast.success("User updated successfully");
@@ -165,6 +165,7 @@ export default function Profile() {
                   }}
                   image={post.attachment}
                   title="image"
+                  component="img"
                 />
               </Card>
             </Grid>

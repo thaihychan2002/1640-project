@@ -4,11 +4,27 @@ import * as api from "../../api";
 //post
 function* fetchPostSaga(action) {
   try {
-    const posts = yield call(api.fetchPosts);
-    yield put(actions.getPosts.getPostsSuccess(posts.data));
+    let posts;
+    if (action.payload === "recently") {
+      posts = yield call(api.fetchRecentlyPosts);
+    } else if (action.payload === "mostViews") {
+      posts = yield call(api.fetchPostsByMostViews);
+    } else if (action.payload === "mostLikes") {
+      posts = yield call(api.fetchPostsByMostLikes);
+    }
+    yield put(actions.getPosts.getPostsSuccess(posts?.data));
   } catch (err) {
     console.log(err);
     yield put(actions.getPosts.getPostsFailure(err));
+  }
+}
+function* fetchAllPostsSaga(action) {
+  try {
+    const allPosts = yield call(api.fetchPosts);
+    yield put(actions.getAllPosts.getAllPostsSuccess(allPosts?.data));
+  } catch (err) {
+    console.log(err);
+    yield put(actions.getAllPosts.getAllPostsFailure(err));
   }
 }
 function* createPostSaga(action) {
@@ -133,6 +149,7 @@ function* deleteCategorySaga(action) {
 function* mysaga() {
   //post
   yield takeLatest(actions.getPosts.getPostsRequest, fetchPostSaga);
+  yield takeLatest(actions.getAllPosts.getAllPostsRequest, fetchAllPostsSaga);
   yield takeLatest(actions.updatePosts.updatePostsRequest, updatePostSaga);
   yield takeLatest(actions.createPosts.createPostsRequest, createPostSaga);
   yield takeLatest(actions.deletePosts.deletePostsRequest, deletePostSaga);
