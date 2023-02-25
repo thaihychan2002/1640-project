@@ -20,15 +20,6 @@ export const fetchPosts = () => axiosInstance.get(`/posts`);
 export const createPosts = (payload) =>
   axiosInstance.post(`/posts/create`, payload);
 export const updatePosts = (payload) =>
-<<<<<<< HEAD
-  axios.put(`${URL}/posts/update`, payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
-export const deletePosts = (payload) =>
-  axios.delete(`${URL}/posts/delete/${payload}`, payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
-=======
   axiosInstance.put(`/posts/update`, payload);
 export const deletePosts = (payload) =>
   axiosInstance.delete(`/posts/delete/${payload}`, payload);
@@ -46,45 +37,24 @@ export const fetchPostsByDepartment = () =>
 export const searchPostsByKeyword = () =>
   axiosInstance.get("/posts/search/:keyword");
 
->>>>>>> c8c199e155fdd253558a7cd53153a5f6e045abfd
 // department
 export const fetchDepartments = () => axiosInstance.get(`/departments`);
 export const createDepartments = (payload) =>
   axiosInstance.post(`/departments/create`, payload);
 export const updateDepartments = (payload) =>
-<<<<<<< HEAD
-  axios.put(`${URL}/departments/update`, payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
-export const deleteDepartments = (payload) =>
-  axios.delete(`${URL}/departments/delete/${payload}`,payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
-=======
   axiosInstance.put(`/departments/update`, payload);
 export const deleteDepartments = (payload) =>
   axiosInstance.delete(`/departments/delete/${payload}`, payload);
 
->>>>>>> c8c199e155fdd253558a7cd53153a5f6e045abfd
 // category
 export const fetchCategories = () => axiosInstance.get(`/categories`);
 export const createCategories = (payload) =>
   axiosInstance.post(`/categories/create`, payload);
 export const updateCategories = (payload) =>
-<<<<<<< HEAD
-  axios.put(`${URL}/categories/update`,payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
-export const deleteCategories = (payload) =>
-  axios.delete(`${URL}/categories/delete/${payload}`,payload ,{
-    headers: { Authorization: `Bearer ${token} ` },
-  });
-=======
   axiosInstance.put(`/categories/update`, payload);
 export const deleteCategories = (payload) =>
   axiosInstance.delete(`/categories/delete/${payload}`, payload);
 
->>>>>>> c8c199e155fdd253558a7cd53153a5f6e045abfd
 // fetch usertoken
 export const fetchUsers = () => axiosInstance.get(`/users`);
 export const fetchUserByID = (userID) =>

@@ -80,17 +80,12 @@ function* createDepartmentSaga(action) {
 }
 function* updateDepartmentSaga(action) {
   try {
-<<<<<<< HEAD
-    const departments = yield call(api.updateDepartments,action.payload);
-    yield put(actions.updateDepartments.updateDepartmentsSuccess(departments.data));
-=======
     console.log("deleteDepartmentSaga", { action });
     const departments = yield call(api.updateDepartments, action.payload);
     yield put(
       actions.updateDepartments.updateDepartmentsSuccess(departments.data)
     );
     console.log("[updateDepartmentSaga - department]", departments);
->>>>>>> c8c199e155fdd253558a7cd53153a5f6e045abfd
   } catch (err) {
     console.log(err);
     yield put(actions.updateDepartments.updateDepartmentsFailure(err));
