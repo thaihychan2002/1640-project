@@ -1,65 +1,64 @@
 import axios from "axios";
+import { URL, token } from "./config.js";
+// import jwtDecode from "jwt-decode";
 
-export const URL = "http://localhost:5000";
-export const token = localStorage.getItem("userInfo");
+// // export const userID = () =>jwtDecode(token)._id;
+// export const userID = () => {
+//   if (token) return jwtDecode(token)._id;
+// };
+//config axios
+const axiosInstance = axios.create({
+  baseURL: URL,
+});
+axiosInstance.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 // posts
-export const fetchPosts = () =>
-  axios.get(`${URL}/posts`, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+export const fetchPosts = () => axiosInstance.get(`/posts`);
 export const createPosts = (payload) =>
-  axios.post(`${URL}/posts/create`, payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.post(`/posts/create`, payload);
 export const updatePosts = (payload) =>
-  axios.post(`${URL}/posts/update`, payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.put(`/posts/update`, payload);
 export const deletePosts = (payload) =>
-  axios.post(`${URL}/posts/delete/${payload}`, payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.delete(`/posts/delete/${payload}`, payload);
+
+// view posts
+export const fetchPostsByMostViews = () =>
+  axiosInstance.get("/posts/viewPostsByMostViews");
+export const fetchPostsByMostLikes = () =>
+  axiosInstance.get("/posts/viewPostsByMostLikes");
+export const fetchRecentlyPosts = () =>
+  axiosInstance.get("/posts/viewRecentlyPosts");
+export const fetchPostsByDepartment = () =>
+  axiosInstance.get("/posts/viewPostsByDepartment/:department");
+//search posts
+export const searchPostsByKeyword = () =>
+  axiosInstance.get("/posts/search/:keyword");
+
 // department
-export const fetchDepartments = () =>
-  axios.get(`${URL}/departments`, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+export const fetchDepartments = () => axiosInstance.get(`/departments`);
 export const createDepartments = (payload) =>
-  axios.post(`${URL}/departments/create`,payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.post(`/departments/create`, payload);
 export const updateDepartments = (payload) =>
-  axios.post(`${URL}/departments/update`, payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.put(`/departments/update`, payload);
 export const deleteDepartments = (payload) =>
-  axios.post(`${URL}/departments/delete/${payload}`,payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.delete(`/departments/delete/${payload}`, payload);
+
 // category
-export const fetchCategories = () =>
-  axios.get(`${URL}/categories`, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+export const fetchCategories = () => axiosInstance.get(`/categories`);
 export const createCategories = (payload) =>
-  axios.post(`${URL}/categories/create`,payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.post(`/categories/create`, payload);
 export const updateCategories = (payload) =>
-  axios.post(`${URL}/categories/update`,console.log(payload),payload, {
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.put(`/categories/update`, payload);
 export const deleteCategories = (payload) =>
-  axios.post(`${URL}/categories/delete/${payload}`, payload,{
-    headers: { Authorization: `Bearer ${token} ` },
-  });
+  axiosInstance.delete(`/categories/delete/${payload}`, payload);
+
 // fetch usertoken
-export const fetchUsers = () =>
-  axios.get(`${URL}/users/`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const fetchUsers = () => axiosInstance.get(`/users`);
 export const fetchUserByID = (userID) =>
-  axios.get(`${URL}/users/getUserById/${userID}`);
+  axiosInstance.post(`/users/getUserById/`, { userID });
 //login user
 export const loginUser = (email, password) =>
   axios.post(`${URL}/users/login/`, { email, password });
@@ -77,21 +76,13 @@ export const registerGoogleUser = (fullName, email, avatar, password) =>
   });
 // update user
 export const updateUser = (userID, role) =>
-  axios.put(
-    `${URL}/users/updateUser/${userID}`,
-    { role },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+  axiosInstance.put(`/users/updateUser/`, { role, userID });
 export const updateUserProfile = (userID, fullName, data) =>
-  axios.put(
-    `${URL}/users/updateUserProfile/${userID}`,
-    { fullName, data },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  axiosInstance.put(`/users/updateUserProfile/`, {
+    fullName,
+    data,
+    userID,
+  });
 //delete user
 export const deleteUser = (userID) =>
-  axios.delete(`${URL}/users/deleteUser/${userID}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  axiosInstance.delete(`/users/deleteUser/`, { userID });

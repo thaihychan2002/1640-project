@@ -15,7 +15,23 @@ import Penguin from "../../iconAnonymous/Penguin.jpg";
 import RedPanda from "../../iconAnonymous/RedPanda.png";
 import Otter from "../../iconAnonymous/Otter.jpeg";
 import Hedgehog from "../../iconAnonymous/Hedgehog.png";
+import Kangaroo from "../../iconAnonymous/Kangaroo.png";
+import Platypus from "../../iconAnonymous/Platypus.png";
+import Octopus from "../../iconAnonymous/Octopus.png";
+
 export const animalList = [
+  {
+    name: "Kangaroo",
+    avatar: Kangaroo,
+  },
+  {
+    name: "Platypus",
+    avatar: Platypus,
+  },
+  {
+    name: "Octopus",
+    avatar: Octopus,
+  },
   {
     name: "Koala",
     avatar: Koala,

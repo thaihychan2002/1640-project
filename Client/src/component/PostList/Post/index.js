@@ -136,37 +136,28 @@ export default function Post({ post }) {
   return (
     <>
       <Card className={classes.card} key={post._id}>
-        {post.isAnonymous ? (
-          <CardHeader
-            avatar={<img src={animal.avatar} alt={`${animal.name} Avatar`} />}
-            title={`Anonymous ${animal.name}`}
-            subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
-            action={
-              <IconButton onClick={viewModal_2} title="Delete post">
-                <MoreVertIcon />
-              </IconButton>
-            }
-          />
-        ) : (
-          <CardHeader
-            avatar={
-              <Avatar>
-                <img src={post.author.avatar} alt={post.author.fullName} />
-              </Avatar>
-            }
-            title={post.author.fullName}
-            subheader={moment(post.updatedAt).format("HH:MM MM DD,YYYY")}
-            action={
-              <IconButton onClick={viewModal_2} title="Delete post">
-                <MoreVertIcon />
-              </IconButton>
-            }
-          />
-        )}
-
+        <CardHeader
+          avatar={
+            post.isAnonymous ? (
+              <img src={animal.avatar} alt={`${animal.name} Avatar`} />
+            ) : (
+              <img src={post.author.avatar} alt={post.author.fullName} />
+            )
+          }
+          title={
+            post.isAnonymous ? `Anonymous ${animal.name}` : post.author.fullName
+          }
+          subheader={moment(post.createdAt).format("LLL")}
+          action={
+            <IconButton onClick={viewModal_2} title="Delete post">
+              <MoreVertIcon />
+            </IconButton>
+          }
+        />
         <CardMedia
           image={post.attachment || ""}
           title="image"
+          component="img"
           className={classes.media}
         ></CardMedia>
         <CardContent>
@@ -176,6 +167,7 @@ export default function Post({ post }) {
           <Typography variant="body2" component="p" color="textSecondary">
             {post.content}
           </Typography>
+          <Typography>{post.view} Views</Typography>
         </CardContent>
         <CardActions>
           <IconButton

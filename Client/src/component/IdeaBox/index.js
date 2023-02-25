@@ -217,7 +217,6 @@ export default function IdeaBox() {
                   ))}
                 </Select>
               </div>
-
               <div>
                 <Switch
                   style={{ width: "100%" }}
@@ -231,7 +230,7 @@ export default function IdeaBox() {
                   }
                 ></Switch>
               </div>
-              <div style={{ marginTop: "52%", fontSize: "18px" }}>
+              <div style={{ marginTop: "44%", fontSize: "16px" }}>
                 Click to view{" "}
                 <span className="term" onClick={showDrawer}>
                   GreFeed Terms and Conditions

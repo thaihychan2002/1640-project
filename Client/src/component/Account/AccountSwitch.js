@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
 import { Row, Col } from "antd";
 import "../assets/css/AccountSwitch.css";
-import { Store } from "../../Store"; 
+import { Store } from "../../Store";
 import { Link } from "react-router-dom";
 import { Button } from "antd";
 export default function AccountSwitch() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   let user = state.userInfo;
   const signoutHandler = () => {
-    ctxDispatch({ type: "USER_SIGNOUT" });
-    localStorage.removeItem("userToken");
+    ctxDispatch({ type: "USER_LOGOUT" });
+    localStorage.removeItem("userInfo");
     window.location.href = "/login";
   };
   return (

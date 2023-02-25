@@ -1,5 +1,11 @@
 import { INIT_STATE } from "../../constant";
-import { createPosts, getPosts, getType, updatePosts,deletePosts } from "../actions";
+import {
+  createPosts,
+  getPosts,
+  getType,
+  updatePosts,
+  deletePosts,
+} from "../actions";
 
 export default function postsReducers(state = INIT_STATE.posts, action) {
   switch (action.type) {
@@ -31,13 +37,13 @@ export default function postsReducers(state = INIT_STATE.posts, action) {
           post._id === action.payload._id ? action.payload : post
         ),
       };
-      case getType(deletePosts.deletePostsSuccess):
-        return {
-          ...state,
-          // data: state.data.map((post) =>
-          //    action.payload._id ? action.payload : [...state.data]
-          // ),
-        };
+    case getType(deletePosts.deletePostsSuccess):
+      return {
+        ...state,
+        // data: state.data.map((post) =>
+        //    action.payload._id ? action.payload : [...state.data]
+        // ),
+      };
     default:
       return state;
   }
