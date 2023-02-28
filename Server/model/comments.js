@@ -10,8 +10,11 @@ const schema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        
+        postID:{
+            type:String,
+            required: true
+        }
     },
     { timestamps: true }
 );
-export const DepartmentModel = mongoose.model("Department", schema);
+export const CommentModel = mongoose.model("Comment", schema);

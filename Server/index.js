@@ -5,6 +5,7 @@ import posts from './routers/posts.js'
 import users from './routers/users.js'
 import departments from './routers/departments.js'
 import categories from './routers/categories.js'
+import comments from './routers/comments.js'
 import mongoose from 'mongoose'
 import morgan from 'morgan'
 import { DepartmentModel } from './model/departments.js'
@@ -23,6 +24,7 @@ app.use('/posts', posts)
 app.use('/users', users)
 app.use('/departments', departments)
 app.use('/categories', categories)
+app.use('/comments', comments)
 app.get('/', (req, res) => {
   res.send('SUCCESS')
   console.log('SUCCESS')
