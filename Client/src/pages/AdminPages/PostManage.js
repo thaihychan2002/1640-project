@@ -14,7 +14,6 @@ export default function PostManage() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [filteredInfo, setFilteredInfo] = useState({});
-
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -166,7 +165,6 @@ export default function PostManage() {
       }),
       render: (_, record) => (
         <Space size="middle">
-          <Link>Update </Link>
           <Link>Delete</Link>
         </Space>
       ),

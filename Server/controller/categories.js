@@ -19,12 +19,12 @@ export const createCate = async (req, res) => {
 };
 export const deleteCate = async (req, res) => {
     try {
-        const deleteCategory = req.params._id;
+        const deleteCategory = req.params.id;
         const category = await CategoriesModel.findByIdAndDelete(
             deleteCategory,
             { new: true }
         );
-        res.status(200).json(category);
+        res.status(200).json(category)
     } catch (err) {
         res.status(500).json({ error: err });
     }

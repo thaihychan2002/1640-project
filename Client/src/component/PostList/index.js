@@ -19,8 +19,14 @@ export default function PostList() {
   const [selectedView, setSelectedView] = useState("recently");
   // console.log(actions.getPosts.getPostsRequest(selectedView));
   React.useEffect(() => {
-    dispatch(actions.getPosts.getPostsRequest(selectedView));
+      dispatch(actions.getPosts.getPostsRequest(selectedView));
   }, [dispatch, selectedView]);
+  React.useEffect(() => {
+    dispatch(actions.getDepartments.getDepartmentsRequest());
+  }, [dispatch]);
+  React.useEffect(() => {
+    dispatch(actions.getCategories.getCategoriesRequest());
+  }, [dispatch]);
   const changePostsView = (value) => {
     setSelectedView(value);
   };
