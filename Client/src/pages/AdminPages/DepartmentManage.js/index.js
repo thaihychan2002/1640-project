@@ -1,19 +1,22 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { departmentsLoading$, departmentsState$, modalState$ } from "../../../redux/seclectors";
+import {
+  departmentsLoading$,
+  departmentsState$,
+  modalState$,
+} from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
 import React from "react";
 import { Link } from "react-router-dom";
-import Department from './department'
+import Department from "./department";
 import { Space, Table, Button, Modal, Input } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 
 const { TextArea } = Input;
 export default function DepartmentManage() {
-
-  const dispatch = useDispatch()
-  const departments = useSelector(departmentsState$)
-  const loading = useSelector(departmentsLoading$)
+  const dispatch = useDispatch();
+  const departments = useSelector(departmentsState$);
+  const loading = useSelector(departmentsLoading$);
   const { isShow } = useSelector(modalState$);
   const [data, setdata] = React.useState({
     name: "",
@@ -22,15 +25,18 @@ export default function DepartmentManage() {
     dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
   const depart = departments?.map((department) => ({
-    _id: department._id,
+    key: department._id,
     name: department.name,
   }));
   const viewModal = React.useCallback(() => {
     dispatch(actions.showModal());
-  }, [dispatch])
-  const deletedepartHandler = React.useCallback((record) => {
-    dispatch(actions.deleteDepartments.deleteDepartmentsRequest(record._id))
-  }, [dispatch])
+  }, [dispatch]);
+  const deletedepartHandler = React.useCallback(
+    (record) => {
+      dispatch(actions.deleteDepartments.deleteDepartmentsRequest(record._id));
+    },
+    [dispatch]
+  );
   const columns = [
     {
       title: "Department",
@@ -49,7 +55,7 @@ export default function DepartmentManage() {
         </Space>
       ),
     },
-  ]
+  ];
   const handleOk = React.useCallback(() => {
     dispatch(actions.hideModal());
   }, [dispatch]);
@@ -64,12 +70,17 @@ export default function DepartmentManage() {
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
-        <Button type="primary" onClick={viewModal}> Add new department</Button>
-        <Modal open={isShow}
+        <Button type="primary" onClick={viewModal}>
+          {" "}
+          Add new department
+        </Button>
+        <Modal
+          open={isShow}
           onOk={handleOk}
           onCancel={handleOk}
           footer={null}
-          className="container">
+          className="container"
+        >
           <Grid container spacing={2} alignItems="stretch">
             <Grid item xs={12} lg={12} className="row-new-post">
               <center>Create new department</center>
@@ -81,12 +92,10 @@ export default function DepartmentManage() {
                   minRows: 3,
                   maxRows: 5,
                 }}
-                placeholder='Write the name of department'
+                placeholder="Write the name of department"
                 size="large"
                 value={data.name}
-                onChange={(e) =>
-                  setdata({ ...data, name: e.target.value })
-                }
+                onChange={(e) => setdata({ ...data, name: e.target.value })}
                 required
               />
               <Button
@@ -103,7 +112,7 @@ export default function DepartmentManage() {
         {loading ? (
           <LoadingBox />
         ) : (
-          <Table columns={columns} dataSource={depart}/>
+          <Table columns={columns} dataSource={depart} />
         )}
       </Grid>
     </Grid>

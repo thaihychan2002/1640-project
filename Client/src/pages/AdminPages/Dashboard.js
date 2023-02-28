@@ -1,17 +1,34 @@
 import { Tabs } from "antd";
 import UserManage from "./UserManage";
 import DepartmentManage from "./DepartmentManage.js/index.js";
-import CategoryManage from "./CategoryManage"
-import { UserOutlined, ApartmentOutlined, BarsOutlined } from "@ant-design/icons";
+import CategoryManage from "./CategoryManage";
+import {
+  UserOutlined,
+  ApartmentOutlined,
+  BarsOutlined,
+  BulbOutlined,
+} from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
+import PostManage from "./PostManage";
 const DashBoard = () => {
-  const children = [<UserManage />, <DepartmentManage />, <CategoryManage />, ""];
+  const children = [
+    <UserManage />,
+    <DepartmentManage />,
+    <CategoryManage />,
+    <PostManage />,
+  ];
   const tabName = [
     <span>User Manage</span>,
     <span>Department Manage</span>,
     <span>Category Manage</span>,
+    <span>Post Manage</span>,
   ];
-  const icon = [<UserOutlined />, <ApartmentOutlined />, <BarsOutlined />, ""];
+  const icon = [
+    <UserOutlined />,
+    <ApartmentOutlined />,
+    <BarsOutlined />,
+    <BulbOutlined />,
+  ];
   return (
     <div>
       <Helmet>
@@ -21,7 +38,7 @@ const DashBoard = () => {
       <Tabs
         defaultActiveKey="1"
         centered
-        items={new Array(3).fill(null).map((_, i) => {
+        items={new Array(4).fill(null).map((_, i) => {
           const id = String(i + 1);
           return {
             label: (

@@ -93,7 +93,10 @@ export const deletePosts = async (req, res) => {
 
 export const viewPostsByMostViews = async (req, res) => {
   try {
-    const posts = await PostModel.find().sort({ view: -1 }).populate('author')
+    const posts = await PostModel.find()
+      .sort({ view: -1 })
+      .populate('author', 'fullName avatar _id role department')
+      .lean()
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -103,7 +106,8 @@ export const viewPostsByMostLikes = async (req, res) => {
   try {
     const posts = await PostModel.find()
       .sort({ likeCount: -1 })
-      .populate('author')
+      .populate('author', 'fullName avatar _id role department')
+      .lean()
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -113,7 +117,8 @@ export const viewRecentlyPosts = async (req, res) => {
   try {
     const posts = await PostModel.find()
       .sort({ createdAt: -1 })
-      .populate('author')
+      .populate('author', 'fullName avatar _id role department')
+      .lean()
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -163,7 +168,19 @@ export const searchPostsByKeyword = async (req, res) => {
         return true
       }
     })
-    res.send([...filteredAuthorPosts, ...filteredTitlePosts, ...posts])
+    const filteredContentPosts = allPosts.filter((post) => {
+      const content = post.content
+      const distance = levenshteinDistance(keyword, content)
+      if (distance <= 10) {
+        return true
+      }
+    })
+    res.send([
+      ...filteredAuthorPosts,
+      ...filteredTitlePosts,
+      ...filteredContentPosts,
+      ...posts,
+    ])
   } catch (err) {
     res.status(500).json({ error: err })
   }

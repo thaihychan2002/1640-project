@@ -1,6 +1,10 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { categoriesLoading$, categoriesState$, modalState$ } from "../../../redux/seclectors";
+import {
+  categoriesLoading$,
+  categoriesState$,
+  modalState$,
+} from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -10,10 +14,9 @@ import Category from "./category";
 
 const { TextArea } = Input;
 export default function CategoryManage() {
-
-  const dispatch = useDispatch()
-  const categories = useSelector(categoriesState$)
-  const loading = useSelector(categoriesLoading$)
+  const dispatch = useDispatch();
+  const categories = useSelector(categoriesState$);
+  const loading = useSelector(categoriesLoading$);
   const { isShow } = useSelector(modalState$);
   const [data, setdata] = React.useState({
     name: "",
@@ -22,12 +25,15 @@ export default function CategoryManage() {
     dispatch(actions.getCategories.getCategoriesRequest());
   }, [dispatch]);
   const category = categories?.map((category) => ({
-    _id: category._id,
+    key: category._id,
     name: category.name,
   }));
-  const deletedepartHandler = React.useCallback((record) => {
-    dispatch(actions.deleteCategories.deleteCategoriesRequest(record.key))
-  }, [dispatch])
+  const deletedepartHandler = React.useCallback(
+    (record) => {
+      dispatch(actions.deleteCategories.deleteCategoriesRequest(record.key));
+    },
+    [dispatch]
+  );
   const columns = [
     {
       title: "Category",
@@ -46,10 +52,10 @@ export default function CategoryManage() {
         </Space>
       ),
     },
-  ]
+  ];
   const viewModal = React.useCallback(() => {
     dispatch(actions.showModal());
-  }, [dispatch])
+  }, [dispatch]);
   const handleOk = React.useCallback(() => {
     dispatch(actions.hideModal());
   }, [dispatch]);
@@ -64,12 +70,17 @@ export default function CategoryManage() {
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
-        <Button type="primary" onClick={viewModal}> Add new category</Button>
-        <Modal open={isShow}
+        <Button type="primary" onClick={viewModal}>
+          {" "}
+          Add new category
+        </Button>
+        <Modal
+          open={isShow}
           onOk={handleOk}
           onCancel={handleOk}
           footer={null}
-          className="container">
+          className="container"
+        >
           <Grid container spacing={2} alignItems="stretch">
             <Grid item xs={12} lg={12} className="row-new-post">
               <center>Create new category</center>
@@ -81,12 +92,10 @@ export default function CategoryManage() {
                   minRows: 3,
                   maxRows: 5,
                 }}
-                placeholder='Write the name of department'
+                placeholder="Write the name of department"
                 size="large"
                 value={data.name}
-                onChange={(e) =>
-                  setdata({ ...data, name: e.target.value })
-                }
+                onChange={(e) => setdata({ ...data, name: e.target.value })}
                 required
               />
               <Button
