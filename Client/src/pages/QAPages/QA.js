@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet-async";
 export default function QA() {
   const dispatch = useDispatch();
   const posts = useSelector(allPostsState$);
+
   const [departments, setDepartments] = useState([]);
   const optionsPie = useMemo(() => {
     return {
@@ -32,7 +33,6 @@ export default function QA() {
       ],
     };
   }, [departments]);
-
   const [series, setSeries] = useState([]);
   const [seriesPie, setSeriesPie] = useState([]);
   const [options, setOptions] = useState({});

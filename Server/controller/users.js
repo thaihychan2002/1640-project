@@ -7,13 +7,6 @@ import { v2 as cloudinary } from 'cloudinary'
 export const getUsers = async (req, res) => {
   try {
     const users = await UserModel.find()
-    // const today = moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a");
-    // const expDate = moment(new Date(req.user.exp * 1000)).format(
-    //   "dddd, MMMM Do YYYY, h:mm:ss a"
-    // );
-    // console.log(today);
-    // console.log(expDate);
-    // console.log(today < expDate);
     res.send(users)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -67,7 +60,6 @@ export const loginGoogleUsers = async (req, res) => {
 export const registerUsers = async (req, res, next) => {
   try {
     await registerUserSchema.validateAsync(req.body)
-    // console.log(result);
     const newUser = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
@@ -87,8 +79,6 @@ export const registerUsers = async (req, res, next) => {
 }
 export const registerGoogleUsers = async (req, res) => {
   try {
-    // const result = await userSchema.validateAsync(req.body);
-    // console.log(result);
     const newUser = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,

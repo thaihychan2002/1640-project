@@ -1,21 +1,22 @@
 import { Store } from "../../Store";
-import react, { useContext, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useContext, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Grid, Card, CardMedia } from "@material-ui/core";
 import { Helmet } from "react-helmet-async";
 import { Form, Input, Button, Divider } from "antd";
 import { BulbOutlined } from "@ant-design/icons";
-
+import * as actions from "../../redux/actions";
 import "../../component/assets/css/Profile.css";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { updateUserProfile } from "../../api/index";
-import { postsState$ } from "../../redux/seclectors";
+import { allPostsState$ } from "../../redux/seclectors";
 import { token } from "../../api/config";
 import jwtDecode from "jwt-decode";
 export default function Profile() {
   // fetch user posts
-  const posts = useSelector(postsState$);
+  const dispatch = useDispatch();
+  const posts = useSelector(allPostsState$);
   const userID = jwtDecode(token)._id;
 
   //
@@ -45,7 +46,6 @@ export default function Profile() {
   const updateUserProfileHandler = async (e) => {
     e.preventDefault();
     let data = previewSource;
-
     try {
       await updateUserProfile(userID, fullName, data);
       toast.success("User updated successfully");
@@ -53,7 +53,9 @@ export default function Profile() {
       toast.error(getError(err));
     }
   };
-
+  React.useEffect(() => {
+    dispatch(actions.getAllPosts.getAllPostsRequest());
+  }, [dispatch]);
   const filteredPosts = posts.filter((post) => post.author._id === userID);
 
   return (
@@ -119,7 +121,7 @@ export default function Profile() {
             {toggle ? (
               <div>
                 <Input
-                  value={fullName}
+                  value={user.fullName}
                   className="profile-name"
                   onChange={(e) => setFullName(e.target.value)}
                 />
@@ -127,7 +129,7 @@ export default function Profile() {
             ) : (
               <div>
                 <Input
-                  value={fullName}
+                  value={user.fullName}
                   className="profile-name"
                   bordered={false}
                 />

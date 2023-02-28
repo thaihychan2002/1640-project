@@ -2,16 +2,25 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../../component/assets/css/NotFound.css";
 import { Helmet } from "react-helmet-async";
+import { Result, Button } from "antd";
 const NotFound = () => {
   return (
     <div className="error-page">
       <Helmet>
         <title>404 Not Found</title>
       </Helmet>
-      <h1>404</h1>
-      <h2>Page not found</h2>
-      <p>The page you're looking for could not be found.</p>
-      <Link to="/">Go back to the home page</Link>
+      <Result
+        status="404"
+        title="404"
+        subTitle="Sorry, the page you visited does not exist."
+        extra={
+          <Button type="primary">
+            <Link to="/" style={{ textDecoration: "none" }}>
+              Back Home
+            </Link>
+          </Button>
+        }
+      />{" "}
     </div>
   );
 };

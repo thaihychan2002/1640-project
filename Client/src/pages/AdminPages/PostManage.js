@@ -2,13 +2,14 @@ import { Grid } from "@material-ui/core";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { Helmet } from "react-helmet-async";
-import { postsState$ } from "../../redux/seclectors/";
-import { useSelector } from "react-redux";
+import { allPostsState$ } from "../../redux/seclectors/";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table } from "antd";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
+import * as actions from "../../redux/actions";
 export default function PostManage() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -113,7 +114,7 @@ export default function PostManage() {
       ),
   });
 
-  const posts = useSelector(postsState$);
+  const posts = useSelector(allPostsState$);
   const data = posts?.map((post) => ({
     key: post._id,
     title: post.title,
@@ -121,7 +122,10 @@ export default function PostManage() {
     author: post.author,
     department: post.department,
   }));
-
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(actions.getAllPosts.getAllPostsRequest());
+  }, [dispatch]);
   const columns = [
     {
       title: "Title",
@@ -154,7 +158,11 @@ export default function PostManage() {
       title: "Action",
       key: "action",
       width: "20%",
-
+      onCell: (_, record) => ({
+        onClick: () => {
+          // handle click action here
+        },
+      }),
       render: (_, record) => (
         <Space size="middle">
           <Link>Delete</Link>

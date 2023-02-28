@@ -1,6 +1,10 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { categoriesLoading$, categoriesState$, modalState$ } from "../../../redux/seclectors";
+import {
+  categoriesLoading$,
+  categoriesState$,
+  modalState$,
+} from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -11,6 +15,7 @@ import moment from "moment";
 
 const { TextArea } = Input;
 export default function CategoryManage() {
+
 
   const dispatch_ca = useDispatch()
   const categories = useSelector(categoriesState$)
@@ -24,8 +29,9 @@ export default function CategoryManage() {
     end: "",
   });
   const category = categories?.map((category) => ({
-    _id: category._id,
+    key: category._id,
     name: category.name,
+
     description: category.description,
     begindate: category.begin,
     enddate: category.end
@@ -73,8 +79,9 @@ export default function CategoryManage() {
         </Space>
       ),
     },
-  ]
+  ];
   const viewModal = React.useCallback(() => {
+
     setModalcatOpen(true);
   }, [])
   const handleclose = React.useCallback(() => {
@@ -100,12 +107,14 @@ export default function CategoryManage() {
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
+
         <Button type="primary" onClick={viewModal}> Add new category</Button>
         <Modal open={ModalcatOpen}
           onOk={handleclose}
           onCancel={handleclose}
           footer={null}
-          className="container">
+          className="container"
+        >
           <Grid container spacing={2} alignItems="stretch">
             <Grid item xs={12} lg={12} className="row-new-post">
               <center>Create new category</center>
@@ -141,6 +150,7 @@ export default function CategoryManage() {
                   minRows: 3,
                   maxRows: 5,
                 }}
+
                 placeholder='Describe your category'
                 size="large"
                 value={cat_data.description}
