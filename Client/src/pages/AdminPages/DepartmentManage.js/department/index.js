@@ -8,14 +8,11 @@ import { Input } from "antd";
 const { TextArea } = Input;
 export default function Department({ record_dep }) {
   const dispatch_de = useDispatch()
-  const [data, setdata] = React.useState({
-    _id: '',
-    name: '',
-  });
+  const [data, setdata] = React.useState({});
   const onUpdateHandler = React.useCallback(() => {
-    dispatch_de(actions.updateDepartments.updateDepartmentsRequest({ _id: data._id, name: data.name }))
+    dispatch_de(actions.updateDepartments.updateDepartmentsRequest({ _id: record_dep._id,...data }))
     setdata({ _id: '', name: '' })
-  }, [data, dispatch_de]);
+  }, [data, dispatch_de,record_dep]);
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={8} lg={8} className="row-new-post">
@@ -29,7 +26,7 @@ export default function Department({ record_dep }) {
           size="large"
           value={data.name}
           onChange={(e) =>
-            setdata({ ...data, name: e.target.value, _id: record_dep._id })
+            setdata({ ...data, name: e.target.value })
           }
           required
         />

@@ -20,12 +20,13 @@ import {
   departmentsState$,
   categoriesState$
 } from "../../../redux/seclectors";
-import { Modal, Button, Input, Select } from "antd";
+import { Modal, Button, Input, Select, Alert } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined, } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
 import { Link } from "react-router-dom";
 import { animalList } from "./anonymousAnimal.js";
+import { render } from "react-dom";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -37,16 +38,10 @@ export default function Post({ post }) {
   const departments = useSelector(departmentsState$);
   const categories = useSelector(categoriesState$);
   const [Modalupdate, setModalUpdate] = useState(false);
+  const [Modaloption, setModalOption] = useState(false)
   const departmentref = useRef(null);
   const caetgoryref = useRef(null)
-  const [data, setdata] = React.useState({
-    title: '',
-    // author: '' || "none",
-    content: '',
-    department: '',
-    categories: '',
-    attachment: '',
-  });
+  const [data, setdata] = React.useState({});
   const [defaultValue, setvalue] = React.useState({
     title: post.title,
     author: post.author || "none",
@@ -74,9 +69,18 @@ export default function Post({ post }) {
   const handleOk = React.useCallback(() => {
     setModalUpdate(false);
   }, []);
-  const viewModal = React.useCallback(() => {
-    setModalUpdate(true);
+  const handleoption = React.useCallback(() => {
+    setModalOption(false);
   }, []);
+  const viewModal = React.useCallback(() => {
+    if (post.author.fullName === user.fullName) {
+      setModalUpdate(true);
+    }
+    else {
+      console.log('cannot edit other post ', post.author)
+      setModalOption(true);
+    }
+  }, [user, post]);
   const classes = useStyles();
   const [likeActive, setLikeActive] = React.useState(false);
   const [dislikeActive, setDislikeActive] = React.useState(false);
@@ -109,9 +113,10 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   const updatehandler = React.useCallback(() => {
-    console.log(`data-update`,data)
-    dispatch(updatePosts.updatePostsRequest({ _id: post._id,author:post.author, ...data }));
-  }, [dispatch, data, post]);
+    console.log(`data-update`, data)
+    dispatch(updatePosts.updatePostsRequest({ _id: post._id, author: post.author, ...data }));
+    handleOk()
+  }, [dispatch, data, post, handleOk]);
   const onDislikeBtnClick = React.useCallback(() => {
     if (dislikeActive) {
       setDislikeActive(false);
@@ -156,7 +161,7 @@ export default function Post({ post }) {
           }
           subheader={moment(post.createdAt).format("LLL")}
           action={
-            <IconButton onClick={viewModal} title="Delete post">
+            <IconButton onClick={viewModal} title="Edit post">
               <MoreVertIcon />
             </IconButton>
           }
@@ -192,7 +197,21 @@ export default function Post({ post }) {
             <Typography component="span" color="textSecondary"></Typography>
           </IconButton>
           {`${post.likeCount} likes`}
+
         </CardActions>
+        <Grid container spacing={2} alignItems="stretch" style={{ marginLeft: '20px' }}>
+          <Grid item xs={6} lg={6} className="idea">
+            <div>
+              <Link to="/profile">
+                <img alt={user?.fullName} src={user?.avatar} />
+              </Link>
+            </div>
+            <Input placeholder="Any comments ?" className="idea-create" />
+          </Grid>
+          <Grid item xs={6} lg={6} className="idea">
+            <Link>Show comments</Link>
+          </Grid>
+        </Grid>
       </Card>
       <Modal
         open={Modalupdate}
@@ -225,7 +244,6 @@ export default function Post({ post }) {
                 </div>
                 <div className="input-file">
                   <FileBase64
-                    
                     accept="image/*"
                     multiple={false}
                     type="file"
@@ -254,6 +272,7 @@ export default function Post({ post }) {
               </Link>
 
               <div className="user-mg">
+                <Typography>Title</Typography>
                 <Input
                   allowClear
                   placeholder={defaultValue.title}
@@ -269,6 +288,7 @@ export default function Post({ post }) {
                 />
               </div>
               <div className="user-mg">
+                <Typography>Content</Typography>
                 <TextArea
                   allowClear
                   autoSize={{
@@ -285,6 +305,7 @@ export default function Post({ post }) {
                 />
               </div>
               <div className="user-mg">
+                <Typography>Choose department</Typography>
                 <Select
                   defaultValue={defaultValue.department}
                   style={{ width: "100%" }}
@@ -299,6 +320,7 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
+                <Typography>Choose category</Typography>
                 <Select
                   defaultValue={defaultValue.category}
                   style={{ width: "100%", top: "20px" }}
@@ -317,12 +339,38 @@ export default function Post({ post }) {
               <Button
                 type="primary"
                 block
-                style={{ bottom: "-45%" }}
+                style={{ bottom: "-5%" }}
                 onClick={updatehandler}
               >
                 Update
               </Button>
             </div>
+          </Grid>
+        </Grid>
+      </Modal>
+      <Modal
+        open={Modaloption}
+        onOk={handleoption}
+        onCancel={handleoption}
+        footer={null}
+        className="container"
+      >
+        <Grid container spacing={2} alignItems="stretch">
+          <Grid item xs={12} lg={12} >
+            <Button
+              type="primary"
+              block
+            >
+              Report
+            </Button>
+          </Grid>
+          <Grid item xs={12} lg={12} >
+            <Button
+              type="primary"
+              block
+            >
+              Save post
+            </Button>
           </Grid>
         </Grid>
       </Modal>
