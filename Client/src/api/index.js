@@ -23,6 +23,8 @@ export const updatePosts = (payload) =>
   axiosInstance.put(`/posts/update`, payload);
 export const deletePosts = (payload) =>
   axiosInstance.delete(`/posts/delete/${payload}`, payload);
+export const deletePostByAdmin = (payload) =>
+  axiosInstance.delete(`/posts/deletePost/${payload}`, payload);
 
 // view posts
 export const fetchPostsByMostViews = () =>
@@ -36,7 +38,11 @@ export const fetchPostsByDepartment = () =>
 //search posts
 export const searchPostsByKeyword = () =>
   axiosInstance.get("/posts/search/:keyword");
-
+// post status
+export const acceptPost = (payload) =>
+  axiosInstance.put("/posts/accept", payload);
+export const rejectPost = (payload) =>
+  axiosInstance.put("/posts/reject", payload);
 // department
 export const fetchDepartments = () => axiosInstance.get(`/departments`);
 export const createDepartments = (payload) =>

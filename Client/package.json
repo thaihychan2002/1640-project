@@ -21,6 +21,7 @@
     "react-apexcharts": "^1.4.0",
     "react-bootstrap": "^2.7.1",
     "react-bootstrap-validation": "^0.1.11",
+    "react-countup": "^6.4.1",
     "react-dom": "^18.2.0",
     "react-easy-crop": "^4.7.0",
     "react-file-base64": "^1.0.3",

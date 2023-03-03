@@ -47,6 +47,32 @@ function* updatePostSaga(action) {
     yield put(actions.updatePosts.updatePostsFailure(err));
   }
 }
+function* updatePostAcceptSaga(action) {
+  try {
+    console.log("updatePostSaga", { action });
+    const updatedPost = yield call(api.acceptPost, action.payload);
+    console.log("[updatePostSaga - post]", updatedPost);
+    yield put(
+      actions.updatePostAccept.updatePostAcceptSuccess(updatedPost.data)
+    );
+  } catch (err) {
+    console.error(err);
+    yield put(actions.updatePostAccept.updatePostAcceptFailure(err));
+  }
+}
+function* updatePostRejectSaga(action) {
+  try {
+    console.log("updatePostSaga", { action });
+    const updatedPost = yield call(api.rejectPost, action.payload);
+    console.log("[updatePostSaga - post]", updatedPost);
+    yield put(
+      actions.updatePostReject.updatePostRejectSuccess(updatedPost.data)
+    );
+  } catch (err) {
+    console.error(err);
+    yield put(actions.updatePostReject.updatePostRejectFailure(err));
+  }
+}
 function* deletePostSaga(action) {
   try {
     console.log("deletePostSaga", { action });
@@ -55,6 +81,18 @@ function* deletePostSaga(action) {
   } catch (err) {
     console.error(err);
     yield put(actions.deletePosts.deletePostsFailure(err));
+  }
+}
+function* deletePostByAdminSaga(action) {
+  try {
+    console.log("deletePostSaga", { action });
+    const deletedPost = yield call(api.deletePostByAdmin, action.payload);
+    yield put(
+      actions.deletePostByAdmin.deletePostSuccessByAdmin(deletedPost.data)
+    );
+  } catch (err) {
+    console.error(err);
+    yield put(actions.deletePostByAdmin.deletePostFailureByAdmin(err));
   }
 }
 //department
@@ -151,8 +189,20 @@ function* mysaga() {
   yield takeLatest(actions.getPosts.getPostsRequest, fetchPostSaga);
   yield takeLatest(actions.getAllPosts.getAllPostsRequest, fetchAllPostsSaga);
   yield takeLatest(actions.updatePosts.updatePostsRequest, updatePostSaga);
+  yield takeLatest(
+    actions.updatePostAccept.updatePostAcceptRequest,
+    updatePostAcceptSaga
+  );
+  yield takeLatest(
+    actions.updatePostReject.updatePostRejectRequest,
+    updatePostRejectSaga
+  );
   yield takeLatest(actions.createPosts.createPostsRequest, createPostSaga);
   yield takeLatest(actions.deletePosts.deletePostsRequest, deletePostSaga);
+  yield takeLatest(
+    actions.deletePostByAdmin.deletePostRequestByAdmin,
+    deletePostByAdminSaga
+  );
   //department
   yield takeLatest(
     actions.getDepartments.getDepartmentsRequest,

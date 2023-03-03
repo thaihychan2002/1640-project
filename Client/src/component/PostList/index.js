@@ -10,26 +10,43 @@ import {
   postsToken$,
 } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
+import { useMediaQuery } from "@material-ui/core";
 import { Select } from "antd";
+import { toast } from "react-toastify";
+import { getError } from "../../utils";
 const { Option } = Select;
 export default function PostList() {
   const dispatch = useDispatch();
   const posts = useSelector(postsState$);
   const isLoading = useSelector(postsLoading$);
   const [selectedView, setSelectedView] = useState("recently");
-  // console.log(actions.getPosts.getPostsRequest(selectedView));
   React.useEffect(() => {
+    try {
       dispatch(actions.getPosts.getPostsRequest(selectedView));
+    } catch (err) {
+      toast.error(getError(err));
+    }
   }, [dispatch, selectedView]);
   React.useEffect(() => {
-    dispatch(actions.getDepartments.getDepartmentsRequest());
+    try {
+      dispatch(actions.getDepartments.getDepartmentsRequest());
+    } catch (err) {
+      toast.error(getError(err));
+    }
   }, [dispatch]);
   React.useEffect(() => {
-    dispatch(actions.getCategories.getCategoriesRequest());
+    try {
+      dispatch(actions.getCategories.getCategoriesRequest());
+    } catch (err) {
+      toast.error(getError(err));
+    }
   }, [dispatch]);
   const changePostsView = (value) => {
     setSelectedView(value);
   };
+  const isXs = useMediaQuery("(max-width:600px)");
+  const isSm = useMediaQuery("(max-width:900px)");
+
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={12} sm={12}>
@@ -40,7 +57,10 @@ export default function PostList() {
           <Select
             defaultValue="View Recently Posts"
             onChange={changePostsView}
-            style={{ width: "25%" }}
+            style={{
+              width: isXs ? "100%" : isSm ? "35%" : "25%",
+              marginTop: 10,
+            }}
           >
             {/* <Option value="">View All Posts</Option> */}
             <Option value="recently">View Recently Posts</Option>

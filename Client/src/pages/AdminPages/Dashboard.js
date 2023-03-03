@@ -2,11 +2,15 @@ import { Tabs } from "antd";
 import React from "react";
 import UserManage from "./UserManage";
 import DepartmentManage from "./DepartmentManage.js/index.js";
-
-import CategoryManage from "./CategoryManage"
+import CategoryManage from "./CategoryManage";
 import { useDispatch } from "react-redux";
 import * as actions from "../../redux/actions";
-import { UserOutlined, ApartmentOutlined, BarsOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  ApartmentOutlined,
+  BarsOutlined,
+  BulbOutlined,
+} from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
 import PostManage from "./PostManage";
 const DashBoard = () => {
@@ -20,13 +24,24 @@ const DashBoard = () => {
   React.useEffect(() => {
     dispatch(actions.getCategories.getCategoriesRequest());
   }, [dispatch]);
-  const children = [<UserManage />, <DepartmentManage />, <CategoryManage />, <PostManage/>,""];
+  const children = [
+    <UserManage />,
+    <DepartmentManage />,
+    <CategoryManage />,
+    <PostManage />,
+    "",
+  ];
   const tabName = [
     <span>User Manage</span>,
     <span>Department Manage</span>,
     <span>Category Manage</span>,
-
-    <span>Post Manage</span>
+    <span>Post Manage</span>,
+  ];
+  const icons = [
+    <UserOutlined />,
+    <ApartmentOutlined />,
+    <BarsOutlined />,
+    <BulbOutlined />,
   ];
   return (
     <div>
@@ -38,16 +53,15 @@ const DashBoard = () => {
         defaultActiveKey="1"
         centered
         items={new Array(4).fill(null).map((_, i) => {
-          const id = String(i + 1);
           return {
             label: (
               <span>
-                {icon[id - 1]}
-                {tabName[id - 1]}
+                {icons[i]}
+                {tabName[i]}
               </span>
             ),
-            key: id,
-            children: children[id - 1],
+            key: i,
+            children: children[i],
           };
         })}
       />

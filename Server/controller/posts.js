@@ -69,7 +69,6 @@ export const updatePosts = async (req, res) => {
       updatePosts,
       { new: true }
     )
-    console.log(post)
     res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -90,14 +89,27 @@ export const deletePosts = async (req, res) => {
     res.status(500).json({ error: err })
   }
 }
-
+export const deletePostByAdmin = async (req, res) => {
+  try {
+    const post = await PostModel.findById(req.params.id)
+    if (post) {
+      await post.remove()
+      res.status(200).send({ message: 'Post Deleted' })
+    } else {
+      res.status(404).send({ message: 'Cannot delete other post' })
+    }
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
 export const viewPostsByMostViews = async (req, res) => {
   try {
     const posts = await PostModel.find()
       .sort({ view: -1 })
       .populate('author', 'fullName avatar _id role department')
       .lean()
-    res.status(200).json(posts)
+    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
+    res.status(200).json(filteredPosts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -108,7 +120,8 @@ export const viewPostsByMostLikes = async (req, res) => {
       .sort({ likeCount: -1 })
       .populate('author', 'fullName avatar _id role department')
       .lean()
-    res.status(200).json(posts)
+    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
+    res.status(200).json(filteredPosts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -119,7 +132,9 @@ export const viewRecentlyPosts = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate('author', 'fullName avatar _id role department')
       .lean()
-    res.status(200).json(posts)
+    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
+
+    res.status(200).json(filteredPosts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -190,6 +205,32 @@ export const viewPostsByDepartment = async (req, res) => {
     const department = req.params.department
     const posts = await PostModel.find({ department })
     res.status(200).json(posts)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
+export const updatePostToAccepted = async (req, res) => {
+  try {
+    const updatePosts = req.body
+    const post = await PostModel.findByIdAndUpdate(
+      { _id: updatePosts._id },
+      { status: 'Accepted' },
+      { new: true }
+    )
+    res.status(200).json(post)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
+export const updatePostToRejected = async (req, res) => {
+  try {
+    const updatePosts = req.body
+    const post = await PostModel.findByIdAndUpdate(
+      { _id: updatePosts._id },
+      { status: 'Rejected' },
+      { new: true }
+    )
+    res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })
   }
