@@ -1,15 +1,21 @@
 import React, { useRef, useContext, useState } from "react";
-import {  Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
 import "../assets/css/HomeScreen.css";
 import { useDispatch, useSelector } from "react-redux";
 import { hideModal, showModal, createPosts } from "../../redux/actions";
-import { categoriesState$, departmentsState$, modalState$ } from "../../redux/seclectors";
+import {
+  categoriesState$,
+  departmentsState$,
+  modalState$,
+} from "../../redux/seclectors";
 import { PictureOutlined, CloseOutlined } from "@ant-design/icons";
 import { Input, Select, Button } from "antd";
 import { Link } from "react-router-dom";
 import DrawExpand from "./Drawer";
+import { toast } from "react-toastify";
+import { getError } from "../../utils";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -17,8 +23,8 @@ const { Option } = Select;
 export default function IdeaBox() {
   const dispatch = useDispatch();
   const departments = useSelector(departmentsState$);
-  const categories =useSelector(categoriesState$);
-  
+  const categories = useSelector(categoriesState$);
+
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckChange = (isChecked) => {
@@ -26,7 +32,7 @@ export default function IdeaBox() {
   };
 
   const departmentref = useRef(null);
-  const cateref=useRef(null);
+  const cateref = useRef(null);
   const { isShow } = useSelector(modalState$);
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -54,8 +60,15 @@ export default function IdeaBox() {
     dispatch(showModal());
   }, [dispatch]);
   const onSubmit = React.useCallback(() => {
-    dispatch(createPosts.createPostsRequest(data));
-    handleOk();
+    try {
+      dispatch(createPosts.createPostsRequest(data));
+      handleOk();
+      toast.success(
+        "Created idea successfully. Please wait for Admin to accept your idea"
+      );
+    } catch (err) {
+      toast.error(getError(err));
+    }
   }, [data, dispatch, handleOk]);
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
@@ -220,7 +233,7 @@ export default function IdeaBox() {
                 </Select>
                 <Select
                   defaultValue="Choose a category"
-                  style={{ width: "100%" , top:"20px"}}
+                  style={{ width: "100%", top: "20px" }}
                   size="large"
                   required
                   onChange={(e) => categet(e)}
@@ -235,7 +248,7 @@ export default function IdeaBox() {
               </div>
               <div>
                 <Switch
-                  style={{ width: "100%",top:"20px" }}
+                  style={{ width: "100%", top: "20px" }}
                   checkedChildren="Anonymous"
                   unCheckedChildren={user.fullName}
                   onChange={() =>
@@ -246,7 +259,7 @@ export default function IdeaBox() {
                   }
                 ></Switch>
               </div>
-              <div style={{ marginTop: "44%", fontSize: "16px" }}>
+              <div style={{ marginTop: "34%", fontSize: "16px" }}>
                 Click to view{" "}
                 <span className="term" onClick={showDrawer}>
                   GreFeed Terms and Conditions

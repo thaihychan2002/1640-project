@@ -10,13 +10,15 @@ import "../../component/assets/css/Profile.css";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { updateUserProfile } from "../../api/index";
-import { allPostsState$ } from "../../redux/seclectors";
+import { allPostsState$, allPostsLoading$ } from "../../redux/seclectors";
 import { token } from "../../api/config";
 import jwtDecode from "jwt-decode";
+import LoadingBox from "../../component/LoadingBox/LoadingBox";
 export default function Profile() {
   // fetch user posts
   const dispatch = useDispatch();
   const posts = useSelector(allPostsState$);
+  const loading = useSelector(allPostsLoading$);
   const userID = jwtDecode(token)._id;
 
   //
@@ -57,15 +59,14 @@ export default function Profile() {
     dispatch(actions.getAllPosts.getAllPostsRequest());
   }, [dispatch]);
   const filteredPosts = posts.filter((post) => post.author._id === userID);
-
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Helmet>
         <title>Profile</title>
       </Helmet>
-      <Grid item xs={4} sm={4} />
-      <Grid container item xs={8} sm={8}>
-        <Grid item xs={2} sm={2}>
+      <Grid item xs={2} sm={2} md={4} />
+      <Grid container item xs={8} sm={8} md={8}>
+        <Grid item xs={2} sm={3} md={2}>
           <div style={{ marginTop: "10px" }}>
             {!previewSource ? (
               <label htmlFor="image">
@@ -116,12 +117,12 @@ export default function Profile() {
             )}
           </div>
         </Grid>
-        <Grid item xs={10} sm={10}>
+        <Grid item xs={10} sm={9} md={8}>
           <div style={{ display: "flex", flexDirection: "row" }}>
             {toggle ? (
               <div>
                 <Input
-                  value={user.fullName}
+                  value={fullName}
                   className="profile-name"
                   onChange={(e) => setFullName(e.target.value)}
                 />
@@ -148,25 +149,34 @@ export default function Profile() {
               )}
             </Form.Item>
           </div>
-          <div style={{ marginLeft: "20px" }}>0 posts</div>
+          <div style={{ marginLeft: "20px" }}>
+            You have {filteredPosts.length} ideas now
+          </div>
         </Grid>
       </Grid>
       <Divider>Posts</Divider>
       {/* Post item */}
       <Grid item xs={2} sm={2} />
       <Grid container item xs={10} sm={10}>
-        {filteredPosts.length > 0 ? (
+        {loading ? (
+          <LoadingBox />
+        ) : filteredPosts.length > 0 ? (
           filteredPosts.map((post) => (
-            <Grid item xs={12} sm={4} key={post._id}>
-              <Card>
+            <Grid item xs={12} sm={6} md={4} key={post._id}>
+              <Card
+                style={{
+                  maxWidth: "75%",
+                  maxHeight: "300px",
+                  marginBottom: "25px",
+                }}
+              >
                 <CardMedia
                   style={{
-                    height: "200px",
-                    width: "75%",
-                    marginBottom: "25px",
+                    height: "300px",
+                    borderRadius: "0px",
                   }}
                   image={post.attachment}
-                  title="image"
+                  title={post.title}
                   component="img"
                 />
               </Card>
