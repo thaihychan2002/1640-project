@@ -4,6 +4,15 @@ import joi from 'joi'
 import { v2 as cloudinary } from 'cloudinary'
 import { DepartmentModel } from '../model/departments.js'
 import { UserModel } from '../model/users.js'
+import { Parser } from 'json2csv'
+import { MongoClient } from 'mongodb'
+import fs from 'fs'
+import archiver from 'archiver'
+import { createReadStream, createWriteStream } from 'fs'
+import { createGzip } from 'zlib'
+import { promisify } from 'util'
+import { pipeline } from 'stream'
+import { ObjectId } from 'mongodb'
 export const getPosts = async (req, res) => {
   try {
     const posts = await PostModel.find().populate('author').exec()
@@ -17,7 +26,7 @@ export const createPosts = async (req, res, next) => {
   try {
     const result = await DepartmentModel.distinct('name')
     const postValidateSchema = joi.object({
-      title: joi.string().required(),
+      title: joi.string().min(3).required(),
       content: joi.string().required(),
       author: joi.string().required(),
       department: joi
@@ -233,5 +242,62 @@ export const updatePostToRejected = async (req, res) => {
     res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })
+  }
+}
+export const exportPost = async (req, res) => {
+  const uri =
+    'mongodb+srv://lyhungphat:Fap123456@crud.bjynqbk.mongodb.net/users?retryWrites=true&w=majority'
+  const client = await MongoClient.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  const db = client.db('test')
+
+  try {
+    const data = await db.collection('users').find({}).toArray()
+    const fields = ['_id', 'name', 'email']
+    const json2csvParser = new Parser({ fields })
+    const csv = json2csvParser.parse(data)
+
+    const outputFile = 'output.csv'
+    fs.writeFileSync(outputFile, csv)
+    console.log(`Data exported to ${outputFile}`)
+
+    res.download(outputFile)
+  } catch (err) {
+    console.error(err)
+    res.status(500).send('Error exporting data to CSV')
+  } finally {
+    client.close()
+  }
+}
+export const downloadPost = async (req, res) => {
+  const uri =
+    'mongodb+srv://lyhungphat:Fap123456@crud.bjynqbk.mongodb.net/users?retryWrites=true&w=majority'
+  const client = await MongoClient.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  const db = client.db('test')
+  try {
+    const data = await db
+      .collection('users')
+      .findOne({ _id: new ObjectId(req.body._id) })
+    const fields = ['_id', 'name', 'email']
+    const json2csvParser = new Parser({ fields })
+    const csv = json2csvParser.parse(data)
+
+    const zipName = 'user.zip'
+    const output = createWriteStream(zipName)
+    const archive = archiver('zip', { zlib: { level: 9 } })
+    archive.pipe(output)
+    archive.append(csv, { name: 'users.csv' })
+    archive.finalize()
+    res.send(zipName)
+    return zipName
+  } catch (err) {
+    console.error(err)
+  } finally {
+    client.close()
   }
 }
