@@ -43,6 +43,39 @@ export const acceptPost = (payload) =>
   axiosInstance.put("/posts/accept", payload);
 export const rejectPost = (payload) =>
   axiosInstance.put("/posts/reject", payload);
+//download csv and zip
+export const downloadCSV = () =>
+  axiosInstance.get("/posts/export", { responseType: "blob" });
+export const downloadZip = (postID) =>
+  axiosInstance.post(
+    "/posts/download",
+    { _id: postID },
+    {
+      responseType: "blob",
+    }
+  );
+// const downloadZipFile = async (selectedIds) => {
+//   try {
+//     const response = await axios.post('/downloadUser', { _id: selectedIds }, {
+//       responseType: 'blob',
+//     });
+//     const url = window.URL.createObjectURL(new Blob([response.data]));
+//     const link = document.createElement('a');
+//     link.href = url;
+//     link.setAttribute('download', 'users.zip');
+//     document.body.appendChild(link);
+//     link.click();
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+//role
+export const fetchRoles = () => axiosInstance.get("/roles");
+export const createRole = (name) =>
+  axiosInstance.post("/roles/create", { name });
+export const deleteRole = (id) => axiosInstance.delete(`/roles/delete/${id}`);
+export const updateRole = () => axiosInstance.put("/roles/update");
 // department
 export const fetchDepartments = () => axiosInstance.get(`/departments`);
 export const createDepartments = (payload) =>
@@ -71,8 +104,8 @@ export const loginUser = (email, password) =>
 export const loginGoogleUser = (email, fullName, avatar) =>
   axios.post(`${URL}/users/google/login/`, { email, fullName, avatar });
 //register user
-export const registerUser = (fullName, email, password) =>
-  axios.post(`${URL}/users/register/`, { fullName, email, password });
+export const registerUser = (fullName, email, password, roleUser) =>
+  axios.post(`${URL}/users/register/`, { fullName, email, password, roleUser });
 export const registerGoogleUser = (fullName, email, avatar, password) =>
   axios.post(`${URL}/users/google/register`, {
     fullName,
@@ -81,8 +114,8 @@ export const registerGoogleUser = (fullName, email, avatar, password) =>
     password,
   });
 // update user
-export const updateUser = (userID, role) =>
-  axiosInstance.put(`/users/updateUser/`, { role, userID });
+export const updateUser = (userID, roleID) =>
+  axiosInstance.put(`/users/updateUser/`, { userID, roleID });
 export const updateUserProfile = (userID, fullName, data) =>
   axiosInstance.put(`/users/updateUserProfile/`, {
     fullName,
@@ -90,5 +123,6 @@ export const updateUserProfile = (userID, fullName, data) =>
     userID,
   });
 //delete user
+
 export const deleteUser = (userID) =>
-  axiosInstance.delete(`/users/deleteUser/`, { userID });
+  axiosInstance.delete(`/users/deleteUser/${userID}`);

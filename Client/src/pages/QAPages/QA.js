@@ -7,8 +7,9 @@ import React from "react";
 import * as actions from "../../redux/actions";
 import ReactApexChart from "react-apexcharts";
 import { Helmet } from "react-helmet-async";
-import { Statistic } from "antd";
+import { Button, Statistic } from "antd";
 import CountUp from "react-countup";
+import { downloadCSV } from "../../api";
 
 export default function QA() {
   const dispatch = useDispatch();
@@ -146,6 +147,21 @@ export default function QA() {
     dispatch(actions.getAllPosts.getAllPostsRequest());
   }, [dispatch]);
   const formatter = (value) => <CountUp end={value} separator="," />;
+  const downloadPosts = async () => {
+    try {
+      const response = await downloadCSV();
+      const data = response.data;
+      const csvUrl = URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = csvUrl;
+      link.setAttribute("download", "posts.csv");
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Grid container>
       <Helmet>
@@ -154,6 +170,8 @@ export default function QA() {
       <Grid item xs={2} sm={2} />
       <Grid container item xs={8} sm={8}>
         <Grid item xs={6} md={6}>
+          <Button onClick={() => downloadPosts()}>Download all posts</Button>
+
           <Statistic
             title="Active Ideas"
             value={posts.length}

@@ -6,7 +6,7 @@ import { v2 as cloudinary } from 'cloudinary'
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await UserModel.find()
+    const users = await UserModel.find().populate('role').exec()
     res.send(users)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -15,6 +15,8 @@ export const getUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const user = await UserModel.findById(req.body.userID)
+      .populate('role')
+      .exec()
     console.log(user)
     if (user) {
       res.send({
@@ -22,7 +24,7 @@ export const getUserById = async (req, res) => {
         fullName: user.fullName,
         department: user.department,
         avatar: user.avatar,
-        role: user.role,
+        role: user.role.name,
       })
     }
   } catch (err) {
@@ -63,6 +65,7 @@ export const registerUsers = async (req, res, next) => {
     const newUser = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
+      role: req.body.roleUser,
       password: bcrypt.hashSync(req.body.password),
     })
     const user = await newUser.save()
@@ -96,11 +99,10 @@ export const registerGoogleUsers = async (req, res) => {
 }
 export const deleteUser = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.body.userID)
+    const user = await UserModel.findById(req.params.id).populate('role')
     if (user) {
-      if (user.role === 'Admin') {
-        res.send({ message: 'Can not delete admin' })
-        return
+      if (user.role.name === 'Admin') {
+        return res.status(403).send({ message: 'Cannot delete admin' })
       }
       await user.remove()
       res.send({ message: 'User Deleted' })
@@ -116,7 +118,7 @@ export const updateUser = async (req, res) => {
     const updatedUser = await UserModel.findByIdAndUpdate(
       req.body.userID,
       {
-        $set: { role: req.body.role },
+        $set: { role: req.body.roleID },
       },
       { new: true }
     )

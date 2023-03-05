@@ -49,39 +49,46 @@ export default function AccountSwitch() {
 
   return (
     <div className="account-switch">
-      <div>
-        <Link to="/profile">
-          <img alt={user?.fullName} src={user?.avatar} />
-        </Link>
-      </div>
-      <div className="as-flex">
-        <div>
-          <Link
-            to="/profile"
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            <span>{user?.fullName}</span>
+      <Grid container alignItems="stretch">
+        <Grid item xs={11} sm={11}>
+          <Link to="/profile">
+            <img alt={user?.fullName} src={user?.avatar} />
           </Link>
-        </div>
-        <div>
-          <Button style={{ marginRight: "50px" }}>
+        </Grid>
+        <Grid
+          item
+          xs={11}
+          sm={11}
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <div>
             <Link
-              className="switch"
-              to="#logout"
-              style={{ textDecoration: "none" }}
-              onClick={() => signoutHandler()}
+              to="/profile"
+              style={{ textDecoration: "none", color: "black" }}
             >
-              Logout
+              <span>{user?.fullName}</span>
             </Link>
-          </Button>
-        </div>
-      </div>
+          </div>
+          <div>
+            <Button>
+              <Link
+                className="switch"
+                to="#logout"
+                style={{ textDecoration: "none" }}
+                onClick={() => signoutHandler()}
+              >
+                Logout
+              </Link>
+            </Button>
+          </div>
+        </Grid>
+      </Grid>
       <Grid container alignItems="stretch">
         <Divider style={{ marginTop: 25, marginBottom: 25 }}>
           Suggestions for you
         </Divider>
         {randomPosts.map((post) => (
-          <Grid item xs={11} sm={11}>
+          <Grid item xs={11} sm={11} key={post._id}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               {/* <img src={post.author.avatar} alt={post.title} /> */}
               {post.title}

@@ -10,9 +10,11 @@ import {
   ApartmentOutlined,
   BarsOutlined,
   BulbOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
 import PostManage from "./PostManage";
+import RoleManage from "./RoleManage";
 const DashBoard = () => {
   const dispatch = useDispatch();
   React.useEffect(() => {
@@ -26,19 +28,21 @@ const DashBoard = () => {
   }, [dispatch]);
   const children = [
     <UserManage />,
+    <RoleManage />,
     <DepartmentManage />,
     <CategoryManage />,
     <PostManage />,
-    "",
   ];
   const tabName = [
     <span>User Manage</span>,
+    <span>Role Manage</span>,
     <span>Department Manage</span>,
     <span>Category Manage</span>,
     <span>Post Manage</span>,
   ];
   const icons = [
     <UserOutlined />,
+    <SettingOutlined />,
     <ApartmentOutlined />,
     <BarsOutlined />,
     <BulbOutlined />,
@@ -52,7 +56,7 @@ const DashBoard = () => {
       <Tabs
         defaultActiveKey="1"
         centered
-        items={new Array(4).fill(null).map((_, i) => {
+        items={new Array(5).fill(null).map((_, i) => {
           return {
             label: (
               <span>

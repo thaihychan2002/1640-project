@@ -17,6 +17,8 @@ import { fetchUserByID } from "../../api";
 const { Sider } = Layout;
 
 export default function Navigation() {
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("userInfo");
@@ -35,14 +37,12 @@ export default function Navigation() {
       return;
     };
     fetchUser();
-  }, []);
+  }, [ctxDispatch]);
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const [collapsed, setCollapsed] = useState(false);
-
-  const { state, dispatch: ctxDispatch } = useContext(Store);
   const role = state.userInfo.role;
   const linkRoutes =
     role === "Admin"

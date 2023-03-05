@@ -40,8 +40,8 @@ export const isAdmin = (req, res, next) => {
       } else {
         try {
           const userID = decode._id
-          const user = await UserModel.findById(userID)
-          if (user.role === 'Admin') {
+          const user = await UserModel.findById(userID).populate('role')
+          if (user.role.name === 'Admin') {
             req.user = decode
             next()
           } else {

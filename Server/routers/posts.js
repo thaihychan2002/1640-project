@@ -12,6 +12,8 @@ import {
   updatePostToAccepted,
   updatePostToRejected,
   deletePostByAdmin,
+  exportPost,
+  downloadPost,
 } from '../controller/posts.js'
 import { isAuth, isAdmin } from '../utils.js'
 const router = express.Router()
@@ -31,4 +33,7 @@ router.get('/search/:keyword', searchPostsByKeyword)
 //post status
 router.put('/accept', updatePostToAccepted)
 router.put('/reject', updatePostToRejected)
+//export posts
+router.get('/export', exportPost)
+router.post('/download', downloadPost)
 export default router

@@ -58,7 +58,9 @@ export default function Profile() {
   React.useEffect(() => {
     dispatch(actions.getAllPosts.getAllPostsRequest());
   }, [dispatch]);
-  const filteredPosts = posts.filter((post) => post.author._id === userID);
+  const filteredPosts = posts?.filter(
+    (post) => post?.author?._id === userID && post?.status === "Accepted"
+  );
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Helmet>

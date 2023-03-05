@@ -19,7 +19,7 @@ router.post('/login', loginUsers)
 router.post('/google/login', loginGoogleUsers)
 router.post('/register', registerUsers)
 router.post('/google/register', registerGoogleUsers)
-router.delete('/deleteUser/', isAdmin, deleteUser)
+router.delete('/deleteUser/:id', isAdmin, deleteUser)
 router.put('/updateUser/', isAdmin, updateUser)
 router.put('/updateUserProfile/', isAuth, updateUserProfile)
 export default router
