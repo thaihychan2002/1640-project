@@ -11,7 +11,6 @@ export const getCate = async (req, res) => {
 export const createCate = async (req, res, next) => {
   try {
     await createCategorySchema.validateAsync(req.body)
-
     const newCategory = req.body
     const category = new CategoriesModel(newCategory)
     await category.save()

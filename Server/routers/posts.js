@@ -14,11 +14,13 @@ import {
   deletePostByAdmin,
   exportPost,
   downloadPost,
+  getPostBySlug,
 } from '../controller/posts.js'
 import { isAuth, isAdmin } from '../utils.js'
 const router = express.Router()
 
-router.get('/', isAuth, getPosts)
+router.get('/', getPosts)
+router.get('/idea/:slug', getPostBySlug)
 router.post('/create', isAuth, createPosts)
 router.put('/update', isAuth, updatePosts)
 router.delete('/delete/:id', isAuth, deletePosts)

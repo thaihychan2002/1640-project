@@ -1,5 +1,5 @@
 import { PostModel } from '../model/posts.js'
-import { transporter, levenshteinDistance } from '../utils.js'
+import { transporter, levenshteinDistance, slug } from '../utils.js'
 import joi from 'joi'
 import { v2 as cloudinary } from 'cloudinary'
 import { DepartmentModel } from '../model/departments.js'
@@ -13,25 +13,40 @@ import { createGzip } from 'zlib'
 import { promisify } from 'util'
 import { pipeline } from 'stream'
 import { ObjectId } from 'mongodb'
+import JSZip from 'jszip'
 export const getPosts = async (req, res) => {
   try {
-    const posts = await PostModel.find().populate('author').exec()
+    const posts = await PostModel.find()
+      .populate('author', 'fullName avatar _id role department')
+      .populate('categories')
+      .populate('department')
+      .exec()
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
 }
-
+export const getPostBySlug = async (req, res) => {
+  try {
+    const post = await PostModel.findOne({ slug: req.params.slug })
+      .populate('author', 'fullName avatar _id role department')
+      .exec()
+    res.status(200).json(post)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
 export const createPosts = async (req, res, next) => {
   try {
-    const result = await DepartmentModel.distinct('name')
-    const postValidateSchema = joi.object({
+    // const result = await DepartmentModel.distinct('name')
+    const result = await DepartmentModel.distinct('_id')
+    const createPostSchema = joi.object({
       title: joi.string().min(3).required(),
       content: joi.string().required(),
       author: joi.string().required(),
       department: joi
         .string()
-        .valid(...result)
+        .valid(...result.map((id) => id.toString()))
         .required(),
       categories: joi.allow(),
       attachment: joi.allow(),
@@ -39,7 +54,7 @@ export const createPosts = async (req, res, next) => {
       likeCount: joi.number().valid(0).allow(),
       view: joi.number().valid(0).allow(),
     })
-    await postValidateSchema.validateAsync(req.body)
+    await createPostSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
     const fileStr = post.attachment
@@ -47,6 +62,7 @@ export const createPosts = async (req, res, next) => {
       const uploadedResponse = await cloudinary.uploader.upload(fileStr)
       post.attachment = uploadedResponse.url
     }
+    post.slug = slug(req.body.title)
     await post.save()
     // send email
     let mailOptions = {
@@ -246,7 +262,7 @@ export const updatePostToRejected = async (req, res) => {
 }
 export const exportPost = async (req, res) => {
   const uri =
-    'mongodb+srv://lyhungphat:Fap123456@crud.bjynqbk.mongodb.net/users?retryWrites=true&w=majority'
+    'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/posts?retryWrites=true&w=majority'
   const client = await MongoClient.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -254,13 +270,22 @@ export const exportPost = async (req, res) => {
   const db = client.db('test')
 
   try {
-    const data = await db.collection('users').find({}).toArray()
-    const fields = ['_id', 'name', 'email']
+    const data = await db.collection('posts').find({}).toArray()
+    const fields = [
+      'title',
+      'content',
+      'author',
+      'department',
+      'categories',
+      'view',
+      'attachment',
+      'likeCount',
+    ]
     const json2csvParser = new Parser({ fields })
     const csv = json2csvParser.parse(data)
 
     const outputFile = 'output.csv'
-    fs.writeFileSync(outputFile, csv)
+    fs.writeFileSync(outputFile, '\uFEFF' + csv, 'utf-8')
     console.log(`Data exported to ${outputFile}`)
 
     res.download(outputFile)
@@ -273,7 +298,7 @@ export const exportPost = async (req, res) => {
 }
 export const downloadPost = async (req, res) => {
   const uri =
-    'mongodb+srv://lyhungphat:Fap123456@crud.bjynqbk.mongodb.net/users?retryWrites=true&w=majority'
+    'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/posts?retryWrites=true&w=majority'
   const client = await MongoClient.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -281,19 +306,29 @@ export const downloadPost = async (req, res) => {
   const db = client.db('test')
   try {
     const data = await db
-      .collection('users')
+      .collection('posts')
       .findOne({ _id: new ObjectId(req.body._id) })
-    const fields = ['_id', 'name', 'email']
+    const fields = [
+      'title',
+      'content',
+      'attachment',
+      'department',
+      'categories',
+      'view',
+      'likeCount',
+    ]
     const json2csvParser = new Parser({ fields })
     const csv = json2csvParser.parse(data)
 
-    const zipName = 'user.zip'
-    const output = createWriteStream(zipName)
-    const archive = archiver('zip', { zlib: { level: 9 } })
-    archive.pipe(output)
-    archive.append(csv, { name: 'users.csv' })
-    archive.finalize()
-    res.send(zipName)
+    const zip = new JSZip()
+    zip.file('idea.csv', csv)
+
+    const zipName = 'idea.zip'
+    const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+
+    res.setHeader('Content-Type', 'application/zip')
+    res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`)
+    res.send(zipContent)
     return zipName
   } catch (err) {
     console.error(err)

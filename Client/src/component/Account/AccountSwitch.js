@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import "../assets/css/AccountSwitch.css";
 import { Store } from "../../Store";
-import { Link } from "react-router-dom";
-import { Button, Divider } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Divider, Input } from "antd";
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { postsLoading$, postsState$ } from "../../redux/seclectors";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import * as actions from "../../redux/actions";
+import Search from "../Search/index";
+
 export default function AccountSwitch() {
+  const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   let user = state.userInfo;
   const signoutHandler = () => {
@@ -51,6 +54,9 @@ export default function AccountSwitch() {
     <div className="account-switch">
       <Grid container alignItems="stretch">
         <Grid item xs={11} sm={11}>
+          <Search />
+        </Grid>
+        <Grid item xs={11} sm={11}>
           <Link to="/profile">
             <img alt={user?.fullName} src={user?.avatar} />
           </Link>
@@ -90,9 +96,13 @@ export default function AccountSwitch() {
         {randomPosts.map((post) => (
           <Grid item xs={11} sm={11} key={post._id}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              {/* <img src={post.author.avatar} alt={post.title} /> */}
               {post.title}
-              <Button>View</Button>
+              <Button
+                type="button"
+                onClick={() => navigate(`/idea/${post?.slug}`)}
+              >
+                View
+              </Button>
             </div>
           </Grid>
         ))}

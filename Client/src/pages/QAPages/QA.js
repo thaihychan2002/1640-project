@@ -43,7 +43,7 @@ export default function QA() {
 
   const getPostsByDepartment = useCallback(
     (department) => {
-      return posts?.filter((post) => post.department === department);
+      return posts?.filter((post) => post?.department?.name === department);
     },
     [posts]
   );
@@ -78,7 +78,7 @@ export default function QA() {
       const date = new Date(post.createdAt).toDateString();
       if (new Date(post.createdAt).getTime() >= lastWeek) {
         // only count posts from last 14 days
-        const department = post.department;
+        const department = post?.department?.name;
         if (!postCountsByDay[date]) {
           postCountsByDay[date] = {};
         }
@@ -93,8 +93,8 @@ export default function QA() {
 
   useEffect(() => {
     const departments = posts?.reduce((accumulator, post) => {
-      if (!accumulator.includes(post.department)) {
-        accumulator.push(post.department);
+      if (!accumulator.includes(post?.department?.name)) {
+        if (post?.department?.name) accumulator.push(post?.department?.name);
       }
       return accumulator;
     }, []);
@@ -154,7 +154,7 @@ export default function QA() {
       const csvUrl = URL.createObjectURL(data);
       const link = document.createElement("a");
       link.href = csvUrl;
-      link.setAttribute("download", "posts.csv");
+      link.setAttribute("download", "idea.csv");
       document.body.appendChild(link);
       link.click();
     } catch (err) {

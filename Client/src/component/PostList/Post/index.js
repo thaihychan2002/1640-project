@@ -16,15 +16,12 @@ import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 import { updatePosts } from "../../../redux/actions/index.js";
-import {
-  departmentsState$,
-  categoriesState$
-} from "../../../redux/seclectors";
+import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
 import { Modal, Button, Input, Select, Alert } from "antd";
 import { Store } from "../../../Store";
-import { PictureOutlined, } from "@ant-design/icons";
+import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { animalList } from "./anonymousAnimal.js";
 import { render } from "react-dom";
 
@@ -32,15 +29,16 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 export default function Post({ post }) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { state } = useContext(Store);
   const user = state.userInfo;
   const departments = useSelector(departmentsState$);
   const categories = useSelector(categoriesState$);
   const [Modalupdate, setModalUpdate] = useState(false);
-  const [Modaloption, setModalOption] = useState(false)
+  const [Modaloption, setModalOption] = useState(false);
   const departmentref = useRef(null);
-  const caetgoryref = useRef(null)
+  const caetgoryref = useRef(null);
   const [data, setdata] = React.useState({});
   const [defaultValue, setvalue] = React.useState({
     title: post.title,
@@ -49,7 +47,7 @@ export default function Post({ post }) {
     department: post.department,
     category: post.categories,
     attachment: post.attachment,
-  })
+  });
   // Anonymous Animals
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
@@ -65,7 +63,7 @@ export default function Post({ post }) {
   const categet = (e) => {
     setdata({ ...data, categories: e });
     data.categories = caetgoryref.current.value;
-  }
+  };
   const handleOk = React.useCallback(() => {
     setModalUpdate(false);
   }, []);
@@ -75,9 +73,8 @@ export default function Post({ post }) {
   const viewModal = React.useCallback(() => {
     if (post.author.fullName === user.fullName) {
       setModalUpdate(true);
-    }
-    else {
-      console.log('cannot edit other post ', post.author)
+    } else {
+      console.log("cannot edit other post ", post.author);
       setModalOption(true);
     }
   }, [user, post]);
@@ -113,9 +110,15 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   const updatehandler = React.useCallback(() => {
-    console.log(`data-update`, data)
-    dispatch(updatePosts.updatePostsRequest({ _id: post._id, author: post.author, ...data }));
-    handleOk()
+    console.log(`data-update`, data);
+    dispatch(
+      updatePosts.updatePostsRequest({
+        _id: post._id,
+        author: post.author,
+        ...data,
+      })
+    );
+    handleOk();
   }, [dispatch, data, post, handleOk]);
   const onDislikeBtnClick = React.useCallback(() => {
     if (dislikeActive) {
@@ -166,12 +169,29 @@ export default function Post({ post }) {
             </IconButton>
           }
         />
-        <CardMedia
-          image={post.attachment || ""}
-          title="image"
-          component="img"
-          className={classes.media}
-        ></CardMedia>
+
+        <Button
+          type="button"
+          onClick={() => navigate(`/idea/${post?.slug}`)}
+          style={{
+            width: "100%",
+            height: "300px",
+            backgroundColor: "transparent",
+            display: "block",
+
+            padding: 0,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          <CardMedia
+            image={post.attachment || ""}
+            title="image"
+            component="img"
+            className={classes.media}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </Button>
         <CardContent>
           <Typography variant="h5" color="textPrimary">
             {post.title}
@@ -197,9 +217,13 @@ export default function Post({ post }) {
             <Typography component="span" color="textSecondary"></Typography>
           </IconButton>
           {`${post.likeCount} likes`}
-
         </CardActions>
-        <Grid container spacing={2} alignItems="stretch" style={{ marginLeft: '20px' }}>
+        <Grid
+          container
+          spacing={2}
+          alignItems="stretch"
+          style={{ marginLeft: "20px" }}
+        >
           <Grid item xs={6} lg={6} className="idea">
             <div>
               <Link to="/profile">
@@ -356,19 +380,13 @@ export default function Post({ post }) {
         className="container"
       >
         <Grid container spacing={2} alignItems="stretch">
-          <Grid item xs={12} lg={12} >
-            <Button
-              type="primary"
-              block
-            >
+          <Grid item xs={12} lg={12}>
+            <Button type="primary" block>
               Report
             </Button>
           </Grid>
-          <Grid item xs={12} lg={12} >
-            <Button
-              type="primary"
-              block
-            >
+          <Grid item xs={12} lg={12}>
+            <Button type="primary" block>
               Save post
             </Button>
           </Grid>

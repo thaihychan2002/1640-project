@@ -86,3 +86,14 @@ export const levenshteinDistance = (str1, str2) => {
   }
   return track[str2.length][str1.length]
 }
+export const slug = (title) => {
+  return (
+    title
+      .toLowerCase()
+      .split(/[ ]/)
+      .filter((item) => item)
+      .join('-') +
+    '-' +
+    Math.floor(Math.random() * 1000)
+  )
+}

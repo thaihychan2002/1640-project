@@ -10,7 +10,6 @@ import mongoose from 'mongoose'
 import morgan from 'morgan'
 import roles from './routers/role.js'
 import { DepartmentModel } from './model/departments.js'
-import { getDepartment } from './controller/departments.js'
 import { v2 as cloudinary } from 'cloudinary'
 
 const app = express()

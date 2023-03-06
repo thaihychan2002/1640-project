@@ -24,6 +24,7 @@
     "joi": "^17.7.1",
     "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.0",
+    "jszip": "^3.10.1",
     "moment": "^2.29.4",
     "mongo-csv": "^2.2.5",
     "mongoose": "^6.9.0",

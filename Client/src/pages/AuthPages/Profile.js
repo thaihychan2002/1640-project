@@ -14,7 +14,9 @@ import { allPostsState$, allPostsLoading$ } from "../../redux/seclectors";
 import { token } from "../../api/config";
 import jwtDecode from "jwt-decode";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
+import { useNavigate } from "react-router-dom";
 export default function Profile() {
+  const navigate = useNavigate();
   // fetch user posts
   const dispatch = useDispatch();
   const posts = useSelector(allPostsState$);
@@ -124,7 +126,7 @@ export default function Profile() {
             {toggle ? (
               <div>
                 <Input
-                  value={fullName}
+                  value={user.fullName}
                   className="profile-name"
                   onChange={(e) => setFullName(e.target.value)}
                 />
@@ -172,15 +174,30 @@ export default function Profile() {
                   marginBottom: "25px",
                 }}
               >
-                <CardMedia
+                <Button
+                  type="button"
+                  onClick={() => navigate(`/idea/${post?.slug}`)}
                   style={{
-                    height: "300px",
-                    borderRadius: "0px",
+                    display: "block",
+                    width: "100%",
+                    height: "100%",
+                    padding: 0,
+                    border: "none",
+                    backgroundColor: "transparent",
+                    cursor: "pointer",
                   }}
-                  image={post.attachment}
-                  title={post.title}
-                  component="img"
-                />
+                >
+                  <CardMedia
+                    style={{
+                      width: "100%",
+                      height: "300px",
+                      borderRadius: "0px",
+                    }}
+                    image={post.attachment}
+                    title={post.title}
+                    component="img"
+                  />
+                </Button>
               </Card>
             </Grid>
           ))
