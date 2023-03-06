@@ -17,6 +17,8 @@ axiosInstance.interceptors.request.use((config) => {
 
 // posts
 export const fetchPosts = () => axiosInstance.get(`/posts`);
+export const fetchPostBySlug = (slug) =>
+  axiosInstance.get(`/posts/idea/${slug}`);
 export const createPosts = (payload) =>
   axiosInstance.post(`/posts/create`, payload);
 export const updatePosts = (payload) =>
@@ -46,30 +48,13 @@ export const rejectPost = (payload) =>
 //download csv and zip
 export const downloadCSV = () =>
   axiosInstance.get("/posts/export", { responseType: "blob" });
+
 export const downloadZip = (postID) =>
   axiosInstance.post(
     "/posts/download",
     { _id: postID },
-    {
-      responseType: "blob",
-    }
+    { responseType: "blob" }
   );
-// const downloadZipFile = async (selectedIds) => {
-//   try {
-//     const response = await axios.post('/downloadUser', { _id: selectedIds }, {
-//       responseType: 'blob',
-//     });
-//     const url = window.URL.createObjectURL(new Blob([response.data]));
-//     const link = document.createElement('a');
-//     link.href = url;
-//     link.setAttribute('download', 'users.zip');
-//     document.body.appendChild(link);
-//     link.click();
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
 //role
 export const fetchRoles = () => axiosInstance.get("/roles");
 export const createRole = (name) =>

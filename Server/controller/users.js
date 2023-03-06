@@ -1,7 +1,11 @@
 import { UserModel } from '../model/users.js'
 import { generateToken } from '../utils.js'
 import bcrypt from 'bcryptjs'
-import { registerUserSchema } from '../helpers/validation_schema.js'
+import {
+  registerUserSchema,
+  updateUserByAdminSchema,
+  updateUserSchema,
+} from '../helpers/validation_schema.js'
 import { v2 as cloudinary } from 'cloudinary'
 
 export const getUsers = async (req, res) => {
@@ -115,6 +119,7 @@ export const deleteUser = async (req, res) => {
 }
 export const updateUser = async (req, res) => {
   try {
+    await updateUserByAdminSchema.validateAsync(req.body)
     const updatedUser = await UserModel.findByIdAndUpdate(
       req.body.userID,
       {
@@ -134,6 +139,7 @@ export const updateUser = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
   try {
+    await updateUserSchema.validateAsync(req.body)
     const user = await UserModel.findById(req.body.userID)
     if (user) {
       const fileStr = req.body.data || req.data

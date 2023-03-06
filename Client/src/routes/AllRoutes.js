@@ -7,7 +7,7 @@ import DashBoard from "../pages/AdminPages/Dashboard";
 import QA from "../pages/QAPages/QA";
 import UserRoute from "../component/ProtectedRoute/UserRoute";
 import AdminRoute from "../component/ProtectedRoute/AdminRoute";
-import PostDetails from "../pages/PostDetails";
+import PostDetails from "../pages/AuthPages/PostDetails";
 export const AllRoutes = [
   {
     path: "/",
@@ -51,7 +51,7 @@ export const AllRoutes = [
     ),
   },
   {
-    path: "/postdetails",
+    path: "/idea/:slug",
     element: <PostDetails />,
   },
 ];

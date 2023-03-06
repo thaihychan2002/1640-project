@@ -118,17 +118,17 @@ export default function PostManage() {
         text
       ),
   });
-
   const posts = useSelector(allPostsState$);
+
   const filterPostsByStatus = (posts, status) =>
     posts
       ?.filter((post) => post.status === status)
-      .map((post) => ({
+      ?.map((post) => ({
         key: post._id,
         title: post.title,
         content: post.content,
         author: post?.author?.fullName,
-        department: post.department,
+        department: post?.department?.name,
         status: post.status,
         attachment: post.attachment,
       }));
@@ -138,7 +138,7 @@ export default function PostManage() {
     title: post.title,
     content: post.content,
     author: post?.author?.fullName,
-    department: post.department,
+    department: post?.department?.name,
     status: post.status,
     attachment: post.attachment,
   }));

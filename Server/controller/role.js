@@ -9,6 +9,7 @@ export const getRole = async (req, res) => {
 }
 export const createRole = async (req, res) => {
   try {
+    await createRoleSchema.validateAsync(req.body)
     const newRole = req.body
     const role = new RoleModel(newRole)
     await role.save()

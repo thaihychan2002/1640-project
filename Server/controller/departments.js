@@ -1,3 +1,4 @@
+import { createDepartmentSchema } from '../helpers/validation_schema.js'
 import { DepartmentModel } from '../model/departments.js'
 export const getDepartment = async (req, res) => {
   try {
@@ -10,6 +11,7 @@ export const getDepartment = async (req, res) => {
 
 export const createDepartment = async (req, res) => {
   try {
+    await createDepartmentSchema.validateAsync(req.body)
     const newDepartment = req.body
     const department = new DepartmentModel(newDepartment)
     await department.save()
