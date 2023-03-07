@@ -24,10 +24,10 @@ const PostDetails = () => {
   useEffect(() => {
     const fetchPost = async () => {
       const { data } = await fetchPostBySlug(slug);
-      console.log(data);
       setAllData({
         ...allData,
         _id: data._id,
+        slug: data.slug,
         title: data.title,
         author: data?.author?.fullName,
         authorAvatar: data.author?.avatar,
@@ -39,6 +39,7 @@ const PostDetails = () => {
     };
     fetchPost();
   }, [slug]);
+  console.log(allData.slug);
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
@@ -48,8 +49,8 @@ const PostDetails = () => {
 
   const downloadPost = async () => {
     try {
-      const postID = allData._id;
-      const response = await downloadZip(postID);
+      const slug = allData.slug;
+      const response = await downloadZip(slug);
       const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = downloadUrl;
@@ -60,6 +61,25 @@ const PostDetails = () => {
       console.error(err);
     }
   };
+  // const downloadPost = async (slug) => {
+  //   try {
+  //     slug = allData.slug;
+  //     const response = await downloadZip(slug);
+  //     // Create a temporary URL for the downloaded file
+  //     const url = window.URL.createObjectURL(new Blob([response.data]));
+
+  //     // Create a link element and click it to download the file
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", `post-${slug}.docx`);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2}></Grid>
@@ -100,7 +120,10 @@ const PostDetails = () => {
               {moment(allData.createdAt).format("LLL")}
             </span>
           </div>
-          <div className="postContent">{allData.content}</div>
+          <div
+            className="postContent"
+            dangerouslySetInnerHTML={{ __html: allData.content }}
+          ></div>
           <center>
             <img className="postImg" src={allData.attachment} alt="" />
           </center>

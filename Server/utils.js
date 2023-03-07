@@ -97,3 +97,6 @@ export const slug = (title) => {
     Math.floor(Math.random() * 1000)
   )
 }
+export const isDuplicatePost = (post1, post2) => {
+  return post1._id === post2._id || post1.attachment === post2.attachment
+}

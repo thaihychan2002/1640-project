@@ -43,6 +43,7 @@ export default function PostList() {
   const changePostsView = (value) => {
     setSelectedView(value);
   };
+
   const isXs = useMediaQuery("(max-width:600px)");
   const isSm = useMediaQuery("(max-width:900px)");
 

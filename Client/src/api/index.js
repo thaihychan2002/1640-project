@@ -38,8 +38,8 @@ export const fetchRecentlyPosts = () =>
 export const fetchPostsByDepartment = () =>
   axiosInstance.get("/posts/viewPostsByDepartment/:department");
 //search posts
-export const searchPostsByKeyword = () =>
-  axiosInstance.get("/posts/search/:keyword");
+export const searchPostsByKeyword = (keyword) =>
+  axiosInstance.get(`/posts/search/${keyword}`);
 // post status
 export const acceptPost = (payload) =>
   axiosInstance.put("/posts/accept", payload);
@@ -49,11 +49,19 @@ export const rejectPost = (payload) =>
 export const downloadCSV = () =>
   axiosInstance.get("/posts/export", { responseType: "blob" });
 
-export const downloadZip = (postID) =>
+// export const downloadZip = (postID) =>
+//   axiosInstance.post(
+//     "/posts/download",
+//     { _id: postID },
+//     { responseType: "blob" }
+//   );
+export const downloadZip = (slug) =>
   axiosInstance.post(
     "/posts/download",
-    { _id: postID },
-    { responseType: "blob" }
+    { slug: slug },
+    {
+      responseType: "blob",
+    }
   );
 //role
 export const fetchRoles = () => axiosInstance.get("/roles");
