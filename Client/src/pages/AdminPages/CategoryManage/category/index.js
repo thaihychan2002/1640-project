@@ -10,7 +10,7 @@ export default function Category({ record_cat }) {
     const dispatch_ca = useDispatch()
     const [ModalCatUpdate, setModalCatUpdate] = useState(false);
     const [data, setdata] = React.useState({});
-    const [defaultValue, setvalue] = React.useState({
+    const [defaultValue] = React.useState({
         name: record_cat.name,
         description: record_cat.description,
         begin: record_cat.begindate,
@@ -104,29 +104,4 @@ export default function Category({ record_cat }) {
             </Modal></>
 
     );
-    setdata({ _id: "", name: "" });
-  }, [data, dispatch]);
-  return (
-    <Grid container spacing={2} alignItems="stretch">
-      <Grid item xs={8} lg={8} className="row-new-post">
-        <TextArea
-          allowClear
-          autoSize={{
-            minRows: 1,
-            maxRows: 1,
-          }}
-          placeholder="Write the updated name"
-          size="large"
-          value={data.name}
-          onChange={(e) =>
-            setdata({ ...data, name: e.target.value, _id: record._id })
-          }
-          required
-        />
-      </Grid>
-      <Grid item xs={4} lg={4} className="row-new-post">
-        <Link onClick={onUpdateHandler}>Update category</Link>
-      </Grid>
-    </Grid>
-  );
 }

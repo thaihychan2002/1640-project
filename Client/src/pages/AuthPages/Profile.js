@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { Grid, Card, CardMedia } from "@material-ui/core";
 import { Helmet } from "react-helmet-async";
 import { Form, Input, Button, Divider } from "antd";
-import { BulbOutlined } from "@ant-design/icons";
 import * as actions from "../../redux/actions";
 import "../../component/assets/css/Profile.css";
 import { toast } from "react-toastify";
@@ -22,7 +21,7 @@ export default function Profile() {
   //
   const { state } = useContext(Store);
   const user = state.userInfo;
-  const [fileInputState, setFileInputState] = useState("");
+  const [fileInputState] = useState("");
   const [previewSource, setPreviewSource] = useState("");
 
   const [fullName, setFullName] = useState(user.fullName);

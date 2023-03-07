@@ -6,8 +6,8 @@ import Icon, {
   LineChartOutlined,
 } from "@ant-design/icons";
 import "../assets/css/Navigation.css";
-import { Layout, Menu, theme, Avatar } from "antd";
-import React, { useState, useEffect, useContext } from "react";
+import { Layout, Menu } from "antd";
+import React, {  useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Store } from "../../Store";
 import jwtDecode from "jwt-decode";
@@ -17,7 +17,8 @@ import { fetchUserByID } from "../../api";
 const { Sider } = Layout;
 
 export default function Navigation() {
-  useEffect(() => {
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  React.useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("userInfo");
       if (token) {
@@ -35,14 +36,8 @@ export default function Navigation() {
       return;
     };
     fetchUser();
-  }, []);
+  }, [ctxDispatch]);
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-  const [collapsed, setCollapsed] = useState(false);
-
-  const { state, dispatch: ctxDispatch } = useContext(Store);
   const role = state.userInfo.role;
   const linkRoutes =
     role === "Admin"

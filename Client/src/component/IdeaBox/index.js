@@ -73,7 +73,7 @@ export default function IdeaBox() {
       isChecked === false
     );
   };
-  const [fileInputState, setFileInputState] = useState("");
+  const [fileInputState] = useState("");
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     previewFile(file);
@@ -246,7 +246,7 @@ export default function IdeaBox() {
                   }
                 ></Switch>
               </div>
-              <div style={{ marginTop: "44%", fontSize: "16px" }}>
+              <div style={{ marginTop: "35%", fontSize: "16px" }}>
                 Click to view{" "}
                 <span className="term" onClick={showDrawer}>
                   GreFeed Terms and Conditions

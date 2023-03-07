@@ -2,7 +2,6 @@ import { Tabs } from "antd";
 import React from "react";
 import UserManage from "./UserManage";
 import DepartmentManage from "./DepartmentManage.js/index.js";
-
 import CategoryManage from "./CategoryManage"
 import { useDispatch } from "react-redux";
 import * as actions from "../../redux/actions";
@@ -21,6 +20,7 @@ const DashBoard = () => {
     dispatch(actions.getCategories.getCategoriesRequest());
   }, [dispatch]);
   const children = [<UserManage />, <DepartmentManage />, <CategoryManage />, <PostManage/>,""];
+  const icon =[<UserOutlined/>, <ApartmentOutlined/>,<BarsOutlined/>]
   const tabName = [
     <span>User Manage</span>,
     <span>Department Manage</span>,

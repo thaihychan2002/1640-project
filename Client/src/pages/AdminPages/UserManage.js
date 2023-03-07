@@ -1,6 +1,5 @@
 import { Grid } from "@material-ui/core";
 import { useEffect, useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { fetchUsers, deleteUser } from "../../api/index";
 import { Space, Table } from "antd";
 import reducer from "../../component/Reducer/Reducer.js";
@@ -13,7 +12,6 @@ import { updateUser } from "../../api/index";
 import { Select } from "antd";
 const { Option } = Select;
 const UserManage = () => {
-  const navigate = useNavigate();
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {

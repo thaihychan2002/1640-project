@@ -7,3 +7,6 @@ export const departmentsState$ = (state) => state.departments.data;
 export const departmentsLoading$ = (state) => state.departments.isLoading;
 export const categoriesState$ = (state) => state.categories.data;
 export const categoriesLoading$ = (state) => state.categories.isLoading;
+export const commentsState$ = (state) => state.comments.data;
+export const commentsLoading$ = (state) => state.comments.isLoading;
+export const conditionCmtState$ = (state) => state.ConditionCmt.data;

@@ -3,12 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   categoriesLoading$,
   categoriesState$,
-  modalState$,
 } from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Space, Table, Button, Modal, Input, DatePicker, Typography, Alert } from "antd";
+import { Space, Table, Button, Modal, Input, DatePicker, Typography} from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 import Category from "./category";
 import moment from "moment";
@@ -121,11 +120,11 @@ export default function CategoryManage() {
             </Grid>
             <Grid item xs={6} lg={6} className="row-new-post">
               <Typography>Begin date of the collection</Typography>
-              <DatePicker showTime={{ format: 'HH:mm:ss' }} format='HH:mm:ss DD-MM-YYYY' onChange={onSelectBegin} />
+              <DatePicker showTime={{ format: 'HH:mm:ss' }} disabledDate={disabledPassDates} format='HH:mm:ss DD-MM-YYYY' onChange={onSelectBegin} />
             </Grid>
             <Grid item xs={6} lg={6} className="row-new-post">
               <Typography>End date of the collection</Typography>
-              <DatePicker showTime={{ format: 'HH:mm:ss' }} format='HH:mm:ss DD-MM-YYYY' onChange={onSelectEnd} />
+              <DatePicker showTime={{ format: 'HH:mm:ss' }} disabledDate={disabledPassDates} format='HH:mm:ss DD-MM-YYYY' onChange={onSelectEnd} />
             </Grid>
             <Grid item xs={12} lg={12} className="row-new-post">
               <Typography>Write the name of the category</Typography>

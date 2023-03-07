@@ -1,7 +1,4 @@
 import { Grid } from "@material-ui/core";
-import { toast } from "react-toastify";
-import { getError } from "../../utils";
-import { Helmet } from "react-helmet-async";
 import { allPostsState$ } from "../../redux/seclectors/";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -13,7 +10,6 @@ import * as actions from "../../redux/actions";
 export default function PostManage() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const [filteredInfo, setFilteredInfo] = useState({});
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();

@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import { Row, Col } from "antd";
+import React, { useContext} from "react";
 import "../assets/css/AccountSwitch.css";
 import { Store } from "../../Store";
 import { Link } from "react-router-dom";
@@ -41,35 +40,5 @@ export default function AccountSwitch() {
         </div>
       </div>
     </div>
-    // <Col className="account-switch">
-    //   <Row>
-    //     <Col lg={24} md={18}>
-    //       <Row>
-    //         <Col lg={10} md={6} className="img-switch">
-    //           <Link to="/profile">
-    //             <img alt={user?.fullName} src={user?.avatar} />
-    //           </Link>
-    //         </Col>
-    //         <div className="info-switch">
-    //           <Col lg={10} md={10} className="account-info">
-    //             <span>{user?.fullName}</span>
-    //           </Col>
-    //           <Col lg={4} md={2}>
-    //             <Button>
-    //               {" "}
-    //               <Link
-    //                 className="switch"
-    //                 to="#logout"
-    //                 onClick={() => signoutHandler()}
-    //               >
-    //                 Logout
-    //               </Link>
-    //             </Button>
-    //           </Col>
-    //         </div>
-    //       </Row>
-    //     </Col>
-    //   </Row>
-    // </Col>
   );
 }
