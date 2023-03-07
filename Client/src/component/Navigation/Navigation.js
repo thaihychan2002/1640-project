@@ -1,4 +1,4 @@
-import {
+import Icon, {
   UserOutlined,
   HomeOutlined,
   ApartmentOutlined,
@@ -6,8 +6,8 @@ import {
   LineChartOutlined,
 } from "@ant-design/icons";
 import "../assets/css/Navigation.css";
-import { Layout, Menu, theme } from "antd";
-import React, { useState, useEffect, useContext } from "react";
+import { Layout, Menu } from "antd";
+import React, {  useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Store } from "../../Store";
 import jwtDecode from "jwt-decode";
@@ -17,7 +17,8 @@ import { fetchUserByID } from "../../api";
 const { Sider } = Layout;
 
 export default function Navigation() {
-  useEffect(() => {
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  React.useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("userInfo");
       if (token) {
@@ -35,50 +36,60 @@ export default function Navigation() {
       return;
     };
     fetchUser();
-  }, []);
+  }, [ctxDispatch]);
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-  const [collapsed, setCollapsed] = useState(false);
-  const navName = [
-    "Home",
-    "Department",
-    "Categories",
-    "Admin Dashboard",
-    "QA Coordinator",
-  ];
-  const linkRoutes = ["/", "/department", "/categories", "/dashboard", "/qa"];
-  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const role = state.userInfo.role;
+  const linkRoutes =
+    role === "Admin"
+      ? ["/", "/department", "/categories", "/dashboard", "/qa", "/profile"]
+      : ["/", "/department", "/categories", "/profile"];
+  const navName =
+    role === "Admin"
+      ? [
+          "Home",
+          "Department",
+          "Categories",
+          "Admin Dashboard",
+          "QA Coordinator",
+          "Profile",
+        ]
+      : ["Home", "Department", "Categories", "Profile"];
   // Hide navbar when route === /login or /register
   const withOutNavbarRoutes = ["/login", "/register"];
   const { pathname } = useLocation();
   if (withOutNavbarRoutes.some((item) => pathname.includes(item))) return null;
   //
+  const profile = () => (
+    <img
+      style={{
+        width: "16px",
+        height: "16px",
+      }}
+      src={state.userInfo.avatar}
+      alt={state.userInfo.fullName}
+    />
+  );
 
-  return (
-    <Sider
-      className="sider-style"
-      breakpoint="lg"
-      collapsedWidth="80"
-      // onBreakpoint={(broken) => {
-      //   console.log(broken);
-      // }}
-      // onCollapse={(collapsed, type) => {
-      //   console.log(collapsed, type);
-      // }}
-    >
-      <Menu
-        className="menu-style"
-        mode="inline"
-        defaultSelectedKeys={["0"]}
-        items={[
+  const ProfileOutlined = (props) => <Icon component={profile} {...props} />;
+
+  const icons =
+    role === "Admin"
+      ? [
           HomeOutlined,
           ApartmentOutlined,
           BarsOutlined,
           LineChartOutlined,
           UserOutlined,
-        ].map((icon, index) => ({
+          ProfileOutlined,
+        ]
+      : [HomeOutlined, ApartmentOutlined, BarsOutlined, ProfileOutlined];
+  return (
+    <Sider className="sider-style" breakpoint="lg" collapsedWidth="80">
+      <Menu
+        className="menu-style"
+        mode="inline"
+        defaultSelectedKeys={["0"]}
+        items={[...icons].map((icon, index) => ({
           key: String(index + 1),
           icon: React.createElement(icon),
           label: (

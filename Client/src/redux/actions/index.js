@@ -24,10 +24,25 @@ export const updatePosts = createActions({
   updatePostsSuccess: (payload) => payload,
   updatePostsFailure: (err) => err,
 });
+export const updatePostAccept = createActions({
+  updatePostAcceptRequest: (payload) => payload,
+  updatePostAcceptSuccess: (payload) => payload,
+  updatePostAcceptFailure: (err) => err,
+});
+export const updatePostReject = createActions({
+  updatePostRejectRequest: (payload) => payload,
+  updatePostRejectSuccess: (payload) => payload,
+  updatePostRejectFailure: (err) => err,
+});
 export const deletePosts = createActions({
   deletePostsRequest: (payload) => payload,
   deletePostsSuccess: (payload) => payload,
   deletePostsFailure: (err) => err,
+});
+export const deletePostByAdmin = createActions({
+  deletePostRequestByAdmin: (payload) => payload,
+  deletePostSuccessByAdmin: (payload) => payload,
+  deletePostFailureByAdmin: (err) => err,
 });
 //department
 export const getDepartments = createActions({
@@ -70,6 +85,32 @@ export const deleteCategories = createActions({
   deleteCategoriesRequest: (payload) => payload,
   deleteCategoriesSuccess: (payload) => payload,
   deleteCategoriesFailure: (err) => err,
+});
+//comment
+export const getConditionCmts = createActions({
+  getCmtsRequest: undefined,
+  getCmtsSuccess: (payload) => payload,
+  getCmtsFailure: (err) => err,
+});
+export const getComments = createActions({
+  getCommentsRequest: (payload) => payload,
+  getCommentsSuccess: (payload) => payload,
+  getCommentsFailure: (err) => err,
+});
+export const createComments = createActions({
+  createCommentsRequest: (payload) => payload,
+  createCommentsSuccess: (payload) => payload,
+  createCommentsFailure: (err) => err,
+});
+export const updateComments = createActions({
+  updateCommentsRequest: (payload) => payload,
+  updateCommentsSuccess: (payload) => payload,
+  updateCommentsFailure: (err) => err,
+});
+export const deleteComments = createActions({
+  deleteCommentsRequest: (payload) => payload,
+  deleteCommentsSuccess: (payload) => payload,
+  deleteCommentsFailure: (err) => err,
 });
 export const showModal = createAction("SHOW_CREATE_POST_MODEL");
 export const hideModal = createAction("HIDE_CREATE_POST_MODAL");

@@ -1,15 +1,20 @@
 import { Grid } from "@material-ui/core";
-import { allPostsState$, departmentsState$ } from "../../redux/seclectors";
+import { allPostsState$ } from "../../redux/seclectors";
 import { useSelector, useDispatch } from "react-redux";
-import { useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { Store } from "../../Store";
+import {  useState, useEffect, useMemo, useCallback } from "react";
+
 import React from "react";
 import * as actions from "../../redux/actions";
 import ReactApexChart from "react-apexcharts";
 import { Helmet } from "react-helmet-async";
+import { Button, Statistic } from "antd";
+import CountUp from "react-countup";
+import { downloadCSV } from "../../api";
+
 export default function QA() {
   const dispatch = useDispatch();
   const posts = useSelector(allPostsState$);
+
   const [departments, setDepartments] = useState([]);
   const optionsPie = useMemo(() => {
     return {
@@ -32,14 +37,13 @@ export default function QA() {
       ],
     };
   }, [departments]);
-
   const [series, setSeries] = useState([]);
   const [seriesPie, setSeriesPie] = useState([]);
   const [options, setOptions] = useState({});
 
   const getPostsByDepartment = useCallback(
     (department) => {
-      return posts?.filter((post) => post.department === department);
+      return posts?.filter((post) => post?.department?.name === department);
     },
     [posts]
   );
@@ -69,12 +73,12 @@ export default function QA() {
   const getPostCountsByDay = useCallback(() => {
     const postCountsByDay = {};
     const now = Date.now();
-    const lastWeek = now - 7 * 24 * 60 * 60 * 1000; // 7 days ago
+    const lastWeek = now - 14 * 24 * 60 * 60 * 1000; // 14 days ago
     posts?.forEach((post) => {
       const date = new Date(post.createdAt).toDateString();
       if (new Date(post.createdAt).getTime() >= lastWeek) {
-        // only count posts from last 7 days
-        const department = post.department;
+        // only count posts from last 14 days
+        const department = post?.department?.name;
         if (!postCountsByDay[date]) {
           postCountsByDay[date] = {};
         }
@@ -89,8 +93,8 @@ export default function QA() {
 
   useEffect(() => {
     const departments = posts?.reduce((accumulator, post) => {
-      if (!accumulator.includes(post.department)) {
-        accumulator.push(post.department);
+      if (!accumulator.includes(post?.department?.name)) {
+        if (post?.department?.name) accumulator.push(post?.department?.name);
       }
       return accumulator;
     }, []);
@@ -105,31 +109,20 @@ export default function QA() {
 
   useEffect(() => {
     const postCountsByDay = getPostCountsByDay();
-    const dates = Object.keys(postCountsByDay).sort();
-    const series = departments?.map((department) => {
-      const data = dates?.map((date) => {
-        return postCountsByDay[date][department] || 0;
-      });
-      return {
-        name: department,
-        data: data,
-      };
-    });
-    setSeries(series);
-  }, [departments, getPostCountsByDay]);
-
-  useEffect(() => {
-    const postCountsByDay = getPostCountsByDay();
-    const dates = Object.keys(postCountsByDay).sort();
-    const series = departments?.map((department) => {
-      const data = dates?.map((date) => {
-        return postCountsByDay[date][department] || 0;
-      });
-      return {
-        name: department,
-        data: data,
-      };
-    });
+    const dates = Object.keys(postCountsByDay);
+    // const dates = Object.keys(postCountsByDay).sort();
+    const series = departments?.map(
+      (department) => {
+        const data = dates?.map((date) => {
+          return postCountsByDay[date][department] || 0;
+        });
+        return {
+          name: department,
+          data: data,
+        };
+      },
+      [departments, getPostCountsByDay]
+    );
     const options = {
       chart: {
         type: "bar", // Change type to "bar"
@@ -153,15 +146,46 @@ export default function QA() {
   React.useEffect(() => {
     dispatch(actions.getAllPosts.getAllPostsRequest());
   }, [dispatch]);
+  const formatter = (value) => <CountUp end={value} separator="," />;
+  const downloadPosts = async () => {
+    try {
+      const response = await downloadCSV();
+      const data = response.data;
+      const csvUrl = URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = csvUrl;
+      link.setAttribute("download", "idea.csv");
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Grid container>
       <Helmet>
         <title>QA Coordinator</title>
       </Helmet>
       <Grid item xs={2} sm={2} />
-      <Grid item xs={8} sm={8}>
-        <ReactApexChart options={optionsPie} series={seriesPie} type="donut" />
-        <ReactApexChart options={options} series={series} type="bar" />
+      <Grid container item xs={8} sm={8}>
+        <Grid item xs={6} md={6}>
+          <Button onClick={() => downloadPosts()}>Download all posts</Button>
+
+          <Statistic
+            title="Active Ideas"
+            value={posts.length}
+            formatter={formatter}
+          />
+          <ReactApexChart
+            options={optionsPie}
+            series={seriesPie}
+            type="donut"
+          />
+        </Grid>
+        <Grid item xs={6} md={6}>
+          <ReactApexChart options={options} series={series} type="bar" />
+        </Grid>
       </Grid>
     </Grid>
   );

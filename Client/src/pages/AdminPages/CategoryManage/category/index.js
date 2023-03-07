@@ -5,11 +5,12 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Modal, Input, DatePicker, Typography } from "antd";
 const { TextArea } = Input;
+
 export default function Category({ record_cat }) {
     const dispatch_ca = useDispatch()
     const [ModalCatUpdate, setModalCatUpdate] = useState(false);
     const [data, setdata] = React.useState({});
-    const [defaultValue, setvalue] = React.useState({
+    const [defaultValue] = React.useState({
         name: record_cat.name,
         description: record_cat.description,
         begin: record_cat.begindate,
@@ -101,5 +102,6 @@ export default function Category({ record_cat }) {
                     </Grid>
                 </Grid>
             </Modal></>
+
     );
 }

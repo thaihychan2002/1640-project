@@ -5,6 +5,9 @@ import {
   getType,
   updatePosts,
   deletePosts,
+  updatePostAccept,
+  updatePostReject,
+  deletePostByAdmin,
 } from "../actions";
 
 export default function postsReducers(state = INIT_STATE.posts, action) {
@@ -37,12 +40,37 @@ export default function postsReducers(state = INIT_STATE.posts, action) {
           post._id === action.payload._id ? action.payload : post
         ),
       };
-      case getType(deletePosts.deletePostsSuccess):
-        const newData =state.data.filter((post)=>{ return post._id !== action.payload._id});
-        return {
-            ...state,
-            data: newData,
-        };
+    case getType(updatePostAccept.updatePostAcceptSuccess):
+      return {
+        ...state,
+        data: state.data.map((post) =>
+          post._id === action.payload._id ? action.payload : post
+        ),
+      };
+    case getType(updatePostReject.updatePostRejectSuccess):
+      return {
+        ...state,
+        data: state.data.map((post) =>
+          post._id === action.payload._id ? action.payload : post
+        ),
+      };
+    case getType(deletePosts.deletePostsSuccess):
+      const newData = state.data.filter((post) => {
+        return post._id !== action.payload._id;
+      });
+      return {
+        ...state,
+        data: newData,
+      };
+
+    case getType(deletePostByAdmin.deletePostSuccessByAdmin):
+      const newDataDelete = state.data.filter((post) => {
+        return post._id !== action.payload._id;
+      });
+      return {
+        ...state,
+        data: newDataDelete,
+      };
     default:
       return state;
   }

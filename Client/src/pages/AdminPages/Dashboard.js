@@ -2,12 +2,19 @@ import { Tabs } from "antd";
 import React from "react";
 import UserManage from "./UserManage";
 import DepartmentManage from "./DepartmentManage.js/index.js";
-import CategoryManage from "./CategoryManage"
+import CategoryManage from "./CategoryManage";
 import { useDispatch } from "react-redux";
 import * as actions from "../../redux/actions";
-import { UserOutlined, ApartmentOutlined, BarsOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  ApartmentOutlined,
+  BarsOutlined,
+  BulbOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
 import PostManage from "./PostManage";
+import RoleManage from "./RoleManage";
 const DashBoard = () => {
   const dispatch = useDispatch();
   React.useEffect(() => {
@@ -19,14 +26,27 @@ const DashBoard = () => {
   React.useEffect(() => {
     dispatch(actions.getCategories.getCategoriesRequest());
   }, [dispatch]);
-  const children = [<UserManage />, <DepartmentManage />, <CategoryManage />, <PostManage/>,""];
+  const children = [
+    <UserManage />,
+    <RoleManage />,
+    <DepartmentManage />,
+    <CategoryManage />,
+    <PostManage />,
+  ];
   const tabName = [
     <span>User Manage</span>,
+    <span>Role Manage</span>,
     <span>Department Manage</span>,
     <span>Category Manage</span>,
-    <span>Post Manage</span>
+    <span>Post Manage</span>,
   ];
-  const icon = [<UserOutlined />, <ApartmentOutlined />, <BarsOutlined />, ""];
+  const icons = [
+    <UserOutlined />,
+    <SettingOutlined />,
+    <ApartmentOutlined />,
+    <BarsOutlined />,
+    <BulbOutlined />,
+  ];
   return (
     <div>
       <Helmet>
@@ -36,17 +56,16 @@ const DashBoard = () => {
       <Tabs
         defaultActiveKey="1"
         centered
-        items={new Array(4).fill(null).map((_, i) => {
-          const id = String(i + 1);
+        items={new Array(5).fill(null).map((_, i) => {
           return {
             label: (
               <span>
-                {icon[id - 1]}
-                {tabName[id - 1]}
+                {icons[i]}
+                {tabName[i]}
               </span>
             ),
-            key: id,
-            children: children[id - 1],
+            key: i,
+            children: children[i],
           };
         })}
       />

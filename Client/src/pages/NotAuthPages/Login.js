@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Divider, Form, Input } from "antd";
 import { Helmet } from "react-helmet-async";
 import { useState, useContext, useEffect } from "react";
 import { Store } from "../../Store";
@@ -7,6 +7,7 @@ import { getError } from "../../utils";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { loginUser, loginGoogleUser } from "../../api/index.js";
 import jwtDecode from "jwt-decode";
+import "../../component/assets/css/Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,7 +23,6 @@ const Login = () => {
   const submitHandler = async () => {
     try {
       const { data } = await loginUser(email, password);
-      console.log(data);
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");
@@ -68,86 +68,79 @@ const Login = () => {
       });
       window?.google?.accounts?.id?.prompt();
     };
-    googleService();
-  }, []);
+
+    setTimeout(googleService, 100);
+  });
 
   return (
-    <Form
-      name="basic"
-      labelCol={{
-        span: 8,
-      }}
-      wrapperCol={{
-        span: 16,
-      }}
-      style={{
-        maxWidth: 600,
-      }}
-      initialValues={{
-        remember: true,
-      }}
-      onFinish={submitHandler}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      <Helmet>
-        <title>Login</title>
-      </Helmet>
-      <Form.Item
-        label="Email"
-        name="email"
-        rules={[
-          {
-            required: true,
-            message: "Please input your email!",
-          },
-        ]}
-      >
-        <Input onChange={(e) => setEmail(e.target.value)} />
-      </Form.Item>
-
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[
-          {
-            required: true,
-            message: "Please input your password!",
-          },
-        ]}
-      >
-        <Input.Password onChange={(e) => setPassword(e.target.value)} />
-      </Form.Item>
-
-      <Form.Item
-        name="remember"
-        valuePropName="checked"
-        wrapperCol={{
-          offset: 8,
-          span: 16,
+    <div className="login">
+      <Form
+        name="basic"
+        labelCol={{
+          span: 6,
         }}
-      >
-        <Checkbox>Remember me</Checkbox>
-      </Form.Item>
-
-      <Form.Item
         wrapperCol={{
-          offset: 8,
-          span: 16,
+          span: 20,
         }}
+        style={{
+          maxWidth: 400,
+        }}
+        onFinish={submitHandler}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
       >
-        <Button type="primary" htmlType="submit">
-          Login
-        </Button>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <p>Create an account?</p>
-          <p>
-            <Link to="/register">Go to Register</Link>
-          </p>
-        </div>
-      </Form.Item>
-      <div id="loginDiv" style={{ marginLeft: "200px" }}></div>
-    </Form>
+        <Helmet>
+          <title>Login</title>
+        </Helmet>
+        <Form.Item
+          label="Email"
+          name="email"
+          style={{ width: "100%" }}
+          rules={[
+            {
+              required: true,
+              message: "Please input your email!",
+            },
+          ]}
+        >
+          <Input onChange={(e) => setEmail(e.target.value)} />
+        </Form.Item>
+
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Please input your password!",
+            },
+          ]}
+        >
+          <Input.Password onChange={(e) => setPassword(e.target.value)} />
+        </Form.Item>
+        <Form.Item style={{ display: "flex", justifyContent: "center" }}>
+          <Button type="primary" htmlType="submit" style={{ width: "100px" }}>
+            Login
+          </Button>
+        </Form.Item>
+        <Form.Item
+          wrapperCol={{
+            offset: 0,
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <p>Create an account?</p>
+            <p>
+              <Link to="/register">
+                <Button>Go to Register</Button>
+              </Link>
+            </p>
+          </div>
+        </Form.Item>
+        <Divider>Or login by Google</Divider>
+        <div id="loginDiv"></div>
+      </Form>
+    </div>
   );
 };
 export default Login;

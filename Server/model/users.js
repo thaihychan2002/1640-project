@@ -22,18 +22,12 @@ const schema = new mongoose.Schema(
       default:
         'https://cdn.landesa.org/wp-content/uploads/default-user-image.png',
     },
-    role: {
-      type: String,
-      required: true,
-      default: 'Staff',
-    },
+    role: { type: Schema.Types.ObjectId, ref: 'Role' },
     department: {
       type: String,
       required: true,
       default: 'None',
     },
-
-    posts: { type: Schema.Types.ObjectId, ref: 'Post' },
   },
   { timestamps: true }
 )

@@ -1,4 +1,4 @@
-import { takeLatest, call, put, take } from "redux-saga/effects";
+import { takeLatest, call, put } from "redux-saga/effects";
 import * as actions from "../actions";
 import * as api from "../../api";
 //post
@@ -47,6 +47,32 @@ function* updatePostSaga(action) {
     yield put(actions.updatePosts.updatePostsFailure(err));
   }
 }
+function* updatePostAcceptSaga(action) {
+  try {
+    console.log("updatePostSaga", { action });
+    const updatedPost = yield call(api.acceptPost, action.payload);
+    console.log("[updatePostSaga - post]", updatedPost);
+    yield put(
+      actions.updatePostAccept.updatePostAcceptSuccess(updatedPost.data)
+    );
+  } catch (err) {
+    console.error(err);
+    yield put(actions.updatePostAccept.updatePostAcceptFailure(err));
+  }
+}
+function* updatePostRejectSaga(action) {
+  try {
+    console.log("updatePostSaga", { action });
+    const updatedPost = yield call(api.rejectPost, action.payload);
+    console.log("[updatePostSaga - post]", updatedPost);
+    yield put(
+      actions.updatePostReject.updatePostRejectSuccess(updatedPost.data)
+    );
+  } catch (err) {
+    console.error(err);
+    yield put(actions.updatePostReject.updatePostRejectFailure(err));
+  }
+}
 function* deletePostSaga(action) {
   try {
     console.log("deletePostSaga", { action });
@@ -55,6 +81,18 @@ function* deletePostSaga(action) {
   } catch (err) {
     console.error(err);
     yield put(actions.deletePosts.deletePostsFailure(err));
+  }
+}
+function* deletePostByAdminSaga(action) {
+  try {
+    console.log("deletePostSaga", { action });
+    const deletedPost = yield call(api.deletePostByAdmin, action.payload);
+    yield put(
+      actions.deletePostByAdmin.deletePostSuccessByAdmin(deletedPost.data)
+    );
+  } catch (err) {
+    console.error(err);
+    yield put(actions.deletePostByAdmin.deletePostFailureByAdmin(err));
   }
 }
 //department
@@ -146,13 +184,82 @@ function* deleteCategorySaga(action) {
     yield put(actions.deleteCategories.deleteCategoriesFailure(err));
   }
 }
+// Comment
+function* fetchConditionCmtSaga(action) {
+  try {
+    let comments;
+    if (action.payload === "recently") {
+      comments = yield call(api.fetchRecentlyCmts);
+    } else if (action.payload === "mostLikes") {
+      comments = yield call(api.fetchCmtsByMostLikes);
+    }
+    yield put(actions.getConditionCmts.getCmtsSuccess(comments?.data));
+  } catch (err) {
+    console.log(err);
+    yield put(actions.getConditionCmts.getCmtsFailure(err));
+  }
+}
+function* fetchCommentSaga(action) {
+  try {
+    const comments = yield call(api.fetchComments, action.payload);
+    yield put(actions.getComments.getCommentsSuccess(comments.data));
+  } catch (err) {
+    console.log(err);
+    yield put(actions.getComments.getCommentsFailure(err));
+  }
+}
+function* createCommentSaga(action) {
+  try {
+    const comments = yield call(api.createComments, action.payload);
+    yield put(
+      actions.createComments.createCommentsSuccess(comments.data)
+    );
+  } catch (err) {
+    console.log(err);
+    yield put(actions.createComments.createCommentsFailure(err));
+  }
+}
+function* updateCommentSaga(action) {
+  try {
+    const comments = yield call(api.updateComments, action.payload);
+    yield put(
+      actions.updateComments.updateCommentsSuccess(comments.data)
+    );
+  } catch (err) {
+    console.log(err);
+    yield put(actions.updateComments.updateCommentsFailure(err));
+  }
+}
+function* deleteCommentSaga(action) {
+  try {
+    const comments = yield call(api.deleteComments, action.payload);
+    yield put(
+      actions.deleteComments.deleteCommentsSuccess(comments.data)
+    );
+  } catch (err) {
+    console.log(err);
+    yield put(actions.deleteComments.deleteCommentsFailure(err));
+  }
+}
 function* mysaga() {
   //post
   yield takeLatest(actions.getPosts.getPostsRequest, fetchPostSaga);
   yield takeLatest(actions.getAllPosts.getAllPostsRequest, fetchAllPostsSaga);
   yield takeLatest(actions.updatePosts.updatePostsRequest, updatePostSaga);
+  yield takeLatest(
+    actions.updatePostAccept.updatePostAcceptRequest,
+    updatePostAcceptSaga
+  );
+  yield takeLatest(
+    actions.updatePostReject.updatePostRejectRequest,
+    updatePostRejectSaga
+  );
   yield takeLatest(actions.createPosts.createPostsRequest, createPostSaga);
   yield takeLatest(actions.deletePosts.deletePostsRequest, deletePostSaga);
+  yield takeLatest(
+    actions.deletePostByAdmin.deletePostRequestByAdmin,
+    deletePostByAdminSaga
+  );
   //department
   yield takeLatest(
     actions.getDepartments.getDepartmentsRequest,
@@ -186,6 +293,27 @@ function* mysaga() {
   yield takeLatest(
     actions.updateCategories.updateCategoriesRequest,
     updateCategorySaga
+  );
+  //Comment
+  yield takeLatest(
+    actions.getConditionCmts.getCmtsRequest,
+    fetchConditionCmtSaga
+  );
+  yield takeLatest(
+    actions.getComments.getCommentsRequest,
+    fetchCommentSaga
+  );
+  yield takeLatest(
+    actions.createComments.createCommentsRequest,
+    createCommentSaga
+  );
+  yield takeLatest(
+    actions.deleteComments.deleteCommentsRequest,
+    deleteCommentSaga
+  );
+  yield takeLatest(
+    actions.updateComments.updateCommentsRequest,
+    updateCommentSaga
   );
 }
 export default mysaga;

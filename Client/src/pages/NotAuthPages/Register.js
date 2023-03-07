@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Divider, Form, Input } from "antd";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import { Store } from "../../Store";
 import { getError } from "../../utils";
 import { registerUser, registerGoogleUser } from "../../api/index.js";
 import jwtDecode from "jwt-decode";
+import "../../component/assets/css/Register.css";
 const Register = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -17,8 +18,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo } = state;
+  const { dispatch: ctxDispatch } = useContext(Store);
 
   const submitHandler = async () => {
     if (password !== rePassword) {
@@ -83,95 +83,101 @@ const Register = () => {
       });
       window?.google?.accounts?.id?.prompt();
     };
-    googleService();
-  }, []);
+    setTimeout(googleService, 100);
+  });
 
   return (
-    <Form
-      name="basic"
-      labelCol={{
-        span: 8,
-      }}
-      wrapperCol={{
-        span: 16,
-      }}
-      style={{
-        maxWidth: 600,
-      }}
-      // autoComplete="on"
-      onFinish={(e) => submitHandler(e)}
-      onFinishFailed={onFinishFailed}
-    >
-      <Helmet>
-        <title>Register</title>
-      </Helmet>
-      <Form.Item
-        label="Email"
-        name="email"
-        rules={[
-          {
-            required: true,
-            message: "Please input your email!",
-          },
-        ]}
-      >
-        <Input onChange={(e) => setEmail(e.target.value)} />
-      </Form.Item>
-      <Form.Item
-        label="Fullname"
-        name="fullname"
-        rules={[
-          {
-            required: true,
-            message: "Please input your fullname!",
-          },
-        ]}
-      >
-        <Input onChange={(e) => setFullName(e.target.value)} />
-      </Form.Item>
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[
-          {
-            required: true,
-            message: "Please input your password!",
-          },
-        ]}
-      >
-        <Input.Password onChange={(e) => setPassword(e.target.value)} />
-      </Form.Item>
-      <Form.Item
-        label="Re-Password"
-        name="rePassword"
-        rules={[
-          {
-            required: true,
-            message: "Please input your re-password!",
-          },
-        ]}
-      >
-        <Input.Password onChange={(e) => setRePassword(e.target.value)} />
-      </Form.Item>
-
-      <Form.Item
+    <div className="register">
+      <Form
+        name="basic"
+        labelCol={{
+          span: 8,
+        }}
         wrapperCol={{
-          offset: 8,
           span: 16,
         }}
+        style={{
+          maxWidth: 400,
+        }}
+        autoComplete="off"
+        onFinish={(e) => submitHandler(e)}
+        onFinishFailed={onFinishFailed}
       >
-        <Button type="primary" htmlType="submit">
-          Register
-        </Button>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <p>Already have an account?</p>
-          <p>
-            <Link to="/login">Go to Login</Link>
-          </p>
-        </div>
-      </Form.Item>
-      <div id="registerDiv" style={{ marginLeft: "200px" }}></div>
-    </Form>
+        <Helmet>
+          <title>Register</title>
+        </Helmet>
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Please input your email!",
+            },
+          ]}
+        >
+          <Input onChange={(e) => setEmail(e.target.value)} />
+        </Form.Item>
+        <Form.Item
+          label="Fullname"
+          name="fullname"
+          rules={[
+            {
+              required: true,
+              message: "Please input your fullname!",
+            },
+          ]}
+        >
+          <Input onChange={(e) => setFullName(e.target.value)} />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Please input your password!",
+            },
+          ]}
+        >
+          <Input.Password onChange={(e) => setPassword(e.target.value)} />
+        </Form.Item>
+        <Form.Item
+          label="Re-Password"
+          name="rePassword"
+          rules={[
+            {
+              required: true,
+              message: "Please input your re-password!",
+            },
+          ]}
+        >
+          <Input.Password onChange={(e) => setRePassword(e.target.value)} />
+        </Form.Item>
+
+        <Form.Item style={{ display: "flex", justifyContent: "center" }}>
+          <Button type="primary" htmlType="submit" style={{ width: "100px" }}>
+            Register
+          </Button>
+        </Form.Item>
+        <Form.Item
+          wrapperCol={{
+            offset: 0,
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <p>Already have an account?</p>
+            <p>
+              <Link to="/login">
+                <Button>Go to Login</Button>
+              </Link>
+            </p>
+          </div>
+        </Form.Item>
+        <Divider>Or register by Google</Divider>
+        <div id="registerDiv"></div>
+      </Form>
+    </div>
   );
 };
 export default Register;

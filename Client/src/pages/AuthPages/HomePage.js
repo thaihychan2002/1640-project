@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container } from "@material-ui/core";
 import Header from "../../component/header/index";
 import PostList from "../../component/PostList";
@@ -6,7 +6,6 @@ import { Grid } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
 import { FloatButton } from "antd";
-import Navigation from "../../component/Navigation/Navigation";
 
 export default function HomePage() {
   return (
