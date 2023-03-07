@@ -178,7 +178,6 @@ export default function Post({ post }) {
             height: "300px",
             backgroundColor: "transparent",
             display: "block",
-
             padding: 0,
             border: "none",
             cursor: "pointer",
@@ -196,9 +195,12 @@ export default function Post({ post }) {
           <Typography variant="h5" color="textPrimary">
             {post.title}
           </Typography>
-          <Typography variant="body2" component="p" color="textSecondary">
-            {post.content}
-          </Typography>
+          <Typography
+            variant="body2"
+            component="p"
+            color="textSecondary"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          ></Typography>
           <Typography>{post.view} Views</Typography>
         </CardContent>
         <CardActions>
