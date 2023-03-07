@@ -86,5 +86,31 @@ export const deleteCategories = createActions({
   deleteCategoriesSuccess: (payload) => payload,
   deleteCategoriesFailure: (err) => err,
 });
+//comment
+export const getConditionCmts = createActions({
+  getCmtsRequest: undefined,
+  getCmtsSuccess: (payload) => payload,
+  getCmtsFailure: (err) => err,
+});
+export const getComments = createActions({
+  getCommentsRequest: (payload) => payload,
+  getCommentsSuccess: (payload) => payload,
+  getCommentsFailure: (err) => err,
+});
+export const createComments = createActions({
+  createCommentsRequest: (payload) => payload,
+  createCommentsSuccess: (payload) => payload,
+  createCommentsFailure: (err) => err,
+});
+export const updateComments = createActions({
+  updateCommentsRequest: (payload) => payload,
+  updateCommentsSuccess: (payload) => payload,
+  updateCommentsFailure: (err) => err,
+});
+export const deleteComments = createActions({
+  deleteCommentsRequest: (payload) => payload,
+  deleteCommentsSuccess: (payload) => payload,
+  deleteCommentsFailure: (err) => err,
+});
 export const showModal = createAction("SHOW_CREATE_POST_MODEL");
 export const hideModal = createAction("HIDE_CREATE_POST_MODAL");

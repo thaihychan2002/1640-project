@@ -6,8 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { Grid } from "@material-ui/core";
 import Navigation from "./component/Navigation/Navigation";
 import { AllRoutes } from "./routes/AllRoutes";
-import { useContext } from "react";
-import { Store } from "./Store";
 function App() {
   const dispatch = useDispatch();
   dispatch(actions.getPosts.getPostsRequest());

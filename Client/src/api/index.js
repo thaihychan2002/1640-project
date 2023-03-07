@@ -87,6 +87,21 @@ export const updateCategories = (payload) =>
 export const deleteCategories = (payload) =>
   axiosInstance.delete(`/categories/delete/${payload}`, payload);
 
+// comment
+export const fetchComments = (payload) =>
+  axiosInstance.post(`/comments`, payload);
+export const createComments = (payload) =>
+  axiosInstance.post(`/comments/create`, payload);
+export const updateComments = (payload) =>
+  axiosInstance.put(`/comments/update`, payload);
+export const deleteComments = (payload) =>
+  axiosInstance.delete(`/comments/delete/${payload}`, payload);
+// view comments
+export const fetchCmtsByMostLikes = () =>
+  axiosInstance.get("/comments/viewCommentsByMostLikes");
+export const fetchRecentlyCmts = () =>
+  axiosInstance.get("/comments/viewRecentlyComments");
+
 // fetch usertoken
 export const fetchUsers = () => axiosInstance.get(`/users`);
 export const fetchUserByID = (userID) =>

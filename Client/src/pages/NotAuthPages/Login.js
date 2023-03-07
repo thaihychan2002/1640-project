@@ -70,7 +70,7 @@ const Login = () => {
     };
 
     setTimeout(googleService, 100);
-  }, []);
+  });
 
   return (
     <div className="login">

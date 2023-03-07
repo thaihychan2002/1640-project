@@ -7,7 +7,6 @@ import IdeaBox from "../IdeaBox";
 import {
   postsState$,
   postsLoading$,
-  postsToken$,
 } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { useMediaQuery } from "@material-ui/core";

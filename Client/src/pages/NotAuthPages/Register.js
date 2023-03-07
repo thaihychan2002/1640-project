@@ -18,8 +18,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo } = state;
+  const { dispatch: ctxDispatch } = useContext(Store);
 
   const submitHandler = async () => {
     if (password !== rePassword) {
@@ -85,7 +84,7 @@ const Register = () => {
       window?.google?.accounts?.id?.prompt();
     };
     setTimeout(googleService, 100);
-  }, []);
+  });
 
   return (
     <div className="register">

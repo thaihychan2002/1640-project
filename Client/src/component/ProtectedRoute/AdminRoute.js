@@ -7,7 +7,7 @@ import { getError } from "../../utils";
 import { fetchUserByID } from "../../api";
 import jwtDecode from "jwt-decode";
 export default function AdminRoute({ children }) {
-  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { state } = useContext(Store);
   const [navigate, setNavigate] = useState("");
   useEffect(() => {
     const fetchUser = async () => {

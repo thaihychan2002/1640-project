@@ -1,8 +1,8 @@
 import { Grid } from "@material-ui/core";
-import { allPostsState$, departmentsState$ } from "../../redux/seclectors";
+import { allPostsState$ } from "../../redux/seclectors";
 import { useSelector, useDispatch } from "react-redux";
-import { useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { Store } from "../../Store";
+import {  useState, useEffect, useMemo, useCallback } from "react";
+
 import React from "react";
 import * as actions from "../../redux/actions";
 import ReactApexChart from "react-apexcharts";

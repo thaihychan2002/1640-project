@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Card,
   CardActions,
   CardContent,
@@ -15,15 +14,19 @@ import moment from "moment";
 import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
-import { updatePosts } from "../../../redux/actions/index.js";
-import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
-import { Modal, Button, Input, Select, Alert } from "antd";
+
+import {
+  departmentsState$,
+  categoriesState$
+} from "../../../redux/seclectors";
+import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
 import { Link, useNavigate } from "react-router-dom";
 import { animalList } from "./anonymousAnimal.js";
-import { render } from "react-dom";
+import CommentList from "../../CommentList/index.js";
+import * as actions from "../../../redux/actions";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -37,15 +40,16 @@ export default function Post({ post }) {
   const categories = useSelector(categoriesState$);
   const [Modalupdate, setModalUpdate] = useState(false);
   const [Modaloption, setModalOption] = useState(false);
+  const [Modalcomment, setModalcomment] = useState(false);
   const departmentref = useRef(null);
   const caetgoryref = useRef(null);
   const [data, setdata] = React.useState({});
-  const [defaultValue, setvalue] = React.useState({
+  const [defaultValue] = React.useState({
     title: post.title,
     author: post.author || "none",
     content: post.content,
-    department: post.department,
-    category: post.categories,
+    department: post.department.name,
+    category: post.categories.name,
     attachment: post.attachment,
   });
   // Anonymous Animals
@@ -63,18 +67,28 @@ export default function Post({ post }) {
   const categet = (e) => {
     setdata({ ...data, categories: e });
     data.categories = caetgoryref.current.value;
-  };
+  }
+  const getcmt = React.useCallback(() => {
+    dispatch(actions.getComments.getCommentsRequest(post))
+  }, [dispatch, post])
   const handleOk = React.useCallback(() => {
     setModalUpdate(false);
   }, []);
   const handleoption = React.useCallback(() => {
     setModalOption(false);
   }, []);
+  const commentclose = React.useCallback(() => {
+    setModalcomment(false);
+  }, []);
+  const viewComment = React.useCallback(() => {
+    getcmt();
+    setModalcomment(true);
+  }, [getcmt]);
   const viewModal = React.useCallback(() => {
     if (post.author.fullName === user.fullName) {
       setModalUpdate(true);
-    } else {
-      console.log("cannot edit other post ", post.author);
+    }
+    else {
       setModalOption(true);
     }
   }, [user, post]);
@@ -85,7 +99,7 @@ export default function Post({ post }) {
     if (likeActive) {
       setLikeActive(false);
       dispatch(
-        updatePosts.updatePostsRequest({
+        actions.updatePosts.updatePostsRequest({
           ...post,
           likeCount: post.likeCount - 1,
         })
@@ -93,7 +107,7 @@ export default function Post({ post }) {
     } else {
       setLikeActive(true);
       dispatch(
-        updatePosts.updatePostsRequest({
+        actions.updatePosts.updatePostsRequest({
           ...post,
           likeCount: post.likeCount + 1,
         })
@@ -101,7 +115,7 @@ export default function Post({ post }) {
       if (dislikeActive) {
         setDislikeActive(false);
         dispatch(
-          updatePosts.updatePostsRequest({
+          actions.updatePosts.updatePostsRequest({
             ...post,
             likeCount: post.likeCount + 2,
           })
@@ -110,21 +124,14 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   const updatehandler = React.useCallback(() => {
-    console.log(`data-update`, data);
-    dispatch(
-      updatePosts.updatePostsRequest({
-        _id: post._id,
-        author: post.author,
-        ...data,
-      })
-    );
-    handleOk();
+    dispatch(actions.updatePosts.updatePostsRequest({ _id: post._id, author: post.author, ...data }));
+    handleOk()
   }, [dispatch, data, post, handleOk]);
   const onDislikeBtnClick = React.useCallback(() => {
     if (dislikeActive) {
       setDislikeActive(false);
       dispatch(
-        updatePosts.updatePostsRequest({
+        actions.updatePosts.updatePostsRequest({
           ...post,
           likeCount: post.likeCount + 1,
         })
@@ -132,7 +139,7 @@ export default function Post({ post }) {
     } else {
       setDislikeActive(true);
       dispatch(
-        updatePosts.updatePostsRequest({
+        actions.updatePosts.updatePostsRequest({
           ...post,
           likeCount: post.likeCount - 1,
         })
@@ -140,7 +147,7 @@ export default function Post({ post }) {
       if (likeActive) {
         setLikeActive(false);
         dispatch(
-          updatePosts.updatePostsRequest({
+          actions.updatePosts.updatePostsRequest({
             ...post,
             likeCount: post.likeCount - 2,
           })
@@ -220,25 +227,27 @@ export default function Post({ post }) {
           </IconButton>
           {`${post.likeCount} likes`}
         </CardActions>
-        <Grid
-          container
-          spacing={2}
-          alignItems="stretch"
-          style={{ marginLeft: "20px" }}
-        >
-          <Grid item xs={6} lg={6} className="idea">
+        <Grid container spacing={2} alignItems="stretch" style={{ marginLeft: '20px' }}>
+          <Grid item xs={8} lg={8} className="idea">
             <div>
               <Link to="/profile">
                 <img alt={user?.fullName} src={user?.avatar} />
               </Link>
             </div>
-            <Input placeholder="Any comments ?" className="idea-create" />
+            <Input placeholder="Any comments ?" className="idea-create" onClick={viewComment} />
           </Grid>
-          <Grid item xs={6} lg={6} className="idea">
-            <Link>Show comments</Link>
+          <Grid item xs={4} lg={4} className="idea">
+            <Button type="link" onClick={viewComment} >Show comments</Button>
           </Grid>
         </Grid>
       </Card>
+      <Modal open={Modalcomment}
+        onOk={commentclose}
+        onCancel={commentclose}
+        footer={null}
+        style={{height:'200px'}}
+        className="container"><CommentList post={post}></CommentList>
+      </Modal>
       <Modal
         open={Modalupdate}
         onOk={handleOk}

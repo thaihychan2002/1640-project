@@ -20,7 +20,6 @@ import { useContext } from "react";
 import { Store } from "../../Store";
 const { Option } = Select;
 const UserManage = () => {
-  const navigate = useNavigate();
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {

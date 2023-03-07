@@ -21,7 +21,6 @@ export const getUserById = async (req, res) => {
     const user = await UserModel.findById(req.body.userID)
       .populate('role')
       .exec()
-    console.log(user)
     if (user) {
       res.send({
         _id: user._id,
