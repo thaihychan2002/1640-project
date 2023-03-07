@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container } from "@material-ui/core";
 import Header from "../../component/header/index";
 import PostList from "../../component/PostList";

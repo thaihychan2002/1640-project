@@ -1,12 +1,16 @@
 import { UserModel } from '../model/users.js'
 import { generateToken } from '../utils.js'
 import bcrypt from 'bcryptjs'
-import { registerUserSchema } from '../helpers/validation_schema.js'
+import {
+  registerUserSchema,
+  updateUserByAdminSchema,
+  updateUserSchema,
+} from '../helpers/validation_schema.js'
 import { v2 as cloudinary } from 'cloudinary'
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await UserModel.find()
+    const users = await UserModel.find().populate('role').exec()
     res.send(users)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -15,14 +19,15 @@ export const getUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const user = await UserModel.findById(req.body.userID)
-    console.log(user)
+      .populate('role')
+      .exec()
     if (user) {
       res.send({
         _id: user._id,
         fullName: user.fullName,
         department: user.department,
         avatar: user.avatar,
-        role: user.role,
+        role: user.role.name,
       })
     }
   } catch (err) {
@@ -63,6 +68,7 @@ export const registerUsers = async (req, res, next) => {
     const newUser = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
+      role: req.body.roleUser,
       password: bcrypt.hashSync(req.body.password),
     })
     const user = await newUser.save()
@@ -96,11 +102,10 @@ export const registerGoogleUsers = async (req, res) => {
 }
 export const deleteUser = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.body.userID)
+    const user = await UserModel.findById(req.params.id).populate('role')
     if (user) {
-      if (user.role === 'Admin') {
-        res.send({ message: 'Can not delete admin' })
-        return
+      if (user.role.name === 'Admin') {
+        return res.status(403).send({ message: 'Cannot delete admin' })
       }
       await user.remove()
       res.send({ message: 'User Deleted' })
@@ -113,10 +118,11 @@ export const deleteUser = async (req, res) => {
 }
 export const updateUser = async (req, res) => {
   try {
+    await updateUserByAdminSchema.validateAsync(req.body)
     const updatedUser = await UserModel.findByIdAndUpdate(
       req.body.userID,
       {
-        $set: { role: req.body.role },
+        $set: { role: req.body.roleID },
       },
       { new: true }
     )
@@ -132,6 +138,7 @@ export const updateUser = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
   try {
+    await updateUserSchema.validateAsync(req.body)
     const user = await UserModel.findById(req.body.userID)
     if (user) {
       const fileStr = req.body.data || req.data

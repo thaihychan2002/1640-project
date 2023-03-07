@@ -11,15 +11,20 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    department: {
+    slug: {
       type: String,
       required: true,
     },
+    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    department: {
+      type: Schema.Types.ObjectId,
+      ref: 'Department',
+      required: true,
+    },
     categories: {
-      type: String,
-      required: false,
-      default: 'none',
+      type: Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
     },
     attachment: String,
     likeCount: {

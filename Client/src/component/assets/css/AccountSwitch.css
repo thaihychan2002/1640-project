@@ -23,6 +23,9 @@
     width: 36px;
     height: 36px;
   }
+  .account-switch {
+    display: none;
+  }
 }
 @media only screen and (max-width: 640px) {
   .account-switch {

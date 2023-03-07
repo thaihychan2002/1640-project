@@ -7,6 +7,7 @@ import DashBoard from "../pages/AdminPages/Dashboard";
 import QA from "../pages/QAPages/QA";
 import UserRoute from "../component/ProtectedRoute/UserRoute";
 import AdminRoute from "../component/ProtectedRoute/AdminRoute";
+import PostDetails from "../pages/AuthPages/PostDetails";
 export const AllRoutes = [
   {
     path: "/",
@@ -48,6 +49,10 @@ export const AllRoutes = [
         <QA />
       </AdminRoute>
     ),
+  },
+  {
+    path: "/idea/:slug",
+    element: <PostDetails />,
   },
 ];
 export default AllRoutes;

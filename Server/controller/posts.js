@@ -1,28 +1,52 @@
 import { PostModel } from '../model/posts.js'
-import { transporter, levenshteinDistance } from '../utils.js'
+import { transporter, levenshteinDistance, slug } from '../utils.js'
 import joi from 'joi'
 import { v2 as cloudinary } from 'cloudinary'
 import { DepartmentModel } from '../model/departments.js'
 import { UserModel } from '../model/users.js'
+import { Parser } from 'json2csv'
+import { MongoClient } from 'mongodb'
+import fs from 'fs'
+import archiver from 'archiver'
+import { createReadStream, createWriteStream } from 'fs'
+import { createGzip } from 'zlib'
+import { promisify } from 'util'
+import { pipeline } from 'stream'
+import { ObjectId } from 'mongodb'
+import JSZip from 'jszip'
 export const getPosts = async (req, res) => {
   try {
-    const posts = await PostModel.find().populate('author').exec()
+    const posts = await PostModel.find()
+      .populate('author', 'fullName avatar _id role department')
+      .populate('categories')
+      .populate('department')
+      .exec()
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
 }
-
+export const getPostBySlug = async (req, res) => {
+  try {
+    const post = await PostModel.findOne({ slug: req.params.slug })
+      .populate('author', 'fullName avatar _id role department')
+      .exec()
+    res.status(200).json(post)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
 export const createPosts = async (req, res, next) => {
   try {
-    const result = await DepartmentModel.distinct('name')
-    const postValidateSchema = joi.object({
-      title: joi.string().required(),
+    // const result = await DepartmentModel.distinct('name')
+    const result = await DepartmentModel.distinct('_id')
+    const createPostSchema = joi.object({
+      title: joi.string().min(3).required(),
       content: joi.string().required(),
       author: joi.string().required(),
       department: joi
         .string()
-        .valid(...result)
+        .valid(...result.map((id) => id.toString()))
         .required(),
       categories: joi.allow(),
       attachment: joi.allow(),
@@ -30,7 +54,7 @@ export const createPosts = async (req, res, next) => {
       likeCount: joi.number().valid(0).allow(),
       view: joi.number().valid(0).allow(),
     })
-    await postValidateSchema.validateAsync(req.body)
+    await createPostSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
     const fileStr = post.attachment
@@ -38,6 +62,7 @@ export const createPosts = async (req, res, next) => {
       const uploadedResponse = await cloudinary.uploader.upload(fileStr)
       post.attachment = uploadedResponse.url
     }
+    post.slug = slug(req.body.title)
     await post.save()
     // send email
     let mailOptions = {
@@ -69,7 +94,6 @@ export const updatePosts = async (req, res) => {
       updatePosts,
       { new: true }
     )
-    console.log(post)
     res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -90,14 +114,27 @@ export const deletePosts = async (req, res) => {
     res.status(500).json({ error: err })
   }
 }
-
+export const deletePostByAdmin = async (req, res) => {
+  try {
+    const post = await PostModel.findById(req.params.id)
+    if (post) {
+      await post.remove()
+      res.status(200).send({ message: 'Post Deleted' })
+    } else {
+      res.status(404).send({ message: 'Cannot delete other post' })
+    }
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
 export const viewPostsByMostViews = async (req, res) => {
   try {
     const posts = await PostModel.find()
       .sort({ view: -1 })
       .populate('author', 'fullName avatar _id role department')
       .lean()
-    res.status(200).json(posts)
+    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
+    res.status(200).json(filteredPosts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -108,7 +145,8 @@ export const viewPostsByMostLikes = async (req, res) => {
       .sort({ likeCount: -1 })
       .populate('author', 'fullName avatar _id role department')
       .lean()
-    res.status(200).json(posts)
+    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
+    res.status(200).json(filteredPosts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -119,7 +157,9 @@ export const viewRecentlyPosts = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate('author', 'fullName avatar _id role department')
       .lean()
-    res.status(200).json(posts)
+    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
+
+    res.status(200).json(filteredPosts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -192,5 +232,107 @@ export const viewPostsByDepartment = async (req, res) => {
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
+  }
+}
+export const updatePostToAccepted = async (req, res) => {
+  try {
+    const updatePosts = req.body
+    const post = await PostModel.findByIdAndUpdate(
+      { _id: updatePosts._id },
+      { status: 'Accepted' },
+      { new: true }
+    )
+    res.status(200).json(post)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
+export const updatePostToRejected = async (req, res) => {
+  try {
+    const updatePosts = req.body
+    const post = await PostModel.findByIdAndUpdate(
+      { _id: updatePosts._id },
+      { status: 'Rejected' },
+      { new: true }
+    )
+    res.status(200).json(post)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
+export const exportPost = async (req, res) => {
+  const uri =
+    'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/posts?retryWrites=true&w=majority'
+  const client = await MongoClient.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  const db = client.db('test')
+
+  try {
+    const data = await db.collection('posts').find({}).toArray()
+    const fields = [
+      'title',
+      'content',
+      'author',
+      'department',
+      'categories',
+      'view',
+      'attachment',
+      'likeCount',
+    ]
+    const json2csvParser = new Parser({ fields })
+    const csv = json2csvParser.parse(data)
+
+    const outputFile = 'output.csv'
+    fs.writeFileSync(outputFile, '\uFEFF' + csv, 'utf-8')
+    console.log(`Data exported to ${outputFile}`)
+
+    res.download(outputFile)
+  } catch (err) {
+    console.error(err)
+    res.status(500).send('Error exporting data to CSV')
+  } finally {
+    client.close()
+  }
+}
+export const downloadPost = async (req, res) => {
+  const uri =
+    'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/posts?retryWrites=true&w=majority'
+  const client = await MongoClient.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  const db = client.db('test')
+  try {
+    const data = await db
+      .collection('posts')
+      .findOne({ _id: new ObjectId(req.body._id) })
+    const fields = [
+      'title',
+      'content',
+      'attachment',
+      'department',
+      'categories',
+      'view',
+      'likeCount',
+    ]
+    const json2csvParser = new Parser({ fields })
+    const csv = json2csvParser.parse(data)
+
+    const zip = new JSZip()
+    zip.file('idea.csv', csv)
+
+    const zipName = 'idea.zip'
+    const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+
+    res.setHeader('Content-Type', 'application/zip')
+    res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`)
+    res.send(zipContent)
+    return zipName
+  } catch (err) {
+    console.error(err)
+  } finally {
+    client.close()
   }
 }

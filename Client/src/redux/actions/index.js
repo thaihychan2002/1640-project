@@ -24,10 +24,25 @@ export const updatePosts = createActions({
   updatePostsSuccess: (payload) => payload,
   updatePostsFailure: (err) => err,
 });
+export const updatePostAccept = createActions({
+  updatePostAcceptRequest: (payload) => payload,
+  updatePostAcceptSuccess: (payload) => payload,
+  updatePostAcceptFailure: (err) => err,
+});
+export const updatePostReject = createActions({
+  updatePostRejectRequest: (payload) => payload,
+  updatePostRejectSuccess: (payload) => payload,
+  updatePostRejectFailure: (err) => err,
+});
 export const deletePosts = createActions({
   deletePostsRequest: (payload) => payload,
   deletePostsSuccess: (payload) => payload,
   deletePostsFailure: (err) => err,
+});
+export const deletePostByAdmin = createActions({
+  deletePostRequestByAdmin: (payload) => payload,
+  deletePostSuccessByAdmin: (payload) => payload,
+  deletePostFailureByAdmin: (err) => err,
 });
 //department
 export const getDepartments = createActions({

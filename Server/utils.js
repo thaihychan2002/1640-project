@@ -40,8 +40,8 @@ export const isAdmin = (req, res, next) => {
       } else {
         try {
           const userID = decode._id
-          const user = await UserModel.findById(userID)
-          if (user.role === 'Admin') {
+          const user = await UserModel.findById(userID).populate('role')
+          if (user.role.name === 'Admin') {
             req.user = decode
             next()
           } else {
@@ -85,4 +85,15 @@ export const levenshteinDistance = (str1, str2) => {
     }
   }
   return track[str2.length][str1.length]
+}
+export const slug = (title) => {
+  return (
+    title
+      .toLowerCase()
+      .split(/[ ]/)
+      .filter((item) => item)
+      .join('-') +
+    '-' +
+    Math.floor(Math.random() * 1000)
+  )
 }

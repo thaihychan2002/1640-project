@@ -21,9 +21,9 @@ import {
 } from "../../../redux/seclectors";
 import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
-import { PictureOutlined, } from "@ant-design/icons";
+import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { animalList } from "./anonymousAnimal.js";
 import CommentList from "../../CommentList/index.js";
 import * as actions from "../../../redux/actions";
@@ -32,6 +32,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 export default function Post({ post }) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { state } = useContext(Store);
   const user = state.userInfo;
@@ -41,16 +42,16 @@ export default function Post({ post }) {
   const [Modaloption, setModalOption] = useState(false);
   const [Modalcomment, setModalcomment] = useState(false);
   const departmentref = useRef(null);
-  const caetgoryref = useRef(null)
+  const caetgoryref = useRef(null);
   const [data, setdata] = React.useState({});
   const [defaultValue] = React.useState({
     title: post.title,
     author: post.author || "none",
     content: post.content,
-    department: post.department,
-    category: post.categories,
+    department: post.department.name,
+    category: post.categories.name,
     attachment: post.attachment,
-  })
+  });
   // Anonymous Animals
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
@@ -175,12 +176,29 @@ export default function Post({ post }) {
             </IconButton>
           }
         />
-        <CardMedia
-          image={post.attachment || ""}
-          title="image"
-          component="img"
-          className={classes.media}
-        ></CardMedia>
+
+        <Button
+          type="button"
+          onClick={() => navigate(`/idea/${post?.slug}`)}
+          style={{
+            width: "100%",
+            height: "300px",
+            backgroundColor: "transparent",
+            display: "block",
+
+            padding: 0,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          <CardMedia
+            image={post.attachment || ""}
+            title="image"
+            component="img"
+            className={classes.media}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </Button>
         <CardContent>
           <Typography variant="h5" color="textPrimary">
             {post.title}
@@ -206,7 +224,6 @@ export default function Post({ post }) {
             <Typography component="span" color="textSecondary"></Typography>
           </IconButton>
           {`${post.likeCount} likes`}
-
         </CardActions>
         <Grid container spacing={2} alignItems="stretch" style={{ marginLeft: '20px' }}>
           <Grid item xs={8} lg={8} className="idea">
@@ -372,19 +389,13 @@ export default function Post({ post }) {
         className="container"
       >
         <Grid container spacing={2} alignItems="stretch">
-          <Grid item xs={12} lg={12} >
-            <Button
-              type="primary"
-              block
-            >
+          <Grid item xs={12} lg={12}>
+            <Button type="primary" block>
               Report
             </Button>
           </Grid>
-          <Grid item xs={12} lg={12} >
-            <Button
-              type="primary"
-              block
-            >
+          <Grid item xs={12} lg={12}>
+            <Button type="primary" block>
               Save post
             </Button>
           </Grid>

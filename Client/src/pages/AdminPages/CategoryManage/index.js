@@ -11,14 +11,14 @@ import { Space, Table, Button, Modal, Input, DatePicker, Typography} from "antd"
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 import Category from "./category";
 import moment from "moment";
+import { toast } from "react-toastify";
+import { getError } from "../../../utils";
 
 const { TextArea } = Input;
 export default function CategoryManage() {
-
-
-  const dispatch_ca = useDispatch()
-  const categories = useSelector(categoriesState$)
-  const loading = useSelector(categoriesLoading$)
+  const dispatch_ca = useDispatch();
+  const categories = useSelector(categoriesState$);
+  const loading = useSelector(categoriesLoading$);
 
   const [ModalcatOpen, setModalcatOpen] = useState(false);
   const [cat_data, setcat_data] = React.useState({
@@ -33,14 +33,19 @@ export default function CategoryManage() {
 
     description: category.description,
     begindate: category.begin,
-    enddate: category.end
-  })); 
-  const deletedepartHandler = React.useCallback((record_cat) => {
-    dispatch_ca(actions.deleteCategories.deleteCategoriesRequest(record_cat._id))
-  }, [dispatch_ca])
+    enddate: category.end,
+  }));
+  const deletedepartHandler = React.useCallback(
+    (record_cat) => {
+      dispatch_ca(
+        actions.deleteCategories.deleteCategoriesRequest(record_cat._id)
+      );
+    },
+    [dispatch_ca]
+  );
   const disabledPassDates = React.useCallback((current) => {
     return current && current < moment().endOf("day");
-  }, [])
+  }, []);
   const columns = [
     {
       title: "Category",
@@ -58,7 +63,7 @@ export default function CategoryManage() {
       title: "Begin date",
       dataIndex: "begindate",
       key: "begin",
-      type:String,
+      type: String,
       width: "15%",
     },
     {
@@ -73,42 +78,59 @@ export default function CategoryManage() {
       width: "20%",
       render: (_, record_cat) => (
         <Space size="middle">
-          <Category key={record_cat._id} record_cat={record_cat} ></Category>
+          <Category key={record_cat._id} record_cat={record_cat}></Category>
           <Link onClick={() => deletedepartHandler(record_cat)}>Delete</Link>
         </Space>
       ),
     },
   ];
   const viewModal = React.useCallback(() => {
-
     setModalcatOpen(true);
-  }, [])
+  }, []);
   const handleclose = React.useCallback(() => {
     setModalcatOpen(false);
   }, []);
-  const onSubmit = React.useCallback(() => {
-    console.log(cat_data);
-    dispatch_ca(actions.createCategories.createCategoriesRequest(cat_data));
+  // const onSubmit = React.useCallback(() => {
+  //   console.log(cat_data);
+  //   try {
+  //     dispatch_ca(actions.createCategories.createCategoriesRequest(cat_data));
+  //     toast.success("Created category successfully");
+  //   } catch (err) {
+  //     toast.error(getError(err));
+  //   }
+  //   handleclose();
+  // }, [cat_data, dispatch_ca, handleclose]);
+  const onSubmit = async () => {
+    try {
+      dispatch_ca(actions.createCategories.createCategoriesRequest(cat_data));
+      toast.success("Created category successfully");
+    } catch (err) {
+      dispatch_ca(actions.createCategories.createCategoriesFailure(err));
+      console.log(err);
+    }
     handleclose();
-  }, [cat_data, dispatch_ca, handleclose]);
+  };
   const checkToCate = () => {
     return cat_data.name === "";
   };
   function onSelectBegin(date, dateString) {
-    cat_data.begin= dateString;
+    cat_data.begin = dateString;
     console.log(cat_data.begin);
   }
   function onSelectEnd(date, dateString) {
-    cat_data.end= dateString;
+    cat_data.end = dateString;
     console.log(cat_data.end);
   }
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
-
-        <Button type="primary" onClick={viewModal}> Add new category</Button>
-        <Modal open={ModalcatOpen}
+        <Button type="primary" onClick={viewModal}>
+          {" "}
+          Add new category
+        </Button>
+        <Modal
+          open={ModalcatOpen}
           onOk={handleclose}
           onCancel={handleclose}
           footer={null}
@@ -134,7 +156,7 @@ export default function CategoryManage() {
                   minRows: 3,
                   maxRows: 5,
                 }}
-                placeholder='Name of category'
+                placeholder="Name of category"
                 size="large"
                 value={cat_data.name}
                 onChange={(e) =>
@@ -149,8 +171,7 @@ export default function CategoryManage() {
                   minRows: 3,
                   maxRows: 5,
                 }}
-
-                placeholder='Describe your category'
+                placeholder="Describe your category"
                 size="large"
                 value={cat_data.description}
                 onChange={(e) =>

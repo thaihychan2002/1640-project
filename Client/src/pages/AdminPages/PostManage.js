@@ -2,8 +2,13 @@ import { Grid } from "@material-ui/core";
 import { allPostsState$ } from "../../redux/seclectors/";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table } from "antd";
+import { AppstoreOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Input, Space, Table, Tag, Tabs } from "antd";
+import {
+  SyncOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import * as actions from "../../redux/actions";
@@ -109,19 +114,95 @@ export default function PostManage() {
         text
       ),
   });
-
   const posts = useSelector(allPostsState$);
+
+  const filterPostsByStatus = (posts, status) =>
+    posts
+      ?.filter((post) => post.status === status)
+      ?.map((post) => ({
+        key: post._id,
+        title: post.title,
+        content: post.content,
+        author: post?.author?.fullName,
+        department: post?.department?.name,
+        status: post.status,
+        attachment: post.attachment,
+      }));
+
   const data = posts?.map((post) => ({
     key: post._id,
     title: post.title,
     content: post.content,
-    author: post.author,
-    department: post.department,
+    author: post?.author?.fullName,
+    department: post?.department?.name,
+    status: post.status,
+    attachment: post.attachment,
   }));
+  const dataPending = filterPostsByStatus(posts, "Pending");
+  const dataAccept = filterPostsByStatus(posts, "Accepted");
+  const dataReject = filterPostsByStatus(posts, "Rejected");
   const dispatch = useDispatch();
   React.useEffect(() => {
     dispatch(actions.getAllPosts.getAllPostsRequest());
   }, [dispatch]);
+
+  const updateAcceptHandler = React.useCallback(
+    (record) => {
+      if (
+        window.confirm(
+          "Are you sure to update status of this post to accepted?"
+        )
+      ) {
+        try {
+          dispatch(
+            actions.updatePostAccept.updatePostAcceptRequest({
+              _id: record.key,
+            })
+          );
+          toast.success("Updated status successfully");
+        } catch (err) {
+          toast.error(getError(err));
+        }
+      }
+    },
+    [dispatch]
+  );
+  const updateRejectHandler = React.useCallback(
+    (record) => {
+      if (
+        window.confirm(
+          "Are you sure to update status of this post to rejected?"
+        )
+      ) {
+        try {
+          dispatch(
+            actions.updatePostReject.updatePostRejectRequest({
+              _id: record.key,
+            })
+          );
+          toast.success("Updated status successfully");
+        } catch (err) {
+          toast.error(getError(err));
+        }
+      }
+    },
+    [dispatch]
+  );
+  const deleteHandler = React.useCallback(
+    (record) => {
+      if (window.confirm("Are you sure to delete this idea?")) {
+        try {
+          dispatch(
+            actions.deletePostByAdmin.deletePostRequestByAdmin(record.key)
+          );
+          toast.success("Delete idea successfully");
+        } catch (err) {
+          toast.error(getError(err));
+        }
+      }
+    },
+    [dispatch]
+  );
   const columns = [
     {
       title: "Title",
@@ -138,6 +219,19 @@ export default function PostManage() {
       width: "30%",
     },
     {
+      title: "Attachment",
+      dataIndex: "attachment",
+      key: "attachment",
+      width: "10%",
+      render: (_, record) => (
+        <img
+          style={{ width: "150px", height: "150px", borderRadius: 0 }}
+          src={record.attachment}
+          alt={record._id}
+        />
+      ),
+    },
+    {
       title: "Author",
       dataIndex: "author",
       key: "author",
@@ -148,7 +242,32 @@ export default function PostManage() {
       title: "Department",
       dataIndex: "department",
       key: "department",
-      width: "30%",
+      width: "20%",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: "10%",
+      render: (_, record) => {
+        let colorType = {
+          Pending: "yellow",
+          Accepted: "green",
+          Rejected: "red",
+        };
+        let iconType = {
+          Pending: <SyncOutlined spin />,
+          Accepted: <CheckCircleOutlined />,
+          Rejected: <CloseCircleOutlined />,
+        };
+        let color = colorType[record.status];
+        let icon = iconType[record.status];
+        return (
+          <Tag icon={icon} color={color}>
+            {record.status}
+          </Tag>
+        );
+      },
     },
     {
       title: "Action",
@@ -160,18 +279,77 @@ export default function PostManage() {
         },
       }),
       render: (_, record) => (
-        <Space size="middle">
-          <Link>Delete</Link>
+        <Space
+          size="middle"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          <Button type="primary" onClick={() => updateAcceptHandler(record)}>
+            Accept
+          </Button>
+          <Button type="primary" onClick={() => updateRejectHandler(record)}>
+            Reject
+          </Button>
+          <Button type="primary" onClick={() => deleteHandler(record)}>
+            Delete
+          </Button>
         </Space>
       ),
     },
   ];
+  const [tableParams, setTableParams] = useState({
+    pagination: {
+      pageSize: 5,
+    },
+  });
 
+  const tabs = [
+    <Table
+      pagination={tableParams.pagination}
+      columns={columns}
+      dataSource={data}
+    />,
+    <Table
+      pagination={tableParams.pagination}
+      columns={columns}
+      dataSource={dataPending}
+    />,
+    <Table
+      pagination={tableParams.pagination}
+      columns={columns}
+      dataSource={dataAccept}
+    />,
+    <Table
+      pagination={tableParams.pagination}
+      columns={columns}
+      dataSource={dataReject}
+    />,
+  ];
+  const labels = ["All", "Pending", "Accept", "Reject"];
+  const icons = [
+    <AppstoreOutlined />,
+    <SyncOutlined spin />,
+    <CheckCircleOutlined />,
+    <CloseCircleOutlined />,
+  ];
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
-        <Table columns={columns} dataSource={data} />
+        <Tabs
+          tabPosition="right"
+          items={new Array(4).fill(null).map((_, i) => {
+            return {
+              label: (
+                <span>
+                  {icons[i]}
+                  {labels[i]}
+                </span>
+              ),
+              key: i,
+              children: tabs[i],
+            };
+          })}
+        />
       </Grid>
     </Grid>
   );

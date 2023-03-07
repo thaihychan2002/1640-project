@@ -17,12 +17,16 @@ axiosInstance.interceptors.request.use((config) => {
 
 // posts
 export const fetchPosts = () => axiosInstance.get(`/posts`);
+export const fetchPostBySlug = (slug) =>
+  axiosInstance.get(`/posts/idea/${slug}`);
 export const createPosts = (payload) =>
   axiosInstance.post(`/posts/create`, payload);
 export const updatePosts = (payload) =>
   axiosInstance.put(`/posts/update`, payload);
 export const deletePosts = (payload) =>
   axiosInstance.delete(`/posts/delete/${payload}`, payload);
+export const deletePostByAdmin = (payload) =>
+  axiosInstance.delete(`/posts/deletePost/${payload}`, payload);
 
 // view posts
 export const fetchPostsByMostViews = () =>
@@ -36,7 +40,27 @@ export const fetchPostsByDepartment = () =>
 //search posts
 export const searchPostsByKeyword = () =>
   axiosInstance.get("/posts/search/:keyword");
+// post status
+export const acceptPost = (payload) =>
+  axiosInstance.put("/posts/accept", payload);
+export const rejectPost = (payload) =>
+  axiosInstance.put("/posts/reject", payload);
+//download csv and zip
+export const downloadCSV = () =>
+  axiosInstance.get("/posts/export", { responseType: "blob" });
 
+export const downloadZip = (postID) =>
+  axiosInstance.post(
+    "/posts/download",
+    { _id: postID },
+    { responseType: "blob" }
+  );
+//role
+export const fetchRoles = () => axiosInstance.get("/roles");
+export const createRole = (name) =>
+  axiosInstance.post("/roles/create", { name });
+export const deleteRole = (id) => axiosInstance.delete(`/roles/delete/${id}`);
+export const updateRole = () => axiosInstance.put("/roles/update");
 // department
 export const fetchDepartments = () => axiosInstance.get(`/departments`);
 export const createDepartments = (payload) =>
@@ -80,8 +104,8 @@ export const loginUser = (email, password) =>
 export const loginGoogleUser = (email, fullName, avatar) =>
   axios.post(`${URL}/users/google/login/`, { email, fullName, avatar });
 //register user
-export const registerUser = (fullName, email, password) =>
-  axios.post(`${URL}/users/register/`, { fullName, email, password });
+export const registerUser = (fullName, email, password, roleUser) =>
+  axios.post(`${URL}/users/register/`, { fullName, email, password, roleUser });
 export const registerGoogleUser = (fullName, email, avatar, password) =>
   axios.post(`${URL}/users/google/register`, {
     fullName,
@@ -90,8 +114,8 @@ export const registerGoogleUser = (fullName, email, avatar, password) =>
     password,
   });
 // update user
-export const updateUser = (userID, role) =>
-  axiosInstance.put(`/users/updateUser/`, { role, userID });
+export const updateUser = (userID, roleID) =>
+  axiosInstance.put(`/users/updateUser/`, { userID, roleID });
 export const updateUserProfile = (userID, fullName, data) =>
   axiosInstance.put(`/users/updateUserProfile/`, {
     fullName,
@@ -99,5 +123,6 @@ export const updateUserProfile = (userID, fullName, data) =>
     userID,
   });
 //delete user
+
 export const deleteUser = (userID) =>
-  axiosInstance.delete(`/users/deleteUser/`, { userID });
+  axiosInstance.delete(`/users/deleteUser/${userID}`);
