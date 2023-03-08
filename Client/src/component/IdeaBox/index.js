@@ -226,7 +226,7 @@ export default function IdeaBox() {
                 />
               </div>
               <div className="user-mg">
-                <TextArea
+                {/* <TextArea
                   allowClear
                   autoSize={{
                     minRows: 3,
@@ -239,15 +239,15 @@ export default function IdeaBox() {
                     setdata({ ...data, content: e.target.value })
                   }
                   required
-                />
-                {/* <ReactQuill
+                /> */}
+                <ReactQuill
                   placeholder={holder}
                   theme="snow"
                   modules={modules}
                   // formats={formats}
                   value={data.content}
                   onChange={(e) => setdata({ ...data, content: e })}
-                /> */}
+                />
               </div>
               <div className="user-mg">
                 <Select
