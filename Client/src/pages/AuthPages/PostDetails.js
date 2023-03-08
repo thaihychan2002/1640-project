@@ -8,6 +8,7 @@ import moment from "moment";
 import { animalList } from "../../component/PostList/Post/anonymousAnimal.js";
 import { Button } from "antd";
 import axios from "axios";
+import DownloadButton from "../../component/DownloadButton";
 
 const PostDetails = () => {
   const [allData, setAllData] = useState({
@@ -49,8 +50,8 @@ const PostDetails = () => {
 
   const downloadPost = async () => {
     try {
-      const slug = allData.slug;
-      const response = await downloadZip(slug);
+      const id = allData._id;
+      const response = await downloadZip(id);
       const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = downloadUrl;
@@ -127,7 +128,12 @@ const PostDetails = () => {
           <center>
             <img className="postImg" src={allData.attachment} alt="" />
           </center>
-          <Button onClick={downloadPost}>Download document of idea</Button>
+          <div style={{ marginLeft: "80%" }}>
+            <DownloadButton
+              download={downloadPost}
+              textDownload={"Download ZIP"}
+            />
+          </div>
           <div className="postBottom">
             <div className="postBottomLeft">
               <LikeOutlined style={{ fontSize: "32px" }} />

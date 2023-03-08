@@ -123,7 +123,7 @@ const Login = () => {
             Login
           </Button>
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           wrapperCol={{
             offset: 0,
           }}
@@ -136,7 +136,7 @@ const Login = () => {
               </Link>
             </p>
           </div>
-        </Form.Item>
+        </Form.Item> */}
         <Divider>Or login by Google</Divider>
         <div id="loginDiv"></div>
       </Form>

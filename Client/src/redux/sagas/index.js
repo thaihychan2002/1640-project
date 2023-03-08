@@ -188,11 +188,15 @@ function* deleteCategorySaga(action) {
 function* fetchConditionCmtSaga(action) {
   try {
     let comments;
-    if (action.payload === "recently") {
-      comments = yield call(api.fetchRecentlyCmts);
-    } else if (action.payload === "mostLikes") {
-      comments = yield call(api.fetchCmtsByMostLikes);
-    }
+    // if (action.payload === "recently") {
+    //   comments = yield call(api.fetchRecentlyCmts);
+    // } else if (action.payload === "mostLikes") {
+    //   comments = yield call(api.fetchCmtsByMostLikes);
+    // }
+    console.log(action.payload);
+    comments = yield call(api.fetchRecentlyCmts);
+    // comments = yield call(api.fetchCmtsByMostLikes);
+
     yield put(actions.getConditionCmts.getCmtsSuccess(comments?.data));
   } catch (err) {
     console.log(err);
@@ -211,9 +215,7 @@ function* fetchCommentSaga(action) {
 function* createCommentSaga(action) {
   try {
     const comments = yield call(api.createComments, action.payload);
-    yield put(
-      actions.createComments.createCommentsSuccess(comments.data)
-    );
+    yield put(actions.createComments.createCommentsSuccess(comments.data));
   } catch (err) {
     console.log(err);
     yield put(actions.createComments.createCommentsFailure(err));
@@ -222,9 +224,7 @@ function* createCommentSaga(action) {
 function* updateCommentSaga(action) {
   try {
     const comments = yield call(api.updateComments, action.payload);
-    yield put(
-      actions.updateComments.updateCommentsSuccess(comments.data)
-    );
+    yield put(actions.updateComments.updateCommentsSuccess(comments.data));
   } catch (err) {
     console.log(err);
     yield put(actions.updateComments.updateCommentsFailure(err));
@@ -233,9 +233,7 @@ function* updateCommentSaga(action) {
 function* deleteCommentSaga(action) {
   try {
     const comments = yield call(api.deleteComments, action.payload);
-    yield put(
-      actions.deleteComments.deleteCommentsSuccess(comments.data)
-    );
+    yield put(actions.deleteComments.deleteCommentsSuccess(comments.data));
   } catch (err) {
     console.log(err);
     yield put(actions.deleteComments.deleteCommentsFailure(err));
@@ -299,10 +297,7 @@ function* mysaga() {
     actions.getConditionCmts.getCmtsRequest,
     fetchConditionCmtSaga
   );
-  yield takeLatest(
-    actions.getComments.getCommentsRequest,
-    fetchCommentSaga
-  );
+  yield takeLatest(actions.getComments.getCommentsRequest, fetchCommentSaga);
   yield takeLatest(
     actions.createComments.createCommentsRequest,
     createCommentSaga

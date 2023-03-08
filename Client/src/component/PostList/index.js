@@ -4,10 +4,7 @@ import * as actions from "../../redux/actions";
 import { Grid } from "@material-ui/core";
 import Post from "./Post";
 import IdeaBox from "../IdeaBox";
-import {
-  postsState$,
-  postsLoading$,
-} from "../../redux/seclectors";
+import { postsState$, postsLoading$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { useMediaQuery } from "@material-ui/core";
 import { Select } from "antd";

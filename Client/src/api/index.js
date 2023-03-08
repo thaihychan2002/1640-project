@@ -63,6 +63,14 @@ export const downloadZip = (slug) =>
       responseType: "blob",
     }
   );
+// export const downloadZip = (slug) =>
+//   axiosInstance.post(
+//     "/posts/download",
+//     { slug: slug },
+//     {
+//       responseType: "blob",
+//     }
+//   );
 //role
 export const fetchRoles = () => axiosInstance.get("/roles");
 export const createRole = (name) =>
@@ -97,10 +105,10 @@ export const updateComments = (payload) =>
 export const deleteComments = (payload) =>
   axiosInstance.delete(`/comments/delete/${payload}`, payload);
 // view comments
-export const fetchCmtsByMostLikes = () =>
-  axiosInstance.get("/comments/viewCommentsByMostLikes");
-export const fetchRecentlyCmts = () =>
-  axiosInstance.get("/comments/viewRecentlyComments");
+export const fetchCmtsByMostLikes = (postID) =>
+  axiosInstance.post("/comments/viewCommentsByMostLikes", { id: postID });
+export const fetchRecentlyCmts = (postID) =>
+  axiosInstance.post("/comments/viewRecentlyComments", { id: postID });
 
 // fetch usertoken
 export const fetchUsers = () => axiosInstance.get(`/users`);

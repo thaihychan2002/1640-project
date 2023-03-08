@@ -248,6 +248,14 @@ export default function IdeaBox() {
                   value={data.content}
                   onChange={(e) => setdata({ ...data, content: e })}
                 />
+                {/* <ReactQuill
+                  placeholder={holder}
+                  theme="snow"
+                  modules={modules}
+                  // formats={formats}
+                  value={data.content}
+                  onChange={(e) => setdata({ ...data, content: e })}
+                /> */}
               </div>
               <div className="user-mg">
                 <Select
@@ -292,6 +300,7 @@ export default function IdeaBox() {
                   }
                 ></Switch>
               </div>
+
               <div
                 style={{
                   marginTop: isXs ? "20%" : "10%",

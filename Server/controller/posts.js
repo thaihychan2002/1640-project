@@ -402,3 +402,59 @@ export const downloadPost = async (req, res) => {
     res.status(500).send('Server error')
   }
 }
+
+// export const downloadPost = async (req, res) => {
+//   try {
+//     const slug = req.body.slug
+//     const post = await PostModel.findOne({ slug: slug })
+//     if (!post) {
+//       return res.status(404).send('Post not found')
+//     }
+//     let docx = officegen('docx')
+
+//     docx.on('finalize', function (written) {
+//       console.log('Finish to create a Microsoft Word document.')
+//     })
+
+//     docx.on('error', function (err) {
+//       console.log(err)
+//     })
+
+//     let pObj = docx.createP()
+//     pObj = docx.createP({ align: 'center' })
+//     pObj.addText(`${post.title}`)
+//     pObj = docx.createP()
+//     pObj.options.align = 'right'
+//     pObj.addText(`${moment(post.createdAt).format('LLL')}`)
+//     pObj = docx.createP()
+//     pObj.addText(`${post.content}`)
+//     pObj = docx.createP()
+//     pObj.addText(post.attachment)
+//     let out = fs.createWriteStream('example.docx')
+//     out.on('error', function (err) {
+//       console.log(err)
+//     })
+
+//     // Async call to generate the output file:
+//     docx.generate(out)
+//     ;async () => {
+//       try {
+//         const zip = new JSZip()
+//         zip.file('example.docx', fs.readFileSync('example.docx'))
+//         const zipName = 'example.zip'
+//         const content = await zip.generateAsync({ type: 'nodebuffer' })
+//         res.setHeader('Content-Type', 'application/zip')
+
+//         res.setHeader(`Content-Disposition', 'attachment; filename=${zipName}`)
+//         res.status(200).send(content)
+//         return zipName
+//       } catch (err) {
+//         console.error(err)
+//         res.status(500).send('Server error')
+//       }
+//     }
+//   } catch (err) {
+//     console.error(err)
+//     res.status(500).send('Server error')
+//   }
+// }
