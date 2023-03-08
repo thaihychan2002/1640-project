@@ -40,6 +40,7 @@ const PostDetails = () => {
     };
     fetchPost();
   }, [slug]);
+  console.log(allData.slug);
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];

@@ -320,44 +320,86 @@ export const exportPost = async (req, res) => {
     client.close()
   }
 }
+// export const downloadPost = async (req, res) => {
+//   const uri =
+//     'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/posts?retryWrites=true&w=majority'
+//   const client = await MongoClient.connect(uri, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   const db = client.db('test')
+//   try {
+//     const data = await db
+//       .collection('posts')
+//       .findOne({ _id: new ObjectId(req.body._id) })
+//     const fields = [
+//       'title',
+//       'content',
+//       'attachment',
+//       'department',
+//       'categories',
+//       'view',
+//       'likeCount',
+//     ]
+//     const json2csvParser = new Parser({ fields })
+//     const csv = json2csvParser.parse(data)
+
+//     const zip = new JSZip()
+//     zip.file('idea.csv', csv)
+
+//     const zipName = 'idea.zip'
+//     const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+
+//     res.setHeader('Content-Type', 'application/zip')
+//     res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`)
+//     res.send(zipContent)
+//     return zipName
+//   } catch (err) {
+//     console.error(err)
+//   } finally {
+//     client.close()
+//   }
+// }
+
 export const downloadPost = async (req, res) => {
-  const uri =
-    'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/posts?retryWrites=true&w=majority'
-  const client = await MongoClient.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  const db = client.db('test')
   try {
-    const data = await db
-      .collection('posts')
-      .findOne({ _id: new ObjectId(req.body._id) })
-    const fields = [
-      'title',
-      'content',
-      'attachment',
-      'department',
-      'categories',
-      'view',
-      'likeCount',
-    ]
-    const json2csvParser = new Parser({ fields })
-    const csv = json2csvParser.parse(data)
+    const slug = req.body.slug
+    const post = await PostModel.findOne({ slug: slug })
+    if (!post) {
+      return res.status(404).send('Post not found')
+    }
+    let docx = officegen('docx')
 
-    const zip = new JSZip()
-    zip.file('idea.csv', csv)
+    docx.on('finalize', function (written) {
+      console.log('Finish to create a Microsoft Word document.')
+    })
 
-    const zipName = 'idea.zip'
-    const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+    docx.on('error', function (err) {
+      console.log(err)
+    })
 
-    res.setHeader('Content-Type', 'application/zip')
-    res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`)
-    res.send(zipContent)
+    let pObj = docx.createP()
+    pObj = docx.createP({ align: 'center' })
+    pObj.addText(`${post.title}`)
+    pObj = docx.createP()
+    pObj.options.align = 'right'
+    pObj.addText(`${moment(post.createdAt).format('LLL')}`)
+    pObj = docx.createP()
+    pObj.addText(`${post.content}`)
+    pObj = docx.createP()
+    pObj.addText(post.attachment)
+    let out = fs.createWriteStream('example.docx')
+    out.on('error', function (err) {
+      console.log(err)
+    })
+
+    // Async call to generate the output file:
+    docx.generate(out)
+
     return zipName
   } catch (err) {
     console.error(err)
-  } finally {
-    client.close()
+    res.status(500).send('Server error')
   }
 }
 

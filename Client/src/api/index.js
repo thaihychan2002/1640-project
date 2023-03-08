@@ -49,11 +49,19 @@ export const rejectPost = (payload) =>
 export const downloadCSV = () =>
   axiosInstance.get("/posts/export", { responseType: "blob" });
 
-export const downloadZip = (postID) =>
+// export const downloadZip = (postID) =>
+//   axiosInstance.post(
+//     "/posts/download",
+//     { _id: postID },
+//     { responseType: "blob" }
+//   );
+export const downloadZip = (slug) =>
   axiosInstance.post(
     "/posts/download",
-    { _id: postID },
-    { responseType: "blob" }
+    { slug: slug },
+    {
+      responseType: "blob",
+    }
   );
 // export const downloadZip = (slug) =>
 //   axiosInstance.post(
