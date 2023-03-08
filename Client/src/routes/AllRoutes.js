@@ -8,6 +8,7 @@ import QA from "../pages/QAPages/QA";
 import UserRoute from "../component/ProtectedRoute/UserRoute";
 import AdminRoute from "../component/ProtectedRoute/AdminRoute";
 import PostDetails from "../pages/AuthPages/PostDetails";
+import SearchPage from "../pages/AuthPages/SearchPage";
 export const AllRoutes = [
   {
     path: "/",
@@ -53,6 +54,10 @@ export const AllRoutes = [
   {
     path: "/idea/:slug",
     element: <PostDetails />,
+  },
+  {
+    path: "/search/:keyword",
+    element: <SearchPage />,
   },
 ];
 export default AllRoutes;

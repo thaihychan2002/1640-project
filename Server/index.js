@@ -11,6 +11,10 @@ import morgan from 'morgan'
 import roles from './routers/role.js'
 import { DepartmentModel } from './model/departments.js'
 import { v2 as cloudinary } from 'cloudinary'
+import { fileURLToPath } from 'url'
+import path from 'path'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 const PORT = process.env.port || 5000

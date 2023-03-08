@@ -15,10 +15,7 @@ import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
-import {
-  departmentsState$,
-  categoriesState$
-} from "../../../redux/seclectors";
+import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
 import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
@@ -67,10 +64,10 @@ export default function Post({ post }) {
   const categet = (e) => {
     setdata({ ...data, categories: e });
     data.categories = caetgoryref.current.value;
-  }
+  };
   const getcmt = React.useCallback(() => {
-    dispatch(actions.getComments.getCommentsRequest(post))
-  }, [dispatch, post])
+    dispatch(actions.getComments.getCommentsRequest(post));
+  }, [dispatch, post]);
   const handleOk = React.useCallback(() => {
     setModalUpdate(false);
   }, []);
@@ -87,8 +84,7 @@ export default function Post({ post }) {
   const viewModal = React.useCallback(() => {
     if (post.author.fullName === user.fullName) {
       setModalUpdate(true);
-    }
-    else {
+    } else {
       setModalOption(true);
     }
   }, [user, post]);
@@ -124,8 +120,14 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   const updatehandler = React.useCallback(() => {
-    dispatch(actions.updatePosts.updatePostsRequest({ _id: post._id, author: post.author, ...data }));
-    handleOk()
+    dispatch(
+      actions.updatePosts.updatePostsRequest({
+        _id: post._id,
+        author: post.author,
+        ...data,
+      })
+    );
+    handleOk();
   }, [dispatch, data, post, handleOk]);
   const onDislikeBtnClick = React.useCallback(() => {
     if (dislikeActive) {
@@ -185,7 +187,6 @@ export default function Post({ post }) {
             height: "300px",
             backgroundColor: "transparent",
             display: "block",
-
             padding: 0,
             border: "none",
             cursor: "pointer",
@@ -203,9 +204,12 @@ export default function Post({ post }) {
           <Typography variant="h5" color="textPrimary">
             {post.title}
           </Typography>
-          <Typography variant="body2" component="p" color="textSecondary">
-            {post.content}
-          </Typography>
+          <Typography
+            variant="body2"
+            component="p"
+            color="textSecondary"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          ></Typography>
           <Typography>{post.view} Views</Typography>
         </CardContent>
         <CardActions>
@@ -225,26 +229,40 @@ export default function Post({ post }) {
           </IconButton>
           {`${post.likeCount} likes`}
         </CardActions>
-        <Grid container spacing={2} alignItems="stretch" style={{ marginLeft: '20px' }}>
+        <Grid
+          container
+          spacing={2}
+          alignItems="stretch"
+          style={{ marginLeft: "20px" }}
+        >
           <Grid item xs={8} lg={8} className="idea">
             <div>
               <Link to="/profile">
                 <img alt={user?.fullName} src={user?.avatar} />
               </Link>
             </div>
-            <Input placeholder="Any comments ?" className="idea-create" onClick={viewComment} />
+            <Input
+              placeholder="Any comments ?"
+              className="idea-create"
+              onClick={viewComment}
+            />
           </Grid>
           <Grid item xs={4} lg={4} className="idea">
-            <Button type="link" onClick={viewComment} >Show comments</Button>
+            <Button type="link" onClick={viewComment}>
+              Show comments
+            </Button>
           </Grid>
         </Grid>
       </Card>
-      <Modal open={Modalcomment}
+      <Modal
+        open={Modalcomment}
         onOk={commentclose}
         onCancel={commentclose}
         footer={null}
-        style={{height:'200px'}}
-        className="container"><CommentList post={post}></CommentList>
+        style={{ height: "200px" }}
+        className="container"
+      >
+        <CommentList post={post}></CommentList>
       </Modal>
       <Modal
         open={Modalupdate}

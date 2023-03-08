@@ -5,7 +5,7 @@ import {
   getComment,
   updateComment,
   viewCmtByMostLikes,
-  viewRecentlyCmt
+  viewRecentlyCmt,
 } from '../controller/Comments.js'
 import { isAuth, isAdmin } from '../utils.js'
 
@@ -15,6 +15,6 @@ router.post('/create', isAuth, createComment)
 router.delete('/delete/:id', isAuth, deleteComment)
 router.put('/update', isAuth, updateComment)
 // view comments
-router.get('/viewCommentsByMostLikes', viewCmtByMostLikes)
-router.get('/viewRecentlyComments', viewRecentlyCmt)
+router.post('/viewCommentsByMostLikes', viewCmtByMostLikes)
+router.post('/viewRecentlyComments', viewRecentlyCmt)
 export default router
