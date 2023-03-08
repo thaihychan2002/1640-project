@@ -1,17 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/Search.css";
 export default function Search() {
   const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    const savedSearchText = localStorage.getItem("searchText");
+    if (savedSearchText) {
+      setSearchText(savedSearchText);
+    }
+  }, []);
+
   const navigate = useNavigate();
   const onChange = (e) => {
     e.preventDefault();
-    navigate(`/${searchText}`);
+    localStorage.setItem("searchText", searchText);
+    navigate(`/search/${searchText}`);
   };
   return (
     <div>
       {" "}
-      <form className="form" style={{ width: "90%", marginBottom: 15 }}>
+      <form className="form" style={{ width: "90%", marginBottom: 25 }}>
         <button onClick={onChange}>
           <svg
             width="17"
@@ -32,10 +41,11 @@ export default function Search() {
         </button>
         <input
           className="input"
-          placeholder="Type your text"
+          placeholder="Search any idea"
           type="text"
           id="input"
           onChange={(e) => setSearchText(e.target.value)}
+          autoComplete="off"
         />
         <button className="reset" type="reset">
           <svg

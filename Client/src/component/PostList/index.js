@@ -4,10 +4,7 @@ import * as actions from "../../redux/actions";
 import { Grid } from "@material-ui/core";
 import Post from "./Post";
 import IdeaBox from "../IdeaBox";
-import {
-  postsState$,
-  postsLoading$,
-} from "../../redux/seclectors";
+import { postsState$, postsLoading$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { useMediaQuery } from "@material-ui/core";
 import { Select } from "antd";
@@ -43,6 +40,7 @@ export default function PostList() {
   const changePostsView = (value) => {
     setSelectedView(value);
   };
+
   const isXs = useMediaQuery("(max-width:600px)");
   const isSm = useMediaQuery("(max-width:900px)");
 

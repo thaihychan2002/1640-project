@@ -1,7 +1,7 @@
 import { Grid } from "@material-ui/core";
 import { allPostsState$ } from "../../redux/seclectors";
 import { useSelector, useDispatch } from "react-redux";
-import {  useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 import React from "react";
 import * as actions from "../../redux/actions";
@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet-async";
 import { Button, Statistic } from "antd";
 import CountUp from "react-countup";
 import { downloadCSV } from "../../api";
+import DownloadButton from "../../component/DownloadButton";
 
 export default function QA() {
   const dispatch = useDispatch();
@@ -170,8 +171,10 @@ export default function QA() {
       <Grid item xs={2} sm={2} />
       <Grid container item xs={8} sm={8}>
         <Grid item xs={6} md={6}>
-          <Button onClick={() => downloadPosts()}>Download all posts</Button>
-
+          <DownloadButton
+            download={downloadPosts}
+            textDownload={"Download All Ideas"}
+          />
           <Statistic
             title="Active Ideas"
             value={posts.length}

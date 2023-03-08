@@ -22,8 +22,4 @@ export const INIT_STATE = {
     isLoading: false,
     data: [],
   },
-  ConditionCmt: {
-    isLoading: false,
-    data: [],
-  },
 };

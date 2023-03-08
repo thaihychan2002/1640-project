@@ -16,6 +16,9 @@ import { Link } from "react-router-dom";
 import DrawExpand from "./Drawer";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { useMediaQuery } from "@material-ui/core";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -24,6 +27,8 @@ export default function IdeaBox() {
   const dispatch = useDispatch();
   const departments = useSelector(departmentsState$);
   const categories = useSelector(categoriesState$);
+  const [value, setValue] = useState("");
+  const isXs = useMediaQuery("(max-width:600px)");
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -101,6 +106,26 @@ export default function IdeaBox() {
 
   const user = state.userInfo;
   const holder = "What's on your mind " + user.fullName + "?";
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+  ];
+  const modules = {
+    toolbar: [[{ size: [] }], ["bold", "italic", "underline"]],
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false,
+    },
+  };
 
   return (
     <div>
@@ -201,7 +226,7 @@ export default function IdeaBox() {
                 />
               </div>
               <div className="user-mg">
-                <TextArea
+                {/* <TextArea
                   allowClear
                   autoSize={{
                     minRows: 3,
@@ -214,7 +239,23 @@ export default function IdeaBox() {
                     setdata({ ...data, content: e.target.value })
                   }
                   required
+                /> */}
+                <ReactQuill
+                  placeholder={holder}
+                  theme="snow"
+                  modules={modules}
+                  // formats={formats}
+                  value={data.content}
+                  onChange={(e) => setdata({ ...data, content: e })}
                 />
+                {/* <ReactQuill
+                  placeholder={holder}
+                  theme="snow"
+                  modules={modules}
+                  // formats={formats}
+                  value={data.content}
+                  onChange={(e) => setdata({ ...data, content: e })}
+                /> */}
               </div>
               <div className="user-mg">
                 <Select
@@ -259,7 +300,14 @@ export default function IdeaBox() {
                   }
                 ></Switch>
               </div>
-              <div style={{ marginTop: "35%", fontSize: "16px" }}>
+
+              <div
+                style={{
+                  marginTop: isXs ? "20%" : "10%",
+                  fontSize: isXs ? "10px" : "16px",
+                }}
+              >
+
                 Click to view{" "}
                 <span className="term" onClick={showDrawer}>
                   GreFeed Terms and Conditions

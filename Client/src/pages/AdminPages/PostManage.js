@@ -12,6 +12,8 @@ import {
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import * as actions from "../../redux/actions";
+import { toast } from "react-toastify";
+import { getError } from "../../utils";
 export default function PostManage() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
