@@ -118,12 +118,10 @@ function* createDepartmentSaga(action) {
 }
 function* updateDepartmentSaga(action) {
   try {
-    console.log("deleteDepartmentSaga", { action });
     const departments = yield call(api.updateDepartments, action.payload);
     yield put(
       actions.updateDepartments.updateDepartmentsSuccess(departments.data)
     );
-    console.log("[updateDepartmentSaga - department]", departments);
   } catch (err) {
     console.log(err);
     yield put(actions.updateDepartments.updateDepartmentsFailure(err));
@@ -188,15 +186,11 @@ function* deleteCategorySaga(action) {
 function* fetchConditionCmtSaga(action) {
   try {
     let comments;
-    // if (action.payload === "recently") {
-    //   comments = yield call(api.fetchRecentlyCmts);
-    // } else if (action.payload === "mostLikes") {
-    //   comments = yield call(api.fetchCmtsByMostLikes);
-    // }
-    console.log(action.payload);
-    comments = yield call(api.fetchRecentlyCmts);
-    // comments = yield call(api.fetchCmtsByMostLikes);
-
+    if (action.payload.status === "recently") {
+      comments = yield call(api.fetchRecentlyCmts);
+    } else if (action.payload.status === "mostLikes") {
+      comments = yield call(api.fetchCmtsByMostLikes);
+    }
     yield put(actions.getConditionCmts.getCmtsSuccess(comments?.data));
   } catch (err) {
     console.log(err);

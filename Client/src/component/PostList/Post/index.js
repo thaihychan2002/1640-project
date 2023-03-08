@@ -366,7 +366,7 @@ export default function Post({ post }) {
                   ref={departmentref}
                 >
                   {departments?.map((department) => (
-                    <Option key={department._id} value={department.name}>
+                    <Option key={department._id} value={department._id}>
                       {department.name}
                     </Option>
                   ))}
@@ -381,7 +381,7 @@ export default function Post({ post }) {
                   ref={caetgoryref}
                 >
                   {categories?.map((category) => (
-                    <Option key={category._id} value={category.name}>
+                    <Option key={category._id} value={category._id}>
                       {category.name}
                     </Option>
                   ))}

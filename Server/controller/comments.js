@@ -17,9 +17,9 @@ export const getComment = async (req, res) => {
   }
 }
 export const viewCmtByMostLikes = async (req, res) => {
-  const id = req.body.id
+  const CDID = conditionID
   try {
-    const comments = await CommentModel.find({ postID: id })
+    const comments = await CommentModel.find({ postID: CDID })
       .sort({ likeCount: -1 })
       .populate('author')
       .populate('postID')
@@ -31,8 +31,8 @@ export const viewCmtByMostLikes = async (req, res) => {
 }
 export const viewRecentlyCmt = async (req, res) => {
   try {
-    const id = req.body.id
-    const comments = await CommentModel.find({ postID: id })
+    const CDID = conditionID
+    const comments = await CommentModel.find({ postID: CDID })
       .sort({ createdAt: -1 })
       .populate('author')
       .populate('postID')
@@ -45,12 +45,15 @@ export const viewRecentlyCmt = async (req, res) => {
 export const createComment = async (req, res) => {
   try {
     const newComment = req.body
-    const postID = req.body.postID
-    const post = await PostModel.findOne({ _id: postID })
+    const post = await PostModel.findOne({ _id: req.body.postID })
       .populate('author')
       .exec()
-    const comment = new CommentModel(newComment)
-    await comment.save()
+    const addcomment = new CommentModel(newComment)
+    await addcomment.save()
+    const comment = await CommentModel.findOne({ postID: req.body.postID, _id: addcomment._id })
+      .populate('author')
+      .populate('postID')
+      .exec()
     let mailOptions = {
       from: process.env.GMAIL_USER,
       to: `${post.author.email}`,
@@ -64,6 +67,7 @@ export const createComment = async (req, res) => {
         console.log('Email sent: ' + info.response)
       }
     })
+    console.log(post)
     res.status(200).json(comment)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -88,6 +92,8 @@ export const updateComment = async (req, res) => {
       updateComment,
       { new: true }
     )
+    .populate('author')
+    .populate('postID')
     res.status(200).json(comment)
   } catch (err) {
     res.status(500).json({ error: err })
