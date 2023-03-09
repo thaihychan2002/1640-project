@@ -208,7 +208,12 @@ export default function Post({ post }) {
             variant="body2"
             component="p"
             color="textSecondary"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{
+              __html:
+                post.content.length > 100
+                  ? `${post.content.substring(0, 100)}...`
+                  : post.content,
+            }}
           ></Typography>
           <Typography>{post.view} Views</Typography>
         </CardContent>
