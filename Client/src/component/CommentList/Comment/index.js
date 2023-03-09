@@ -116,8 +116,9 @@ export default function Comment({ comment }) {
     }, []);
     const updatecmthandler = React.useCallback(() => {
         dispatch(actions.updateComments.updateCommentsRequest({ _id: comment._id,author:user._id, ...newcmt }));
+        handleOk()
         Cmtoptionclose()
-    }, [dispatch, newcmt, comment, Cmtoptionclose,user]);
+    }, [dispatch, newcmt, comment, Cmtoptionclose,handleOk,user]);
     const deletehandler = React.useCallback(() => {
         dispatch(actions.deleteComments.deleteCommentsRequest(comment._id))
     }, [comment, dispatch])
@@ -129,7 +130,7 @@ export default function Comment({ comment }) {
                         comment.isAnonymous ? (
                             <img src={animal.avatar} alt={`${animal.name} Avatar`} />
                         ) : (
-                            <img src={user.avatar} alt={comment.author.fullName} />
+                            <img src={comment.author.avatar} alt={comment.author.fullName} />
                         )
                     }
                     title={

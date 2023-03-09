@@ -58,6 +58,9 @@ export const createPosts = async (req, res, next) => {
       likeCount: joi.number().valid(0).allow(),
       view: joi.number().valid(0).allow(),
     })
+    .populate('author')
+    .populate('categories')
+    .populate('department')
     await createPostSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
@@ -98,6 +101,9 @@ export const updatePosts = async (req, res) => {
       updatePosts,
       { new: true }
     )
+      .populate('author')
+      .populate('categories')
+      .populate('department')
     res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -136,6 +142,8 @@ export const viewPostsByMostViews = async (req, res) => {
     const posts = await PostModel.find()
       .sort({ view: -1 })
       .populate('author', 'fullName avatar _id role department')
+      .populate('categories')
+      .populate('department')
       .lean()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
     res.status(200).json(filteredPosts)
@@ -148,6 +156,8 @@ export const viewPostsByMostLikes = async (req, res) => {
     const posts = await PostModel.find()
       .sort({ likeCount: -1 })
       .populate('author', 'fullName avatar _id role department')
+      .populate('categories')
+      .populate('department')
       .lean()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
     res.status(200).json(filteredPosts)
@@ -160,6 +170,8 @@ export const viewRecentlyPosts = async (req, res) => {
     const posts = await PostModel.find()
       .sort({ createdAt: -1 })
       .populate('author', 'fullName avatar _id role department')
+      .populate('categories')
+      .populate('department')
       .lean()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
 

@@ -1,5 +1,5 @@
 import { INIT_STATE } from "../../constant";
-import { getComments, getType, updateComments, deleteComments, createComments } from "../actions";
+import { getComments, getType, updateComments, deleteComments, createComments, getConditionCmts } from "../actions";
 
 export default function DepartmentsReducers(state = INIT_STATE.comments, action) {
     switch (action.type) {
@@ -32,10 +32,26 @@ export default function DepartmentsReducers(state = INIT_STATE.comments, action)
                 ),
             };
         case getType(deleteComments.deleteCommentsSuccess):
-            const newData =state.data.filter((comment)=>{ return comment._id !== action.payload._id});
+            const newData = state.data.filter((comment) => { return comment._id !== action.payload._id });
             return {
                 ...state,
                 data: newData,
+            };
+        case getType(getConditionCmts.getCmtsRequest):
+            return {
+                ...state,
+                isLoading: true,
+            };
+        case getType(getConditionCmts.getCmtsSuccess):
+            return {
+                ...state,
+                isLoading: false,
+                data: action.payload,
+            };
+        case getType(getConditionCmts.getCmtsFailure):
+            return {
+                ...state,
+                isLoading: false,
             };
         default:
             return state;

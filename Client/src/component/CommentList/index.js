@@ -16,38 +16,33 @@ const { Option } = Select;
 const { TextArea } = Input;
 export default function CommentList({ post }) {
   const dispatch = useDispatch();
-  // const comments = useSelector(commentsState$);
-  const [comments, setComments] = useState([]);
-  const [isLoading, setisLoading] = useState(false);
+  const comments = useSelector(commentsState$);
+  // const [comments, setComments] = useState([]);
+  const isLoading = useSelector(commentsLoading$);
   const [selectedcdt, setSelectedcdt] = useState("recently");
   const { state } = useContext(Store);
-  // React.useEffect(() => {
-  //   try {
-  //     dispatch(actions.getConditionCmts.getCmtsRequest('mostLikes'));
-  //     await fetchCmtsByMostLikes
-  //   } catch (err) {
-  //     toast.error(getError(err));
-  //   }
-  // }, [dispatch, selectedcdt]);
-  useEffect(() => {
-    const fetchCmts = async () => {
-      try {
-        setisLoading(true);
-        let data = [];
-        if (selectedcdt === "recently") {
-          ({ data } = await fetchRecentlyCmts(post._id));
-        } else if (selectedcdt === "mostLikes") {
-          ({ data } = await fetchCmtsByMostLikes(post._id));
-        }
-        setComments(data);
-      } catch (err) {
-        toast.error(getError(err));
-      } finally {
-        setisLoading(false);
-      }
-    };
-    fetchCmts();
-  }, [post._id, selectedcdt]);
+  React.useEffect(() => {
+      dispatch(actions.getConditionCmts.getCmtsRequest({status:selectedcdt}));
+  }, [dispatch, selectedcdt]);
+  // useEffect(() => {
+  //   const fetchCmts = async () => {
+  //     try {
+  //       setisLoading(true);
+  //       let data = [];
+  //       if (selectedcdt === "recently") {
+  //         ({ data } = await fetchRecentlyCmts(post._id));
+  //       } else if (selectedcdt === "mostLikes") {
+  //         ({ data } = await fetchCmtsByMostLikes(post._id));
+  //       }
+  //       setComments(data);
+  //     } catch (err) {
+  //       toast.error(getError(err));
+  //     } finally {
+  //       setisLoading(false);
+  //     }
+  //   };
+  //   fetchCmts();
+  // }, [post._id, selectedcdt]);
 
   const user = state.userInfo;
   const [comment, setcomment] = React.useState({
@@ -55,9 +50,10 @@ export default function CommentList({ post }) {
     content: "",
     postID: post._id,
   });
-  const changeCommentsView = (value) => {
+  const changeCommentsView = React.useCallback((value) => {
     setSelectedcdt(value);
-  };
+    console.log(selectedcdt)
+  }, [selectedcdt]);
   const commenthandler = React.useCallback(() => {
     dispatch(actions.createComments.createCommentsRequest(comment));
   }, [comment, dispatch]);
