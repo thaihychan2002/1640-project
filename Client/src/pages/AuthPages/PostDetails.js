@@ -1,53 +1,107 @@
 import { Grid } from "@material-ui/core";
 import "../../component/assets/css/PostDetails.css";
-import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { IconButton, Typography } from "@material-ui/core";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import React, { useEffect, useState } from "react";
 import { downloadCSV, downloadZip, fetchPostBySlug } from "../../api";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import { animalList } from "../../component/PostList/Post/anonymousAnimal.js";
-import { Button } from "antd";
-import axios from "axios";
 import DownloadButton from "../../component/DownloadButton";
+import * as actions from "../../redux/actions"
+import { useDispatch } from "react-redux";
+import CommentList from "../../component/CommentList";
 
 const PostDetails = () => {
-  const [allData, setAllData] = useState({
-    _id: "",
-    title: "",
-    author: "",
-    attachment: "",
-    content: "",
-    createdAt: "",
-    isAnonymous: false,
-  });
+  const [allData, setAllData] = useState({});
   const params = useParams();
   const { slug } = params;
-  useEffect(() => {
-    const fetchPost = async () => {
-      const { data } = await fetchPostBySlug(slug);
-      setAllData({
-        ...allData,
-        _id: data._id,
-        slug: data.slug,
-        title: data.title,
-        author: data?.author?.fullName,
-        authorAvatar: data.author?.avatar,
-        attachment: data.attachment,
-        content: data.content,
-        createdAt: data.createdAt,
-        isAnonymous: data.isAnonymous,
-      });
-    };
-    fetchPost();
-  }, [slug,allData]);
-  console.log(allData.slug);
+ const dispatch = useDispatch()
+  // React.useEffect(() => {
+  //   dispatch(actions.getComments.getCommentsRequest(allData));
+  //   const fetchPost = async () => {
+  //     const { data } = await fetchPostBySlug(slug);
+  //     setAllData({
+  //       ...allData,
+  //       _id: data._id,
+  //       slug: data.slug,
+  //       title: data.title,
+  //       author: data?.author?.fullName,
+  //       authorAvatar: data.author?.avatar,
+  //       attachment: data.attachment,
+  //       likeCount: data.likeCount,
+  //       content: data.content,
+  //       createdAt: data.createdAt,
+  //       isAnonymous: data.isAnonymous,
+  //     });
+  //   };
+  //   fetchPost();
+  // }, [slug, allData,dispatch]);
+  console.log(allData);
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
   };
-
+ 
   const animal = getRandomAnimal();
-
+  const [likeActive, setLikeActive] = React.useState(false);
+  const [dislikeActive, setDislikeActive] = React.useState(false);
+  const onLikeBtnClick = React.useCallback(() => {
+    if (likeActive) {
+      setLikeActive(false);
+      dispatch(
+        actions.updatePosts.updatePostsRequest({
+          _id: allData._id,
+          likeCount: allData.likeCount - 1,
+        })
+      );
+    } else {
+      setLikeActive(true);
+      dispatch(
+        actions.updatePosts.updatePostsRequest({
+          _id: allData._id,
+          likeCount: allData.likeCount + 1,
+        })
+      );
+      if (dislikeActive) {
+        setDislikeActive(false);
+        dispatch(
+          actions.updatePosts.updatePostsRequest({
+            _id: allData._id,
+            likeCount: allData.likeCount + 2,
+          })
+        );
+      }
+    }
+  }, [dispatch, allData, likeActive, dislikeActive]);
+  const onDislikeBtnClick = React.useCallback(() => {
+    if (dislikeActive) {
+      setDislikeActive(false);
+      dispatch(
+        actions.updatePosts.updatePostsRequest({
+          _id: allData._id,
+          likeCount: allData.likeCount + 1,
+        })
+      );
+    } else {
+      setDislikeActive(true);
+      dispatch(
+        actions.updatePosts.updatePostsRequest({
+          _id: allData._id,
+          likeCount: allData.likeCount - 1,
+        })
+      );
+      if (likeActive) {
+        setLikeActive(false);
+        dispatch(
+          actions.updatePosts.updatePostsRequest({
+            _id: allData._id,
+            likeCount: allData.likeCount - 2,
+          })
+        );
+      }
+    }
+  }, [dispatch, allData, likeActive, dislikeActive]);
   const downloadPost = async () => {
     try {
       const id = allData._id;
@@ -136,10 +190,21 @@ const PostDetails = () => {
           </div>
           <div className="postBottom">
             <div className="postBottomLeft">
-              <LikeOutlined style={{ fontSize: "32px" }} />
-              <span className="postLikeCounter"> 10 </span>
-              <DislikeOutlined style={{ fontSize: "32px" }} />
-              <span className="postDislikeCounter"> 10 </span>
+              <IconButton
+                onClick={onLikeBtnClick}
+                style={{ color: likeActive ? "red" : "" }}
+              >
+                <FavoriteIcon />
+                <Typography component="span" color="textSecondary"></Typography>
+              </IconButton>
+              <IconButton
+                onClick={onDislikeBtnClick}
+                style={{ color: dislikeActive ? "blue" : "" }}
+              >
+                -<FavoriteIcon />
+                <Typography component="span" color="textSecondary"></Typography>
+              </IconButton>
+              {`${allData.likeCount} likes`}
             </div>
             <div className="postBottomRight">
               <span className="postCommentText"> 10 comments </span>
@@ -148,25 +213,7 @@ const PostDetails = () => {
           <br />
           <div>comments</div>
           <br />
-          <div>
-            <img
-              className="postImage"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/1200px-Google_Chrome_icon_%28February_2022%29.svg.png"
-              alt=""
-            />
-            <span className="postUsername"> phat </span>
-            <span className="postComment"> sfdlkasdjlfjladsjfl</span>
-          </div>
-          <br />
-          <div>
-            <img
-              className="postImage"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/1200px-Google_Chrome_icon_%28February_2022%29.svg.png"
-              alt=""
-            />
-            <span className="postUsername"> phat </span>
-            <span className="postComment"> sfdlkasdjlfjladsjfl</span>
-          </div>
+          <CommentList post={allData}></CommentList>
         </div>
       </Grid>
     </Grid>

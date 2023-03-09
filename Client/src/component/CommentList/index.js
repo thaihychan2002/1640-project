@@ -56,6 +56,7 @@ export default function CommentList({ post }) {
   }, [selectedcdt]);
   const commenthandler = React.useCallback(() => {
     dispatch(actions.createComments.createCommentsRequest(comment));
+    console.log(comment)
   }, [comment, dispatch]);
   return (
     <Grid container spacing={1} alignItems="stretch">
