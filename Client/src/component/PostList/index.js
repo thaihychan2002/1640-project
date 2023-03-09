@@ -23,20 +23,20 @@ export default function PostList() {
       toast.error(getError(err));
     }
   }, [dispatch, selectedView]);
-  React.useEffect(() => {
-    try {
-      dispatch(actions.getDepartments.getDepartmentsRequest());
-    } catch (err) {
-      toast.error(getError(err));
-    }
-  }, [dispatch]);
-  React.useEffect(() => {
-    try {
-      dispatch(actions.getCategories.getCategoriesRequest());
-    } catch (err) {
-      toast.error(getError(err));
-    }
-  }, [dispatch]);
+  // React.useEffect(() => {
+  //   try {
+  //     dispatch(actions.getDepartments.getDepartmentsRequest());
+  //   } catch (err) {
+  //     toast.error(getError(err));
+  //   }
+  // }, [dispatch]);
+  // React.useEffect(() => {
+  //   try {
+  //     dispatch(actions.getCategories.getCategoriesRequest());
+  //   } catch (err) {
+  //     toast.error(getError(err));
+  //   }
+  // }, [dispatch]);
   const changePostsView = (value) => {
     setSelectedView(value);
   };
