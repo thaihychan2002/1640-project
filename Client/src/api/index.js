@@ -23,6 +23,8 @@ export const createPosts = (payload) =>
   axiosInstance.post(`/posts/create`, payload);
 export const updatePosts = (payload) =>
   axiosInstance.put(`/posts/update`, payload);
+export const countViewBySlug = (slug) =>
+  axiosInstance.put("/posts/countView", { slug: slug });
 export const deletePosts = (payload) =>
   axiosInstance.delete(`/posts/delete/${payload}`, payload);
 export const deletePostByAdmin = (payload) =>

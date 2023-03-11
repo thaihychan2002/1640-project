@@ -10,12 +10,13 @@ import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import * as actions from "../../redux/actions";
 import Search from "../Search/index";
+import { countViewBySlug } from "../../api";
 
 export default function AccountSwitch() {
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   let user = state.userInfo;
-  const signoutHandler = () => {
+  const logoutHandler = () => {
     ctxDispatch({ type: "USER_LOGOUT" });
     localStorage.removeItem("userInfo");
     window.location.href = "/login";
@@ -49,7 +50,10 @@ export default function AccountSwitch() {
       setRandomPosts(randomPosts);
     }
   }, [posts]);
-
+  const countView = async (slug) => {
+    console.log(slug);
+    await countViewBySlug(slug);
+  };
   return (
     <div className="account-switch">
       <Grid container alignItems="stretch">
@@ -81,7 +85,7 @@ export default function AccountSwitch() {
                 className="switch"
                 to="#logout"
                 style={{ textDecoration: "none" }}
-                onClick={() => signoutHandler()}
+                onClick={() => logoutHandler()}
               >
                 Logout
               </Link>
@@ -99,7 +103,10 @@ export default function AccountSwitch() {
               {post.title}
               <Button
                 type="button"
-                onClick={() => navigate(`/idea/${post?.slug}`)}
+                onClick={() => {
+                  navigate(`/idea/${post?.slug}`);
+                  countView(post.slug);
+                }}
               >
                 View
               </Button>

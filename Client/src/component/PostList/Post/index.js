@@ -24,6 +24,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { animalList } from "./anonymousAnimal.js";
 import CommentList from "../../CommentList/index.js";
 import * as actions from "../../../redux/actions";
+import { countViewBySlug } from "../../../api/index.js";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -157,6 +158,10 @@ export default function Post({ post }) {
       }
     }
   }, [dispatch, post, likeActive, dislikeActive]);
+  const countView = async (slug) => {
+    console.log(slug);
+    await countViewBySlug(slug);
+  };
   return (
     <>
       <Card className={classes.card} key={post._id}>
@@ -181,7 +186,10 @@ export default function Post({ post }) {
 
         <Button
           type="button"
-          onClick={() => navigate(`/idea/${post?.slug}`)}
+          onClick={() => {
+            navigate(`/idea/${post?.slug}`);
+            countView(post.slug);
+          }}
           style={{
             width: "100%",
             height: "300px",
