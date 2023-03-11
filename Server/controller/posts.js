@@ -17,10 +17,12 @@ import JSZip from 'jszip'
 export const getPosts = async (req, res) => {
   try {
     const posts = await PostModel.find()
+      .sort({ createdAt: -1 })
       .populate('author', 'fullName avatar _id role department')
       .populate('categories')
       .populate('department')
       .exec()
+
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -58,6 +60,7 @@ export const createPosts = async (req, res, next) => {
       likeCount: joi.number().valid(0).allow(),
       view: joi.number().valid(0).allow(),
     })
+
     await createPostSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
@@ -257,6 +260,8 @@ export const viewPostsByDepartment = async (req, res) => {
   try {
     const departmentID = req.body.id
     const posts = await PostModel.find({ department: departmentID })
+      .sort({ createdAt: -1 })
+
       .populate('author')
       .exec()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
@@ -269,10 +274,22 @@ export const viewPostsByCategories = async (req, res) => {
   try {
     const categoryID = req.body.id
     const posts = await PostModel.find({ categories: categoryID })
+      .sort({ createdAt: -1 })
       .populate('author')
       .exec()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
     res.status(200).json(filteredPosts)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
+export const countViewPostBySlug = async (req, res) => {
+  try {
+    const slug = req.body.slug
+    const post = await PostModel.findOne({ slug: slug })
+    post.view = post.view + 1
+    const updateView = await post.save()
+    res.status(200).json(updateView)
   } catch (err) {
     res.status(500).json({ error: err })
   }

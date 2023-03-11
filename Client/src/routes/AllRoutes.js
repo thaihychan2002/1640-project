@@ -24,10 +24,14 @@ export const AllRoutes = [
     path: "/login",
     element: <Login />,
   },
-  { path: "/register", element: <Register /> },
+  // { path: "/register", element: <Register /> },
   {
     path: "*",
-    element: <NotFound />,
+    element: (
+      <UserRoute>
+        <NotFound />
+      </UserRoute>
+    ),
   },
   {
     path: "/profile",
@@ -45,14 +49,14 @@ export const AllRoutes = [
       </AdminRoute>
     ),
   },
-  {
-    path: "/qa",
-    element: (
-      <AdminRoute>
-        <QA />
-      </AdminRoute>
-    ),
-  },
+  // {
+  //   path: "/qa",
+  //   element: (
+  //     <AdminRoute>
+  //       <QA />
+  //     </AdminRoute>
+  //   ),
+  // },
   {
     path: "/idea/:slug",
     element: <PostDetails />,
