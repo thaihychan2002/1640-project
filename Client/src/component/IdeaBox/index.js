@@ -20,14 +20,12 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useMediaQuery } from "@material-ui/core";
 
-const { TextArea } = Input;
 const { Option } = Select;
 
 export default function IdeaBox() {
   const dispatch = useDispatch();
   const departments = useSelector(departmentsState$);
   const categories = useSelector(categoriesState$);
-  const [value, setValue] = useState("");
   const isXs = useMediaQuery("(max-width:600px)");
 
   const [isChecked, setIsChecked] = useState(false);
@@ -65,15 +63,8 @@ export default function IdeaBox() {
     dispatch(showModal());
   }, [dispatch]);
   const onSubmit = React.useCallback(() => {
-    try {
       dispatch(createPosts.createPostsRequest(data));
       handleOk();
-      toast.success(
-        "Created idea successfully. Please wait for Admin to accept your idea"
-      );
-    } catch (err) {
-      toast.error(getError(err));
-    }
   }, [data, dispatch, handleOk]);
   const [open, setOpen] = useState(false);
   const showDrawer = () => {

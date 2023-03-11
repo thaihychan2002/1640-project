@@ -71,6 +71,10 @@ export const createPosts = async (req, res, next) => {
     }
     post.slug = slug(req.body.title)
     await post.save()
+    const createdpost = await PostModel.findOne({ _id: post._id })
+      .populate('author')
+      .populate('categories')
+      .populate('department')
     // send email
     let mailOptions = {
       from: process.env.GMAIL_USER,
@@ -85,7 +89,7 @@ export const createPosts = async (req, res, next) => {
         console.log('Email sent: ' + info.response)
       }
     })
-    res.status(200).json(post)
+    res.status(200).json(createdpost)
   } catch (err) {
     if (err.isJoi === true) {
       res.status(422).send({ message: `${err.details[0].message}` })
@@ -129,7 +133,7 @@ export const deletePostByAdmin = async (req, res) => {
     const post = await PostModel.findById(req.params.id)
     if (post) {
       await post.remove()
-      res.status(200).send({ message: 'Post Deleted' })
+      res.status(200).send(post)
     } else {
       res.status(404).send({ message: 'Cannot delete other post' })
     }

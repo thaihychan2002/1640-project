@@ -1,6 +1,8 @@
 import { takeLatest, call, put } from "redux-saga/effects";
 import * as actions from "../actions";
 import * as api from "../../api";
+import { toast } from "react-toastify";
+import { getError } from "../../utils";
 //post
 function* fetchPostSaga(action) {
   try {
@@ -30,9 +32,13 @@ function* fetchAllPostsSaga(action) {
 function* createPostSaga(action) {
   try {
     const posts = yield call(api.createPosts, action.payload);
+    toast.success(
+      "Created idea successfully. Please wait for Admin to accept your idea"
+    );
     yield put(actions.createPosts.createPostsSuccess(posts.data));
   } catch (err) {
     console.log(err);
+    toast.error(getError(err));
     yield put(actions.createPosts.createPostsFailure(err));
   }
 }
