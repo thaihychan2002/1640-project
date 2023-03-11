@@ -4,7 +4,7 @@ import * as actions from "../../redux/actions";
 import { Grid } from "@material-ui/core";
 import Comment from "./Comment";
 import { Link } from "react-router-dom";
-import { Input, Button } from "antd";
+import { Input, Button, Typography } from "antd";
 import { Store } from "../../Store";
 import { commentsLoading$, commentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
@@ -14,6 +14,7 @@ import { getError } from "../../utils";
 import { fetchCmtsByMostLikes, fetchRecentlyCmts } from "../../api";
 const { Option } = Select;
 const { TextArea } = Input;
+const { Text } = Typography;
 export default function CommentList({ post }) {
   const dispatch = useDispatch();
   const comments = useSelector(commentsState$);
@@ -22,7 +23,7 @@ export default function CommentList({ post }) {
   const [selectedcdt, setSelectedcdt] = useState("recently");
   const { state } = useContext(Store);
   React.useEffect(() => {
-      dispatch(actions.getConditionCmts.getCmtsRequest({status:selectedcdt}));
+    dispatch(actions.getConditionCmts.getCmtsRequest({ status: selectedcdt }));
   }, [dispatch, selectedcdt]);
   // useEffect(() => {
   //   const fetchCmts = async () => {
@@ -84,7 +85,10 @@ export default function CommentList({ post }) {
           required
         />
       </Grid>
-      <Grid item xs={9} sm={9}>
+      <Grid item xs={2} sm={2} style={{marginLeft:'20px'}}>
+        <Text type="secondary">{comments.length} comments</Text>
+      </Grid>
+      <Grid item xs={7} sm={7}>
         <div style={{ display: "flex", justifyContent: "end" }}>
           <Select
             defaultValue="View Recently"
@@ -96,7 +100,7 @@ export default function CommentList({ post }) {
           </Select>
         </div>
       </Grid>
-      <Grid item xs={3} sm={3}>
+      <Grid item xs={2} sm={2}>
         <Button type="primary" block onClick={commenthandler}>
           Post
         </Button>

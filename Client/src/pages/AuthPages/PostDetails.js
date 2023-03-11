@@ -3,46 +3,57 @@ import "../../component/assets/css/PostDetails.css";
 import { IconButton, Typography } from "@material-ui/core";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import React, { useEffect, useState } from "react";
-import { downloadCSV, downloadZip, fetchPostBySlug } from "../../api";
+import { downloadZip, fetchPostBySlug } from "../../api";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import { animalList } from "../../component/PostList/Post/anonymousAnimal.js";
-import DownloadButton from "../../component/DownloadButton";
 import * as actions from "../../redux/actions"
-import { useDispatch } from "react-redux";
+import DownloadButton from "../../component/DownloadButton/index.js";
+import NotFound from "../NotAuthPages/NotFound.js";
+import { Helmet } from "react-helmet-async";
+import { useDispatch, useSelector } from "react-redux";
 import CommentList from "../../component/CommentList";
-
+import { commentsState$ } from "../../redux/seclectors";
 const PostDetails = () => {
   const [allData, setAllData] = useState({});
   const params = useParams();
   const { slug } = params;
- const dispatch = useDispatch()
-  // React.useEffect(() => {
-  //   dispatch(actions.getComments.getCommentsRequest(allData));
-  //   const fetchPost = async () => {
-  //     const { data } = await fetchPostBySlug(slug);
-  //     setAllData({
-  //       ...allData,
-  //       _id: data._id,
-  //       slug: data.slug,
-  //       title: data.title,
-  //       author: data?.author?.fullName,
-  //       authorAvatar: data.author?.avatar,
-  //       attachment: data.attachment,
-  //       likeCount: data.likeCount,
-  //       content: data.content,
-  //       createdAt: data.createdAt,
-  //       isAnonymous: data.isAnonymous,
-  //     });
-  //   };
-  //   fetchPost();
-  // }, [slug, allData,dispatch]);
-  console.log(allData);
+  const comments = useSelector(commentsState$);
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      const { data } = await fetchPostBySlug(slug);
+      setAllData({
+        _id: data._id,
+        slug: data.slug,
+        title: data.title,
+        author: data?.author?.fullName,
+        authorAvatar: data.author?.avatar,
+        attachment: data.attachment,
+        likeCount: data.likeCount,
+        view: data.view,
+        content: data.content,
+        createdAt: data.createdAt,
+        isAnonymous: data.isAnonymous,
+      });
+    };
+    fetchPost();
+  }, [slug]);
+  React.useEffect(() => {
+    dispatch(actions.getComments.getCommentsRequest(allData));
+    dispatch(
+      actions.updatePosts.updatePostsRequest({
+        _id: allData._id,
+        view: allData.view + 1,
+      })
+    );
+  }, [dispatch, allData])
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
   };
- 
+
   const animal = getRandomAnimal();
   const [likeActive, setLikeActive] = React.useState(false);
   const [dislikeActive, setDislikeActive] = React.useState(false);
@@ -116,107 +127,98 @@ const PostDetails = () => {
       console.error(err);
     }
   };
-  // const downloadPost = async (slug) => {
-  //   try {
-  //     slug = allData.slug;
-  //     const response = await downloadZip(slug);
-  //     // Create a temporary URL for the downloaded file
-  //     const url = window.URL.createObjectURL(new Blob([response.data]));
-
-  //     // Create a link element and click it to download the file
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", `post-${slug}.docx`);
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
   return (
-    <Grid container spacing={2} alignItems="stretch">
-      <Grid item xs={2} sm={2}></Grid>
-      <Grid item xs={10} sm={10}>
-        {/* <h1>Post Details</h1> */}
-        <div className="post">
-          <div className="postTop">
-            <div className="postTopLeft" style={{ marginBottom: 15 }}>
-              {allData.isAnonymous ? (
-                <>
-                  <img
-                    className="postImage"
-                    src={animal.avatar}
-                    alt={`${animal.name} Avatar`}
-                  />
-                  <span className="postUsername">
-                    {" "}
-                    Anonymous {animal.name}{" "}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <img
-                    className="postImage"
-                    src={allData.authorAvatar}
-                    alt={allData.author}
-                  />
-                  <span className="postUsername"> {allData.author} </span>
-                </>
-              )}
-              {/* <img className="postImage" src={allData.authorAvatar} alt="" /> */}
-            </div>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span className="postTitle">{allData.title}</span>
+    <div>
+      {allData._id ? (
+        <Grid container spacing={2} alignItems="stretch">
+          <Helmet>
+            <title>{allData.title}</title>
+          </Helmet>
+          <Grid item xs={2} sm={2} />
+          <Grid item xs={10} sm={10}>
+            <div className="post">
+              <div className="postTop">
+                <div
+                  className="postTopLeft"
+                  style={{ marginBottom: 15, marginTop: 15 }}
+                >
+                  {allData.isAnonymous ? (
+                    <>
+                      <img
+                        className="postImage"
+                        src={animal.avatar}
+                        alt={`${animal.name} Avatar`}
+                      />
+                      <span className="postUsername">
+                        {" "}
+                        Anonymous {animal.name}{" "}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <img
+                        className="postImage"
+                        src={allData.authorAvatar}
+                        alt={allData.author}
+                      />
+                      <span className="postUsername"> {allData.author} </span>
+                    </>
+                  )}
+                  {/* <img className="postImage" src={allData.authorAvatar} alt="" /> */}
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span className="postTitle">{allData.title}</span>
 
-            <span className="postDate">
-              {moment(allData.createdAt).format("LLL")}
-            </span>
-          </div>
-          <div
-            className="postContent"
-            dangerouslySetInnerHTML={{ __html: allData.content }}
-          ></div>
-          <center>
-            <img className="postImg" src={allData.attachment} alt="" />
-          </center>
-          <div style={{ marginLeft: "80%" }}>
-            <DownloadButton
-              download={downloadPost}
-              textDownload={"Download ZIP"}
-            />
-          </div>
-          <div className="postBottom">
-            <div className="postBottomLeft">
-              <IconButton
-                onClick={onLikeBtnClick}
-                style={{ color: likeActive ? "red" : "" }}
-              >
-                <FavoriteIcon />
-                <Typography component="span" color="textSecondary"></Typography>
-              </IconButton>
-              <IconButton
-                onClick={onDislikeBtnClick}
-                style={{ color: dislikeActive ? "blue" : "" }}
-              >
-                -<FavoriteIcon />
-                <Typography component="span" color="textSecondary"></Typography>
-              </IconButton>
-              {`${allData.likeCount} likes`}
+                <span className="postDate">
+                  {moment(allData.createdAt).format("LLL")}
+                </span>
+              </div>
+              <div
+                className="postContent"
+                dangerouslySetInnerHTML={{ __html: allData.content }}
+              ></div>
+              <center>
+                <img className="postImg" src={allData.attachment} alt="" />
+              </center>
+              <div style={{ marginLeft: "80%" }}>
+                <DownloadButton
+                  download={downloadPost}
+                  textDownload={"Download ZIP"}
+                />
+              </div>
+              <div className="postBottom">
+                <IconButton
+                  onClick={onLikeBtnClick}
+                  style={{ color: likeActive ? "red" : "" }}
+                >
+                  <FavoriteIcon />
+                  <Typography component="span" color="textSecondary">Like</Typography>
+                </IconButton>
+                <IconButton
+                  onClick={onDislikeBtnClick}
+                  style={{ color: dislikeActive ? "blue" : "" }}
+                >
+                  -<FavoriteIcon />
+                  <Typography component="span" color="textSecondary">Dislike</Typography>
+                </IconButton>
+                {`${allData.likeCount} likes`}
+                <div className="postBottomRight">
+                  <span className="postCommentText"> {comments.length} comments </span>
+                </div>
+              </div>
+              <br />
+              <div>comments</div>
+              <br />
+              <CommentList post={allData}></CommentList>
             </div>
-            <div className="postBottomRight">
-              <span className="postCommentText"> 10 comments </span>
-            </div>
-          </div>
-          <br />
-          <div>comments</div>
-          <br />
-          <CommentList post={allData}></CommentList>
-        </div>
-      </Grid>
-    </Grid>
+          </Grid>
+        </Grid>
+      ) : (
+        <NotFound />
+      )}
+    </div>
   );
 };
+
 export default PostDetails;

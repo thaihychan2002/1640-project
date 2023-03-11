@@ -63,15 +63,8 @@ export default function IdeaBox() {
     dispatch(showModal());
   }, [dispatch]);
   const onSubmit = React.useCallback(() => {
-    try {
       dispatch(createPosts.createPostsRequest(data));
       handleOk();
-      toast.success(
-        "Created idea successfully. Please wait for Admin to accept your idea"
-      );
-    } catch (err) {
-      toast.error(getError(err));
-    }
   }, [data, dispatch, handleOk]);
   const [open, setOpen] = useState(false);
   const showDrawer = () => {

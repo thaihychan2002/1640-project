@@ -15,6 +15,7 @@ import {
   exportPost,
   downloadPost,
   getPostBySlug,
+  viewPostsByCategories,
 } from '../controller/posts.js'
 import { isAuth, isAdmin } from '../utils.js'
 const router = express.Router()
@@ -29,7 +30,8 @@ router.delete('/deletePost/:id', isAdmin, deletePostByAdmin)
 router.get('/viewPostsByMostViews', viewPostsByMostViews)
 router.get('/viewPostsByMostLikes', viewPostsByMostLikes)
 router.get('/viewRecentlyPosts', viewRecentlyPosts)
-router.get('/viewPostsByDepartment/:department', viewPostsByDepartment)
+router.post('/viewPostsByDepartment/', viewPostsByDepartment)
+router.post('/viewPostsByCategory/', viewPostsByCategories)
 //search posts
 router.get('/search/:keyword', searchPostsByKeyword)
 //post status

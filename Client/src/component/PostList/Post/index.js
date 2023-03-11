@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
 import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
-import { Modal, Button, Input, Select } from "antd";
+import { Modal, Button, Input, Select} from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
@@ -208,7 +208,12 @@ export default function Post({ post }) {
             variant="body2"
             component="p"
             color="textSecondary"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{
+              __html:
+                post.content.length > 100
+                  ? `${post.content.substring(0, 100)}...`
+                  : post.content,
+            }}
           ></Typography>
           <Typography>{post.view} Views</Typography>
         </CardContent>

@@ -7,7 +7,7 @@ import Icon, {
 } from "@ant-design/icons";
 import "../assets/css/Navigation.css";
 import { Layout, Menu } from "antd";
-import React, {  useContext } from "react";
+import React, { useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Store } from "../../Store";
 import jwtDecode from "jwt-decode";
@@ -41,19 +41,19 @@ export default function Navigation() {
   const role = state.userInfo.role;
   const linkRoutes =
     role === "Admin"
-      ? ["/", "/department", "/categories", "/dashboard", "/qa", "/profile"]
-      : ["/", "/department", "/categories", "/profile"];
+      ? ["/", "/departments", "/categories", "/dashboard", "/qa", "/profile"]
+      : ["/", "/departments", "/categories", "/profile"];
   const navName =
     role === "Admin"
       ? [
           "Home",
-          "Department",
+          "Departments",
           "Categories",
           "Admin Dashboard",
           "QA Coordinator",
           "Profile",
         ]
-      : ["Home", "Department", "Categories", "Profile"];
+      : ["Home", "Departments", "Categories", "Profile"];
   // Hide navbar when route === /login or /register
   const withOutNavbarRoutes = ["/login", "/register"];
   const { pathname } = useLocation();

@@ -1,5 +1,5 @@
 import { Store } from "../../Store";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid, Card, CardMedia } from "@material-ui/core";
 import { Helmet } from "react-helmet-async";
@@ -25,10 +25,15 @@ export default function Profile() {
   //
   const { state } = useContext(Store);
   const user = state.userInfo;
+  useEffect(() => {
+    if (user) {
+      setFullName(user.fullName);
+    }
+  }, [user]);
   const [fileInputState] = useState("");
   const [previewSource, setPreviewSource] = useState("");
 
-  const [fullName, setFullName] = useState(user.fullName);
+  const [fullName, setFullName] = useState("");
   const [toggle, setToggle] = useState(false);
   const toggleEdit = () => {
     setToggle(!toggle);
@@ -125,7 +130,7 @@ export default function Profile() {
             {toggle ? (
               <div>
                 <Input
-                  value={user.fullName}
+                  value={fullName}
                   className="profile-name"
                   onChange={(e) => setFullName(e.target.value)}
                 />
