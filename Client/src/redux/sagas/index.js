@@ -3,6 +3,7 @@ import * as actions from "../actions";
 import * as api from "../../api";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
+import { useDispatch } from "react-redux";
 //post
 function* fetchPostSaga(action) {
   try {
@@ -16,8 +17,8 @@ function* fetchPostSaga(action) {
     }
     yield put(actions.getPosts.getPostsSuccess(posts?.data));
   } catch (err) {
-    console.log(err);
     yield put(actions.getPosts.getPostsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* fetchAllPostsSaga(action) {
@@ -25,8 +26,8 @@ function* fetchAllPostsSaga(action) {
     const allPosts = yield call(api.fetchPosts);
     yield put(actions.getAllPosts.getAllPostsSuccess(allPosts?.data));
   } catch (err) {
-    console.log(err);
     yield put(actions.getAllPosts.getAllPostsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* createPostSaga(action) {
@@ -37,68 +38,67 @@ function* createPostSaga(action) {
     );
     yield put(actions.createPosts.createPostsSuccess(posts.data));
   } catch (err) {
-    console.log(err);
-    toast.error(getError(err));
     yield put(actions.createPosts.createPostsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* updatePostSaga(action) {
   try {
-    console.log("updatePostSaga", { action });
     const updatedPost = yield call(api.updatePosts, action.payload);
-    console.log("[updatePostSaga - post]", updatedPost);
     yield put(actions.updatePosts.updatePostsSuccess(updatedPost.data));
   } catch (err) {
-    console.error(err);
+    console.log(err);
     yield put(actions.updatePosts.updatePostsFailure(err));
+    toast.error(getError(err));
   }
 }
+
 function* updatePostAcceptSaga(action) {
   try {
-    console.log("updatePostSaga", { action });
     const updatedPost = yield call(api.acceptPost, action.payload);
-    console.log("[updatePostSaga - post]", updatedPost);
     yield put(
       actions.updatePostAccept.updatePostAcceptSuccess(updatedPost.data)
     );
+    toast.success("Update post to accepted successfully");
   } catch (err) {
-    console.error(err);
     yield put(actions.updatePostAccept.updatePostAcceptFailure(err));
+    toast.error(err);
   }
 }
 function* updatePostRejectSaga(action) {
   try {
-    console.log("updatePostSaga", { action });
     const updatedPost = yield call(api.rejectPost, action.payload);
-    console.log("[updatePostSaga - post]", updatedPost);
     yield put(
       actions.updatePostReject.updatePostRejectSuccess(updatedPost.data)
     );
+    toast.success("Update post to rejected successfully");
   } catch (err) {
-    console.error(err);
     yield put(actions.updatePostReject.updatePostRejectFailure(err));
+    // toast.error(getError(err));
+    console.log(err);
   }
 }
 function* deletePostSaga(action) {
   try {
-    console.log("deletePostSaga", { action });
     const deletedPost = yield call(api.deletePosts, action.payload);
     yield put(actions.deletePosts.deletePostsSuccess(deletedPost.data));
+    toast.success("Delete post successfully");
   } catch (err) {
-    console.error(err);
     yield put(actions.deletePosts.deletePostsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* deletePostByAdminSaga(action) {
   try {
-    console.log("deletePostSaga", { action });
     const deletedPost = yield call(api.deletePostByAdmin, action.payload);
     yield put(
       actions.deletePostByAdmin.deletePostSuccessByAdmin(deletedPost.data)
     );
+    toast.success("Delete post successfully");
   } catch (err) {
-    console.error(err);
+    console.log(err);
     yield put(actions.deletePostByAdmin.deletePostFailureByAdmin(err));
+    toast.error(getError(err));
   }
 }
 //department
@@ -107,8 +107,8 @@ function* fetchDepartmentSaga(action) {
     const departments = yield call(api.fetchDepartments);
     yield put(actions.getDepartments.getDepartmentsSuccess(departments.data));
   } catch (err) {
-    console.log(err);
     yield put(actions.getDepartments.getDepartmentsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* createDepartmentSaga(action) {
@@ -117,9 +117,10 @@ function* createDepartmentSaga(action) {
     yield put(
       actions.createDepartments.createDepartmentsSuccess(departments.data)
     );
+    toast.success("Created department successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.createDepartments.createDepartmentsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* updateDepartmentSaga(action) {
@@ -128,9 +129,10 @@ function* updateDepartmentSaga(action) {
     yield put(
       actions.updateDepartments.updateDepartmentsSuccess(departments.data)
     );
+    toast.success("Updated department successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.updateDepartments.updateDepartmentsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* deleteDepartmentSaga(action) {
@@ -139,10 +141,10 @@ function* deleteDepartmentSaga(action) {
     yield put(
       actions.deleteDepartments.deleteDepartmentsSuccess(departments.data)
     );
-    console.log(departments);
+    toast.success("Deleted department successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.deleteDepartments.deleteDepartmentsFailure(err));
+    toast.error(getError(err));
   }
 }
 // category
@@ -151,8 +153,8 @@ function* fetchCategorySaga(action) {
     const categories = yield call(api.fetchCategories);
     yield put(actions.getCategories.getCategoriesSuccess(categories.data));
   } catch (err) {
-    console.log(err);
     yield put(actions.getCategories.getCategoriesFailure(err));
+    toast.error(getError(err));
   }
 }
 function* createCategorySaga(action) {
@@ -161,9 +163,10 @@ function* createCategorySaga(action) {
     yield put(
       actions.createCategories.createCategoriesSuccess(categories.data)
     );
+    toast.success("Created category successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.createCategories.createCategoriesFailure(err));
+    toast.error(getError(err));
   }
 }
 function* updateCategorySaga(action) {
@@ -172,9 +175,10 @@ function* updateCategorySaga(action) {
     yield put(
       actions.updateCategories.updateCategoriesSuccess(categories.data)
     );
+    toast.success("Updated category successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.updateCategories.updateCategoriesFailure(err));
+    toast.error(getError(err));
   }
 }
 function* deleteCategorySaga(action) {
@@ -183,9 +187,10 @@ function* deleteCategorySaga(action) {
     yield put(
       actions.deleteCategories.deleteCategoriesSuccess(categories.data)
     );
+    toast.success("Deleted category successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.deleteCategories.deleteCategoriesFailure(err));
+    toast.error(getError(err));
   }
 }
 // Comment
@@ -199,8 +204,8 @@ function* fetchConditionCmtSaga(action) {
     }
     yield put(actions.getConditionCmts.getCmtsSuccess(comments?.data));
   } catch (err) {
-    console.log(err);
     yield put(actions.getConditionCmts.getCmtsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* fetchCommentSaga(action) {
@@ -208,35 +213,38 @@ function* fetchCommentSaga(action) {
     const comments = yield call(api.fetchComments, action.payload);
     yield put(actions.getComments.getCommentsSuccess(comments.data));
   } catch (err) {
-    console.log(err);
     yield put(actions.getComments.getCommentsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* createCommentSaga(action) {
   try {
     const comments = yield call(api.createComments, action.payload);
     yield put(actions.createComments.createCommentsSuccess(comments.data));
+    toast.success("Created comment successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.createComments.createCommentsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* updateCommentSaga(action) {
   try {
     const comments = yield call(api.updateComments, action.payload);
     yield put(actions.updateComments.updateCommentsSuccess(comments.data));
+    toast.success("Updated comment successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.updateComments.updateCommentsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* deleteCommentSaga(action) {
   try {
     const comments = yield call(api.deleteComments, action.payload);
     yield put(actions.deleteComments.deleteCommentsSuccess(comments.data));
+    toast.success("Deleted comment successfully");
   } catch (err) {
-    console.log(err);
     yield put(actions.deleteComments.deleteCommentsFailure(err));
+    toast.error(getError(err));
   }
 }
 function* mysaga() {

@@ -7,20 +7,13 @@ import {
 import * as actions from "../../../redux/actions";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Space,
-  Table,
-  Button,
-  Modal,
-  Input,
-  DatePicker,
-  Typography,
-} from "antd";
+import { Space, Table, Button, Modal, Input, Typography } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 import Category from "./category";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { getError } from "../../../utils";
+import { DatePicker } from "antd";
 
 const { TextArea } = Input;
 export default function CategoryManage() {
@@ -46,14 +39,14 @@ export default function CategoryManage() {
   const deletedepartHandler = React.useCallback(
     (record_cat) => {
       dispatch_ca(
-        actions.deleteCategories.deleteCategoriesRequest(record_cat._id)
+        actions.deleteCategories.deleteCategoriesRequest(record_cat.key)
       );
     },
     [dispatch_ca]
   );
-  const disabledPassDates = React.useCallback((current) => {
-    return current && current < moment().endOf("day");
-  }, []);
+  // const disabledPassDates = React.useCallback((current) => {
+  //   return current && current < moment().endOf("day");
+  // }, []);
   const columns = [
     {
       title: "Category",
@@ -111,10 +104,8 @@ export default function CategoryManage() {
   const onSubmit = async () => {
     try {
       dispatch_ca(actions.createCategories.createCategoriesRequest(cat_data));
-      toast.success("Created category successfully");
     } catch (err) {
       dispatch_ca(actions.createCategories.createCategoriesFailure(err));
-      console.log(err);
     }
     handleclose();
   };
@@ -150,30 +141,16 @@ export default function CategoryManage() {
             </Grid>
             <Grid item xs={6} lg={6} className="row-new-post">
               <Typography>Begin date of the collection</Typography>
-              <DatePicker
-                showTime={{ format: "HH:mm:ss" }}
-                disabledDate={disabledPassDates}
-                format="HH:mm:ss DD-MM-YYYY"
-                onChange={onSelectBegin}
-              />
+              <DatePicker format="MM-DD-YYYY" onChange={onSelectBegin} />
             </Grid>
             <Grid item xs={6} lg={6} className="row-new-post">
               <Typography>End date of the collection</Typography>
-              <DatePicker
-                showTime={{ format: "HH:mm:ss" }}
-                disabledDate={disabledPassDates}
-                format="HH:mm:ss DD-MM-YYYY"
-                onChange={onSelectEnd}
-              />
+              <DatePicker format="MM-DD-YYYY" onChange={onSelectEnd} />
             </Grid>
             <Grid item xs={12} lg={12} className="row-new-post">
               <Typography>Write the name of the category</Typography>
               <Input
                 allowClear
-                autoSize={{
-                  minRows: 3,
-                  maxRows: 5,
-                }}
                 placeholder="Name of category"
                 size="large"
                 value={cat_data.name}

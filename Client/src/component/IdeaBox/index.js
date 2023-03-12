@@ -63,8 +63,8 @@ export default function IdeaBox() {
     dispatch(showModal());
   }, [dispatch]);
   const onSubmit = React.useCallback(() => {
-      dispatch(createPosts.createPostsRequest(data));
-      handleOk();
+    dispatch(createPosts.createPostsRequest(data));
+    handleOk();
   }, [data, dispatch, handleOk]);
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
@@ -168,15 +168,6 @@ export default function IdeaBox() {
                   />
                 </div>
                 <div className="input-file">
-                  {/* <FileBase64
-                    accept="image/*"
-                    multiple={false}
-                    type="file"
-                    // value={data.attachment}
-                    // onDone={({ base64 }) =>
-                    //   setdata({ ...data, attachment: base64 })
-                    // }
-                  /> */}
                   <input
                     type="file"
                     onChange={handleFileInputChange}
@@ -217,20 +208,6 @@ export default function IdeaBox() {
                 />
               </div>
               <div className="user-mg">
-                {/* <TextArea
-                  allowClear
-                  autoSize={{
-                    minRows: 3,
-                    maxRows: 5,
-                  }}
-                  placeholder={holder}
-                  size="large"
-                  // value={data.content}
-                  onChange={(e) =>
-                    setdata({ ...data, content: e.target.value })
-                  }
-                  required
-                /> */}
                 <ReactQuill
                   placeholder={holder}
                   theme="snow"
@@ -239,14 +216,6 @@ export default function IdeaBox() {
                   value={data.content}
                   onChange={(e) => setdata({ ...data, content: e })}
                 />
-                {/* <ReactQuill
-                  placeholder={holder}
-                  theme="snow"
-                  modules={modules}
-                  // formats={formats}
-                  value={data.content}
-                  onChange={(e) => setdata({ ...data, content: e })}
-                /> */}
               </div>
               <div className="user-mg">
                 <Select
@@ -298,7 +267,6 @@ export default function IdeaBox() {
                   fontSize: isXs ? "10px" : "16px",
                 }}
               >
-
                 Click to view{" "}
                 <span className="term" onClick={showDrawer}>
                   GreFeed Terms and Conditions

@@ -15,6 +15,6 @@ router.post('/create', isAuth, createComment)
 router.delete('/delete/:id', isAuth, deleteComment)
 router.put('/update', isAuth, updateComment)
 // view comments
-router.post('/viewCommentsByMostLikes', viewCmtByMostLikes)
-router.post('/viewRecentlyComments', viewRecentlyCmt)
+router.post('/viewCommentsByMostLikes', isAuth, viewCmtByMostLikes)
+router.post('/viewRecentlyComments', isAuth, viewRecentlyCmt)
 export default router
