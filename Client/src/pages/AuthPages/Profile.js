@@ -1,7 +1,7 @@
 import { Store } from "../../Store";
 import React, { useContext, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Grid, Card, CardMedia } from "@material-ui/core";
+import { Grid, Card, CardMedia, useMediaQuery } from "@material-ui/core";
 import { Helmet } from "react-helmet-async";
 import { Form, Input, Button, Divider } from "antd";
 import * as actions from "../../redux/actions";
@@ -21,7 +21,7 @@ export default function Profile() {
   const posts = useSelector(allPostsState$);
   const loading = useSelector(allPostsLoading$);
   const userID = jwtDecode(token)._id;
-
+  const isXs = useMediaQuery("(max-width:400px)");
   //
   const { state } = useContext(Store);
   const user = state.userInfo;
@@ -72,8 +72,8 @@ export default function Profile() {
       <Helmet>
         <title>Profile</title>
       </Helmet>
-      <Grid item xs={2} sm={2} md={4} />
-      <Grid container item xs={8} sm={8} md={8}>
+      <Grid item xs={false} sm={2} md={4} />
+      <Grid container item xs={12} sm={10} md={8}>
         <Grid item xs={2} sm={3} md={2}>
           <div style={{ marginTop: "10px" }}>
             {!previewSource ? (
@@ -125,7 +125,7 @@ export default function Profile() {
             )}
           </div>
         </Grid>
-        <Grid item xs={10} sm={9} md={8}>
+        <Grid item xs={10} sm={9} md={10}>
           <div style={{ display: "flex", flexDirection: "row" }}>
             {toggle ? (
               <div>
@@ -149,7 +149,11 @@ export default function Profile() {
               <Button onClick={() => toggleEdit()}>Edit Profile</Button>
               {toggle && (
                 <Button
-                  style={{ marginLeft: "10px" }}
+                  style={{
+                    marginLeft: isXs ? "0px" : "10px",
+                    width: isXs && "100px",
+                    marginTop: isXs && "10px",
+                  }}
                   onClick={(e) => updateUserProfileHandler(e)}
                 >
                   Save
@@ -157,7 +161,7 @@ export default function Profile() {
               )}
             </Form.Item>
           </div>
-          <div style={{ marginLeft: "20px" }}>
+          <div style={{ marginLeft: isXs ? "110px" : "20px" }}>
             You have {filteredPosts.length} ideas now
           </div>
         </Grid>

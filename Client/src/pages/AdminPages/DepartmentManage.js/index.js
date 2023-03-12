@@ -29,9 +29,10 @@ export default function DepartmentManage() {
     setModaldepOpen(true);
   }, []);
   const deletedepartHandler = React.useCallback(
-    (record_dep) => {
+    (record) => {
+      console.log(record.key);
       dispatch_de(
-        actions.deleteDepartments.deleteDepartmentsRequest(record_dep._id)
+        actions.deleteDepartments.deleteDepartmentsRequest(record.key)
       );
     },
     [dispatch_de]

@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { Grid, useMediaQuery } from "@material-ui/core";
 import "../../component/assets/css/PostDetails.css";
 import { IconButton, Typography } from "@material-ui/core";
 import FavoriteIcon from "@material-ui/icons/Favorite";
@@ -7,7 +7,7 @@ import { downloadZip, fetchPostBySlug } from "../../api";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import { animalList } from "../../component/PostList/Post/anonymousAnimal.js";
-import * as actions from "../../redux/actions"
+import * as actions from "../../redux/actions";
 import DownloadButton from "../../component/DownloadButton/index.js";
 import NotFound from "../NotAuthPages/NotFound.js";
 import { Helmet } from "react-helmet-async";
@@ -19,7 +19,8 @@ const PostDetails = () => {
   const params = useParams();
   const { slug } = params;
   const comments = useSelector(commentsState$);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const isXs = useMediaQuery("(max-width:400px)");
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -42,13 +43,13 @@ const PostDetails = () => {
   }, [slug]);
   React.useEffect(() => {
     dispatch(actions.getComments.getCommentsRequest(allData));
-    dispatch(
-      actions.updatePosts.updatePostsRequest({
-        _id: allData._id,
-        view: allData.view + 1,
-      })
-    );
-  }, [dispatch, allData])
+    // dispatch(
+    //   actions.updatePosts.updatePostsRequest({
+    //     _id: allData._id,
+    //     view: allData.view + 1,
+    //   })
+    // );
+  }, [dispatch, allData]);
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
@@ -134,8 +135,8 @@ const PostDetails = () => {
           <Helmet>
             <title>{allData.title}</title>
           </Helmet>
-          <Grid item xs={2} sm={2} />
-          <Grid item xs={10} sm={10}>
+          <Grid item xs={false} sm={2} />
+          <Grid item xs={12} sm={10}>
             <div className="post">
               <div className="postTop">
                 <div
@@ -181,7 +182,7 @@ const PostDetails = () => {
               <center>
                 <img className="postImg" src={allData.attachment} alt="" />
               </center>
-              <div style={{ marginLeft: "80%" }}>
+              <div style={{ marginLeft: isXs ? "59%" : "80%" }}>
                 <DownloadButton
                   download={downloadPost}
                   textDownload={"Download ZIP"}
@@ -193,22 +194,25 @@ const PostDetails = () => {
                   style={{ color: likeActive ? "red" : "" }}
                 >
                   <FavoriteIcon />
-                  <Typography component="span" color="textSecondary">Like</Typography>
+                  <Typography component="span" color="textSecondary">
+                    Like
+                  </Typography>
                 </IconButton>
                 <IconButton
                   onClick={onDislikeBtnClick}
                   style={{ color: dislikeActive ? "blue" : "" }}
                 >
                   -<FavoriteIcon />
-                  <Typography component="span" color="textSecondary">Dislike</Typography>
+                  <Typography component="span" color="textSecondary">
+                    Dislike
+                  </Typography>
                 </IconButton>
                 {`${allData.likeCount} likes`}
                 <div className="postBottomRight">
-                  <span className="postCommentText"> {comments.length} comments </span>
+                  <span> {allData.view} Views </span>
                 </div>
               </div>
               <br />
-              <div>comments</div>
               <br />
               <CommentList post={allData}></CommentList>
             </div>

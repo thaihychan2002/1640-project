@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
 import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
-import { Modal, Button, Input, Select} from "antd";
+import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
@@ -25,6 +25,7 @@ import { animalList } from "./anonymousAnimal.js";
 import CommentList from "../../CommentList/index.js";
 import * as actions from "../../../redux/actions";
 import { countViewBySlug } from "../../../api/index.js";
+import ReactQuill from "react-quill";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -159,9 +160,16 @@ export default function Post({ post }) {
     }
   }, [dispatch, post, likeActive, dislikeActive]);
   const countView = async (slug) => {
-    console.log(slug);
     await countViewBySlug(slug);
   };
+  const modules = {
+    toolbar: [[{ size: [] }], ["bold", "italic", "underline"]],
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false,
+    },
+  };
+
   return (
     <>
       <Card className={classes.card} key={post._id}>
@@ -218,31 +226,35 @@ export default function Post({ post }) {
             color="textSecondary"
             dangerouslySetInnerHTML={{
               __html:
-                post.content.length > 100
-                  ? `${post.content.substring(0, 100)}...`
+                post.content.length > 528
+                  ? `${post.content.substring(0, 528)}...`
                   : post.content,
             }}
           ></Typography>
-          <Typography>{post.view} Views</Typography>
         </CardContent>
-        <CardActions>
-          <IconButton
-            onClick={onLikeBtnClick}
-            style={{ color: likeActive ? "red" : "" }}
-          >
-            <FavoriteIcon />
-            <Typography component="span" color="textSecondary"></Typography>
-          </IconButton>
-          <IconButton
-            onClick={onDislikeBtnClick}
-            style={{ color: dislikeActive ? "blue" : "" }}
-          >
-            -<FavoriteIcon />
-            <Typography component="span" color="textSecondary"></Typography>
-          </IconButton>
-          {`${post.likeCount} likes`}
+        <CardActions
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <div>
+            <IconButton
+              onClick={onLikeBtnClick}
+              style={{ color: likeActive ? "red" : "" }}
+            >
+              <FavoriteIcon />
+              <Typography component="span" color="textSecondary"></Typography>
+            </IconButton>
+            <IconButton
+              onClick={onDislikeBtnClick}
+              style={{ color: dislikeActive ? "blue" : "" }}
+            >
+              -<FavoriteIcon />
+              <Typography component="span" color="textSecondary"></Typography>
+            </IconButton>
+            {`${post.likeCount} likes`}
+          </div>
+          <div>{post.view} Views</div>
         </CardActions>
-        <Grid
+        {/* <Grid
           container
           spacing={2}
           alignItems="stretch"
@@ -265,7 +277,7 @@ export default function Post({ post }) {
               Show comments
             </Button>
           </Grid>
-        </Grid>
+        </Grid> */}
       </Card>
       <Modal
         open={Modalcomment}
@@ -353,18 +365,16 @@ export default function Post({ post }) {
               </div>
               <div className="user-mg">
                 <Typography>Content</Typography>
-                <TextArea
-                  allowClear
-                  autoSize={{
-                    minRows: 3,
-                    maxRows: 5,
-                  }}
-                  placeholder={defaultValue.content}
-                  size="large"
-                  value={data.content}
-                  onChange={(e) =>
-                    setdata({ ...data, content: e.target.value })
+                <ReactQuill
+                  placeholder={
+                    defaultValue.content.length > 200
+                      ? `${defaultValue.content.substring(0, 200)}...`
+                      : defaultValue.content
                   }
+                  theme="snow"
+                  modules={modules}
+                  value={data.content}
+                  onChange={(e) => setdata({ ...data, content: e })}
                   required
                 />
               </div>

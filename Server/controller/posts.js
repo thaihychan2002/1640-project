@@ -13,6 +13,7 @@ import { Parser } from 'json2csv'
 import fs from 'fs'
 import { MongoClient, ObjectId } from 'mongodb'
 import JSZip from 'jszip'
+import { CategoriesModel } from '../model/categories.js'
 
 export const getPosts = async (req, res) => {
   try {
@@ -45,22 +46,25 @@ export const getPostBySlug = async (req, res) => {
 export const createPosts = async (req, res, next) => {
   try {
     // const result = await DepartmentModel.distinct('name')
-    const result = await DepartmentModel.distinct('_id')
+    const resultDepartments = await DepartmentModel.distinct('_id')
+    const resultCategories = await CategoriesModel.distinct('_id')
     const createPostSchema = joi.object({
       title: joi.string().min(3).required(),
       content: joi.string().required(),
       author: joi.string().required(),
       department: joi
         .string()
-        .valid(...result.map((id) => id.toString()))
+        .valid(...resultDepartments.map((id) => id.toString()))
         .required(),
-      categories: joi.allow(),
+      categories: joi
+        .string()
+        .valid(...resultCategories.map((id) => id.toString()))
+        .required(),
       attachment: joi.allow(),
       isAnonymous: joi.boolean().required(),
       likeCount: joi.number().valid(0).allow(),
       view: joi.number().valid(0).allow(),
     })
-
     await createPostSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
@@ -71,10 +75,10 @@ export const createPosts = async (req, res, next) => {
     }
     post.slug = slug(req.body.title)
     await post.save()
-    const createdpost = await PostModel.findOne({ _id: post._id })
-      .populate('author')
-      .populate('categories')
-      .populate('department')
+    // const createdpost = await PostModel.findOne({ _id: post._id })
+    //   .populate('author')
+    //   .populate('categories')
+    //   .populate('department')
     // send email
     let mailOptions = {
       from: process.env.GMAIL_USER,
@@ -89,7 +93,7 @@ export const createPosts = async (req, res, next) => {
         console.log('Email sent: ' + info.response)
       }
     })
-    res.status(200).json(createdpost)
+    res.status(200).json(post)
   } catch (err) {
     if (err.isJoi === true) {
       res.status(422).send({ message: `${err.details[0].message}` })
@@ -97,8 +101,35 @@ export const createPosts = async (req, res, next) => {
     next(err)
   }
 }
-export const updatePosts = async (req, res) => {
+export const updatePosts = async (req, res, next) => {
   try {
+    const resultDepartments = await DepartmentModel.distinct('_id')
+    const resultCategories = await CategoriesModel.distinct('_id')
+    // const updatePostSchema = joi.object({
+    //   title: joi.string().min(3).allow(),
+    //   content: joi.string().min(10).allow(),
+    //   _id: joi.string().required(),
+    //   author: joi
+    //     .object({
+    //       _id: joi.string().required(),
+    //     })
+    //     .unknown(true)
+    //     .required(),
+    //   department: joi
+    //     .string()
+    //     .valid(...resultDepartments.map((id) => id.toString()))
+    //     .allow(),
+    //   categories: joi
+    //     .string()
+    //     .valid(...resultCategories.map((id) => id.toString()))
+    //     .allow(),
+    //   attachment: joi.allow(),
+    //   isAnonymous: joi.boolean().allow(),
+    //   likeCount: joi.number().valid(0).allow(),
+    //   view: joi.number().valid(0).allow(),
+    // })
+
+    // await updatePostSchema.validateAsync(req.body)
     const updatePosts = req.body
     const post = await PostModel.findByIdAndUpdate(
       { _id: updatePosts._id },
@@ -110,7 +141,10 @@ export const updatePosts = async (req, res) => {
       .populate('department')
     res.status(200).json(post)
   } catch (err) {
-    res.status(500).json({ error: err })
+    if (err.isJoi === true) {
+      res.status(422).send({ message: `${err.details[0].message}` })
+    }
+    next(err)
   }
 }
 export const deletePosts = async (req, res) => {

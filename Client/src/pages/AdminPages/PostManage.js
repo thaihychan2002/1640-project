@@ -9,7 +9,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import * as actions from "../../redux/actions";
 import { toast } from "react-toastify";
@@ -17,6 +17,7 @@ import { getError } from "../../utils";
 export default function PostManage() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -120,7 +121,7 @@ export default function PostManage() {
 
   const filterPostsByStatus = (posts, status) =>
     posts
-      ?.filter((post) => post.status === status)
+      ?.filter((post) => post?.status === status)
       ?.map((post) => ({
         key: post._id,
         title: post.title,
@@ -155,16 +156,14 @@ export default function PostManage() {
           "Are you sure to update status of this post to accepted?"
         )
       ) {
-        try {
-          dispatch(
-            actions.updatePostAccept.updatePostAcceptRequest({
-              _id: record.key,
-            })
-          );
-          toast.success("Updated status successfully");
-        } catch (err) {
-          toast.error(getError(err));
-        }
+        dispatch(
+          actions.updatePostAccept.updatePostAcceptRequest({
+            _id: record.key,
+          })
+        );
+        setTimeout(() => {
+          dispatch(actions.getAllPosts.getAllPostsRequest());
+        }, 1000);
       }
     },
     [dispatch]
@@ -176,16 +175,14 @@ export default function PostManage() {
           "Are you sure to update status of this post to rejected?"
         )
       ) {
-        try {
-          dispatch(
-            actions.updatePostReject.updatePostRejectRequest({
-              _id: record.key,
-            })
-          );
-          toast.success("Updated status successfully");
-        } catch (err) {
-          toast.error(getError(err));
-        }
+        dispatch(
+          actions.updatePostReject.updatePostRejectRequest({
+            _id: record.key,
+          })
+        );
+        setTimeout(() => {
+          dispatch(actions.getAllPosts.getAllPostsRequest());
+        }, 1000);
       }
     },
     [dispatch]
@@ -193,18 +190,17 @@ export default function PostManage() {
   const deleteHandler = React.useCallback(
     (record) => {
       if (window.confirm("Are you sure to delete this idea?")) {
-        try {
-          dispatch(
-            actions.deletePostByAdmin.deletePostRequestByAdmin(record.key)
-          );
-          toast.success("Delete idea successfully");
-        } catch (err) {
-          toast.error(getError(err));
-        }
+        dispatch(
+          actions.deletePostByAdmin.deletePostRequestByAdmin(record.key)
+        );
+        setTimeout(() => {
+          dispatch(actions.getAllPosts.getAllPostsRequest());
+        }, 1000);
       }
     },
     [dispatch]
   );
+
   const columns = [
     {
       title: "Title",

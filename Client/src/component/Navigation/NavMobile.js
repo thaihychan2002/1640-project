@@ -6,23 +6,24 @@ import Icon, {
   LineChartOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
+import React, { useState, useContext } from "react";
 import "../assets/css/Navigation.css";
 import { Layout, Menu } from "antd";
-import React, { useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Store } from "../../Store";
 import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { fetchUserByID } from "../../api";
-import NavMobile from "./NavMobile";
-import { useMediaQuery } from "@material-ui/core";
 const { Sider } = Layout;
 
-export default function Navigation() {
+export default function NavMobile() {
+  const [current, setCurrent] = useState("mail");
+  const onClick = (e) => {
+    console.log("click ", e);
+    setCurrent(e.key);
+  };
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const isXs = useMediaQuery("(max-width:400px)");
-
   React.useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("userInfo");
@@ -109,55 +110,27 @@ export default function Navigation() {
   };
 
   return (
-    <div>
-      {!isXs ? (
-        <Sider className="sider-style" breakpoint="lg" collapsedWidth="80">
-          <Menu
-            className="menu-style"
-            mode="inline"
-            defaultSelectedKeys={["0"]}
-            items={[...icons].map((icon, index) => ({
-              key: String(index + 1),
-              icon: React.createElement(icon),
-              label: (
-                <Link
-                  style={{ textDecoration: "none" }}
-                  to={linkRoutes[index]}
-                  onClick={() => {
-                    navName[index] === "Log out" && logoutHandler();
-                  }}
-                >
-                  {navName[index]}
-                </Link>
-              ),
-            }))}
-          />
-        </Sider>
-      ) : (
-        <div className="menu-container">
-          <Menu
-            defaultSelectedKeys={["0"]}
-            mode="horizontal"
-            breakpoint="md"
-            collapsedWidth="80"
-            items={[...icons]
-              .map((icon, index) => ({
-                key: String(index + 1),
-                icon: React.createElement(icon),
-                label: (
-                  <Link
-                    style={{ textDecoration: "none" }}
-                    to={linkRoutes[index]}
-                    onClick={() => {
-                      navName[index] === "Log out" && logoutHandler();
-                    }}
-                  />
-                ),
-              }))
-              .filter((item) => item.key !== "4")}
-          />
-        </div>
-      )}
-    </div>
+    // <Sider>
+    <Menu
+      defaultSelectedKeys={["0"]}
+      style={{ width: "100vw", position: "fixed", bottom: 0, zIndex: 1 }}
+      mode="horizontal"
+      breakpoint="lg"
+      collapsedWidth="80"
+      items={[...icons].map((icon, index) => ({
+        key: String(index + 1),
+        icon: React.createElement(icon),
+        label: (
+          <Link
+            style={{ textDecoration: "none" }}
+            to={linkRoutes[index]}
+            onClick={() => {
+              navName[index] === "Log out" && logoutHandler();
+            }}
+          ></Link>
+        ),
+      }))}
+    />
+    // </Sider>
   );
 }

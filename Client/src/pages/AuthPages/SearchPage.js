@@ -54,7 +54,6 @@ export default function SearchPage() {
             <NoPost />
           )}
         </Grid>
-        {console.log(posts.length)}
         <Grid item xs={3} sm={3}>
           <AccountManage />
         </Grid>
