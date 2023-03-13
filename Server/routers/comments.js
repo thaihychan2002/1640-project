@@ -6,7 +6,7 @@ import {
   updateComment,
   viewCmtByMostLikes,
   viewRecentlyCmt,
-} from '../controller/Comments.js'
+} from '../controller/comments.js'
 import { isAuth, isAdmin } from '../utils.js'
 
 const router = express.Router()

@@ -37,7 +37,7 @@ export default function AccountSwitch() {
     if (posts && posts.length > 0) {
       // Generate an array of 5 unique random indices
       const randomIndices = [];
-      while (randomIndices.length < 5) {
+      while (randomIndices.length < 5 && posts.length >= 5) {
         const index = Math.floor(Math.random() * posts.length);
         if (!randomIndices.includes(index)) {
           randomIndices.push(index);

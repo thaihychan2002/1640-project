@@ -1,7 +1,6 @@
 import { Grid } from "@material-ui/core";
 import { allPostsState$ } from "../../redux/seclectors/";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
 import { AppstoreOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table, Tag, Tabs } from "antd";
 import {
@@ -9,11 +8,10 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import * as actions from "../../redux/actions";
-import { toast } from "react-toastify";
-import { getError } from "../../utils";
+import Report from "../../component/Charts/Report";
 export default function PostManage() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -294,12 +292,12 @@ export default function PostManage() {
       ),
     },
   ];
-  const [tableParams, setTableParams] = useState({
+
+  const tableParams = {
     pagination: {
       pageSize: 5,
     },
-  });
-
+  };
   const tabs = [
     <Table
       pagination={tableParams.pagination}
@@ -333,6 +331,7 @@ export default function PostManage() {
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
+        <Report />
         <Tabs
           tabPosition="right"
           items={new Array(4).fill(null).map((_, i) => {

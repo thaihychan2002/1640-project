@@ -252,13 +252,13 @@ export default function IdeaBox() {
                   style={{ width: "100%", top: "20px" }}
                   checkedChildren="Anonymous"
                   unCheckedChildren={user.fullName}
-                  onChange={() =>
+                  onChange={(checked) =>
                     setdata({
                       ...data,
-                      isAnonymous: !data.isAnonymous,
+                      isAnonymous: checked,
                     })
                   }
-                ></Switch>
+                />
               </div>
 
               <div
