@@ -1,0 +1,23 @@
+version: "3"
+services:
+  clientapp:
+    build: "./Client"
+    volumes:
+      - ./Client:/usr/src/Client
+    ports:
+      - 3000:3000
+  serverapp:
+    build: "./Server"
+    volumes:
+      - ./Server:/usr/src/Server
+    ports:
+      - 5000:5000
+    environment:
+      JWT_SECRET: accesstoken
+      JWT_EXPIRES_IN: 1d
+      CLOUDINARY_CLOUD_NAME: dzje1nabd
+      CLOUDINARY_API_KEY: 768817963511158
+      CLOUDINARY_URL: cloudinary://768817963511158:indsM8CWugn0nmCrIVeD6pzybJY@dzje1nabd
+      CLOUDINARY_API_SECRET: indsM8CWugn0nmCrIVeD6pzybJY
+      GMAIL_USER: phatlhgcs200808@fpt.edu.vn
+      GMAIL_PASS: mbdmwzwupezmycnf

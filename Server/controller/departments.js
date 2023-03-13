@@ -38,7 +38,7 @@ export const deleteDepartment = async (req, res) => {
     res.status(500).json({ error: err })
   }
 }
-export const updateDepartment = async (req, res) => {
+export const updateDepartment = async (req, res, next) => {
   try {
     await updateDepartmentSchema.validateAsync(req.body)
     const updateDepartments = req.body

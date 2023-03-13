@@ -1,5 +1,5 @@
-import { Button, Modal, Tabs } from "antd";
-import React, { useState } from "react";
+import { Tabs } from "antd";
+import React from "react";
 import UserManage from "./UserManage";
 import DepartmentManage from "./DepartmentManage.js/index.js";
 import CategoryManage from "./CategoryManage";
@@ -11,14 +11,10 @@ import {
   BarsOutlined,
   BulbOutlined,
   SettingOutlined,
-  PieChartOutlined,
-  BarChartOutlined,
 } from "@ant-design/icons";
 import { Helmet } from "react-helmet-async";
 import PostManage from "./PostManage";
 import RoleManage from "./RoleManage";
-import PieChart from "../../component/Charts/PieChart";
-import BarChart from "../../component/Charts/BarChart";
 const DashBoard = () => {
   const dispatch = useDispatch();
   React.useEffect(() => {
@@ -37,7 +33,6 @@ const DashBoard = () => {
     <CategoryManage />,
     <PostManage />,
   ];
-  const childrenReport = [<PieChart />, <BarChart />];
   const tabName = [
     <span>User Manage</span>,
     <span>Role Manage</span>,
@@ -52,19 +47,6 @@ const DashBoard = () => {
     <BarsOutlined />,
     <BulbOutlined />,
   ];
-  const chartName = [<span>Total ideas</span>, <span>Ideas per day</span>];
-  const iconsChart = [<PieChartOutlined />, <BarChartOutlined />];
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-  const operations = <Button onClick={showModal}>Report Ideas</Button>;
 
   return (
     <div>
@@ -73,7 +55,6 @@ const DashBoard = () => {
       </Helmet>
 
       <Tabs
-        tabBarExtraContent={operations}
         defaultActiveKey="1"
         centered
         items={new Array(5).fill(null).map((_, i) => {
@@ -89,35 +70,6 @@ const DashBoard = () => {
           };
         })}
       />
-
-      <Modal
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}
-        style={{
-          width: 500,
-          height: 550,
-        }}
-      >
-        <center>Report of ideas</center>
-        <Tabs
-          defaultActiveKey="1"
-          centered
-          items={new Array(2).fill(null).map((_, i) => {
-            return {
-              label: (
-                <span>
-                  {iconsChart[i]}
-                  {chartName[i]}
-                </span>
-              ),
-              key: i,
-              children: childrenReport[i],
-            };
-          })}
-        />
-      </Modal>
     </div>
   );
 };

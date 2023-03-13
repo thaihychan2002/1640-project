@@ -11,12 +11,12 @@ import {
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import moment from "moment";
-import React, { useRef, useContext, useState } from "react";
+import React, { useRef, useContext, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
 import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
-import { Modal, Button, Input, Select } from "antd";
+import { Modal, Button, Input, Select, Switch } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
@@ -50,6 +50,7 @@ export default function Post({ post }) {
     department: post.department.name,
     category: post.categories.name,
     attachment: post.attachment,
+    isAnonymous: post.isAnonymous,
   });
   // Anonymous Animals
   const getRandomAnimal = () => {
@@ -57,8 +58,10 @@ export default function Post({ post }) {
     return animalList[randomIndex];
   };
 
-  const animal = getRandomAnimal();
-
+  const [animal, setAnimal] = useState("");
+  useEffect(() => {
+    setAnimal(getRandomAnimal());
+  }, []);
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
@@ -129,6 +132,7 @@ export default function Post({ post }) {
         ...data,
       })
     );
+
     handleOk();
   }, [dispatch, data, post, handleOk]);
   const onDislikeBtnClick = React.useCallback(() => {
@@ -379,7 +383,6 @@ export default function Post({ post }) {
                 />
               </div>
               <div className="user-mg">
-                <Typography>Choose department</Typography>
                 <Select
                   defaultValue={defaultValue.department}
                   style={{ width: "100%" }}
@@ -394,7 +397,6 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
-                <Typography>Choose category</Typography>
                 <Select
                   defaultValue={defaultValue.category}
                   style={{ width: "100%", top: "20px" }}
@@ -409,6 +411,17 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
+                <Switch
+                  style={{ width: "100%", top: "35px", marginBottom: 10 }}
+                  checkedChildren="Anonymous"
+                  unCheckedChildren={user.fullName}
+                  onChange={(checked) =>
+                    setdata({
+                      ...data,
+                      isAnonymous: checked,
+                    })
+                  }
+                ></Switch>
               </div>
               <Button
                 type="primary"

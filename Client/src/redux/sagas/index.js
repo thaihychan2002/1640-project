@@ -46,6 +46,9 @@ function* updatePostSaga(action) {
   try {
     const updatedPost = yield call(api.updatePosts, action.payload);
     yield put(actions.updatePosts.updatePostsSuccess(updatedPost.data));
+    toast.success(
+      "Updated post successfully. Wait for Admin to review again your idea"
+    );
   } catch (err) {
     console.log(err);
     yield put(actions.updatePosts.updatePostsFailure(err));
