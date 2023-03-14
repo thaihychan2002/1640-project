@@ -3,13 +3,13 @@ import posts from "./posts.js";
 import allPosts from "./allPosts.js";
 import modal from "./modal.js";
 import departments from "./departments.js";
-import categories from "./categories.js";
+import topics from "./topics.js";
 import comments from "./comments.js"
 export default combineReducers({
   posts,
   modal,
   departments,
-  categories,
+  topics,
   allPosts,
   comments,
 });

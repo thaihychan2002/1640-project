@@ -49,23 +49,23 @@ export default function Navigation() {
       ? [
           "/",
           "/departments",
-          "/categories",
+          "/topics",
           "/dashboard",
           "/profile",
           "#signout",
         ]
-      : ["/", "/departments", "/categories", "/profile", "#signout"];
+      : ["/", "/departments", "/topics", "/profile", "#signout"];
   const navName =
     role === "Admin"
       ? [
           "Home",
           "Departments",
-          "Categories",
+          "Topics",
           "Admin Dashboard",
           "Profile",
           "Log out",
         ]
-      : ["Home", "Departments", "Categories", "Profile", "Log out"];
+      : ["Home", "Departments", "Topics", "Profile", "Log out"];
   // Hide navbar when route === /login
   const withOutNavbarRoutes = ["/login"];
   const { pathname } = useLocation();

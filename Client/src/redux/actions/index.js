@@ -65,26 +65,31 @@ export const deleteDepartments = createActions({
   deleteDepartmentsSuccess: (payload) => payload,
   deleteDepartmentsFailure: (err) => err,
 });
-//category
-export const getCategories = createActions({
-  getCategoriesRequest: undefined,
-  getCategoriesSuccess: (payload) => payload,
-  getCategoriesFailure: (err) => err,
+//topic
+export const getTopics = createActions({
+  getTopicsRequest: undefined,
+  getTopicsSuccess: (payload) => payload,
+  getTopicsFailure: (err) => err,
 });
-export const createCategories = createActions({
-  createCategoriesRequest: (payload) => payload,
-  createCategoriesSuccess: (payload) => payload,
-  createCategoriesFailure: (err) => err,
+export const createTopics = createActions({
+  createTopicsRequest: (payload) => payload,
+  createTopicsSuccess: (payload) => payload,
+  createTopicsFailure: (err) => err,
 });
-export const updateCategories = createActions({
-  updateCategoriesRequest: (payload) => payload,
-  updateCategoriesSuccess: (payload) => payload,
-  updateCategoriesFailure: (err) => err,
+export const updateTopics = createActions({
+  updateTopicsRequest: (payload) => payload,
+  updateTopicsSuccess: (payload) => payload,
+  updateTopicsFailure: (err) => err,
 });
-export const deleteCategories = createActions({
-  deleteCategoriesRequest: (payload) => payload,
-  deleteCategoriesSuccess: (payload) => payload,
-  deleteCategoriesFailure: (err) => err,
+export const deleteTopics = createActions({
+  deleteTopicsRequest: (payload) => payload,
+  deleteTopicsSuccess: (payload) => payload,
+  deleteTopicsFailure: (err) => err,
+});
+export const updateTopicStatus = createActions({
+  updateTopicStatusRequest: (payload) => payload,
+  updateTopicStatusSuccess: (payload) => payload,
+  updateTopicStatusFailure: (err) => err,
 });
 //comment
 export const getConditionCmts = createActions({

@@ -15,7 +15,7 @@ import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
-import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
+import { departmentsState$, topicsState$ } from "../../../redux/seclectors";
 import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
@@ -36,7 +36,7 @@ export default function Post({ post }) {
   const { state } = useContext(Store);
   const user = state.userInfo;
   const departments = useSelector(departmentsState$);
-  const categories = useSelector(categoriesState$);
+  const topics = useSelector(topicsState$);
   const [Modalupdate, setModalUpdate] = useState(false);
   const [Modaloption, setModalOption] = useState(false);
   const [Modalcomment, setModalcomment] = useState(false);
@@ -48,7 +48,7 @@ export default function Post({ post }) {
     author: post.author || "none",
     content: post.content,
     department: post.department.name,
-    category: post.categories.name,
+    topic: post.topic.name,
     attachment: post.attachment,
   });
   // Anonymous Animals
@@ -63,9 +63,9 @@ export default function Post({ post }) {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
   };
-  const categet = (e) => {
-    setdata({ ...data, categories: e });
-    data.categories = caetgoryref.current.value;
+  const topicget = (e) => {
+    setdata({ ...data, topics: e });
+    data.topics = caetgoryref.current.value;
   };
   const getcmt = React.useCallback(() => {
     dispatch(actions.getComments.getCommentsRequest(post));
@@ -394,18 +394,18 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
-                <Typography>Choose category</Typography>
+                <Typography>Choose topic</Typography>
                 <Select
-                  defaultValue={defaultValue.category}
-                  style={{ width: "100%", top: "20px" }}
+                  defaultValue={defaultValue.topic}
+                  style={{ width: "100%" }}
                   size="large"
                   required
-                  onChange={(e) => categet(e)}
+                  onChange={(e) => topicget(e)}
                   ref={caetgoryref}
                 >
-                  {categories?.map((category) => (
-                    <Option key={category._id} value={category._id}>
-                      {category.name}
+                  {topics?.filter((topic)=>topic?.status==="Processing")?.map((topic) => (
+                    <Option key={topic._id} value={topic._id}>
+                      {topic.name}
                     </Option>
                   ))}
                 </Select>
@@ -413,7 +413,7 @@ export default function Post({ post }) {
               <Button
                 type="primary"
                 block
-                style={{ bottom: "-5%" }}
+                style={{ bottom: "2%" }}
                 onClick={updatehandler}
               >
                 Update

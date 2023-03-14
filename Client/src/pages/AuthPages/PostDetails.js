@@ -43,12 +43,6 @@ const PostDetails = () => {
   }, [slug]);
   React.useEffect(() => {
     dispatch(actions.getComments.getCommentsRequest(allData));
-    // dispatch(
-    //   actions.updatePosts.updatePostsRequest({
-    //     _id: allData._id,
-    //     view: allData.view + 1,
-    //   })
-    // );
   }, [dispatch, allData]);
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);

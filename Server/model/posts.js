@@ -21,9 +21,9 @@ const schema = new mongoose.Schema(
       ref: 'Department',
       required: true,
     },
-    categories: {
+    topic: {
       type: Schema.Types.ObjectId,
-      ref: 'Category',
+      ref: 'Topic',
       required: true,
     },
     attachment: String,

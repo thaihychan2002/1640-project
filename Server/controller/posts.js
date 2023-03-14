@@ -13,14 +13,14 @@ import { Parser } from 'json2csv'
 import fs from 'fs'
 import { MongoClient, ObjectId } from 'mongodb'
 import JSZip from 'jszip'
-import { CategoriesModel } from '../model/categories.js'
+import { TopicsModel } from '../model/topics.js'
 
 export const getPosts = async (req, res) => {
   try {
     const posts = await PostModel.find()
       .sort({ createdAt: -1 })
       .populate('author', 'fullName avatar _id role department')
-      .populate('categories')
+      .populate('topic')
       .populate('department')
       .exec()
 
@@ -47,7 +47,7 @@ export const createPosts = async (req, res, next) => {
   try {
     // const result = await DepartmentModel.distinct('name')
     const resultDepartments = await DepartmentModel.distinct('_id')
-    const resultCategories = await CategoriesModel.distinct('_id')
+    const resultTopics = await TopicsModel.distinct('_id')
     const createPostSchema = joi.object({
       title: joi.string().min(3).required(),
       content: joi.string().required(),
@@ -56,9 +56,9 @@ export const createPosts = async (req, res, next) => {
         .string()
         .valid(...resultDepartments.map((id) => id.toString()))
         .required(),
-      categories: joi
+      topic: joi
         .string()
-        .valid(...resultCategories.map((id) => id.toString()))
+        .valid(...resultTopics.map((id) => id.toString()))
         .required(),
       attachment: joi.allow(),
       isAnonymous: joi.boolean().required(),
@@ -75,10 +75,10 @@ export const createPosts = async (req, res, next) => {
     }
     post.slug = slug(req.body.title)
     await post.save()
-    // const createdpost = await PostModel.findOne({ _id: post._id })
-    //   .populate('author')
-    //   .populate('categories')
-    //   .populate('department')
+    const createdpost = await PostModel.findOne({ _id: post._id, status:"Accepted" })
+      .populate('author')
+      .populate('topic')
+      .populate('department')
     // send email
     let mailOptions = {
       from: process.env.GMAIL_USER,
@@ -93,7 +93,7 @@ export const createPosts = async (req, res, next) => {
         console.log('Email sent: ' + info.response)
       }
     })
-    res.status(200).json(post)
+    res.status(200).json(createdpost)
   } catch (err) {
     if (err.isJoi === true) {
       res.status(422).send({ message: `${err.details[0].message}` })
@@ -104,7 +104,7 @@ export const createPosts = async (req, res, next) => {
 export const updatePosts = async (req, res, next) => {
   try {
     const resultDepartments = await DepartmentModel.distinct('_id')
-    const resultCategories = await CategoriesModel.distinct('_id')
+    const resultTopics = await TopicsModel.distinct('_id')
     // const updatePostSchema = joi.object({
     //   title: joi.string().min(3).allow(),
     //   content: joi.string().min(10).allow(),
@@ -119,9 +119,9 @@ export const updatePosts = async (req, res, next) => {
     //     .string()
     //     .valid(...resultDepartments.map((id) => id.toString()))
     //     .allow(),
-    //   categories: joi
+    //   topic: joi
     //     .string()
-    //     .valid(...resultCategories.map((id) => id.toString()))
+    //     .valid(...resultTopics.map((id) => id.toString()))
     //     .allow(),
     //   attachment: joi.allow(),
     //   isAnonymous: joi.boolean().allow(),
@@ -137,7 +137,7 @@ export const updatePosts = async (req, res, next) => {
       { new: true }
     )
       .populate('author')
-      .populate('categories')
+      .populate('topic')
       .populate('department')
     res.status(200).json(post)
   } catch (err) {
@@ -180,7 +180,7 @@ export const viewPostsByMostViews = async (req, res) => {
     const posts = await PostModel.find()
       .sort({ view: -1 })
       .populate('author', 'fullName avatar _id role department')
-      .populate('categories')
+      .populate('topic')
       .populate('department')
       .lean()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
@@ -194,7 +194,7 @@ export const viewPostsByMostLikes = async (req, res) => {
     const posts = await PostModel.find()
       .sort({ likeCount: -1 })
       .populate('author', 'fullName avatar _id role department')
-      .populate('categories')
+      .populate('topic')
       .populate('department')
       .lean()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
@@ -208,7 +208,7 @@ export const viewRecentlyPosts = async (req, res) => {
     const posts = await PostModel.find()
       .sort({ createdAt: -1 })
       .populate('author', 'fullName avatar _id role department')
-      .populate('categories')
+      .populate('topic')
       .populate('department')
       .lean()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
@@ -295,7 +295,6 @@ export const viewPostsByDepartment = async (req, res) => {
     const departmentID = req.body.id
     const posts = await PostModel.find({ department: departmentID })
       .sort({ createdAt: -1 })
-
       .populate('author')
       .exec()
     const filteredPosts = posts.filter((post) => post.status === 'Accepted')
@@ -304,10 +303,10 @@ export const viewPostsByDepartment = async (req, res) => {
     res.status(500).json({ error: err })
   }
 }
-export const viewPostsByCategories = async (req, res) => {
+export const viewPostsByTopics = async (req, res) => {
   try {
-    const categoryID = req.body.id
-    const posts = await PostModel.find({ categories: categoryID })
+    const topicID = req.body.id
+    const posts = await PostModel.find({ topic: topicID })
       .sort({ createdAt: -1 })
       .populate('author')
       .exec()
@@ -370,7 +369,7 @@ export const exportPost = async (req, res) => {
       'content',
       'author',
       'department',
-      'categories',
+      'topic',
       'view',
       'attachment',
       'likeCount',
@@ -407,7 +406,7 @@ export const downloadPost = async (req, res) => {
       'content',
       'attachment',
       'department',
-      'categories',
+      'topic',
       'view',
       'likeCount',
     ]

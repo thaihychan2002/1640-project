@@ -4,7 +4,7 @@ import cors from 'cors'
 import posts from './routers/posts.js'
 import users from './routers/users.js'
 import departments from './routers/departments.js'
-import categories from './routers/categories.js'
+import topics from './routers/topics.js'
 import comments from './routers/comments.js'
 import mongoose from 'mongoose'
 import morgan from 'morgan'
@@ -28,7 +28,7 @@ app.use('/posts', posts)
 app.use('/users', users)
 app.use('/roles', roles)
 app.use('/departments', departments)
-app.use('/categories', categories)
+app.use('/topics', topics)
 app.use('/comments', comments)
 app.get('/', (req, res) => {
   res.send('SUCCESS')

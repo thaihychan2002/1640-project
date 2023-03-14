@@ -15,7 +15,7 @@ import {
   exportPost,
   downloadPost,
   getPostBySlug,
-  viewPostsByCategories,
+  viewPostsByTopics,
   countViewPostBySlug,
 } from '../controller/posts.js'
 import { isAuth, isAdmin } from '../utils.js'
@@ -33,7 +33,7 @@ router.get('/viewPostsByMostViews', isAuth, viewPostsByMostViews)
 router.get('/viewPostsByMostLikes', isAuth, viewPostsByMostLikes)
 router.get('/viewRecentlyPosts', isAuth, viewRecentlyPosts)
 router.post('/viewPostsByDepartment/', isAuth, viewPostsByDepartment)
-router.post('/viewPostsByCategory/', isAuth, viewPostsByCategories)
+router.post('/viewPostsByTopic/', isAuth, viewPostsByTopics)
 //search posts
 router.get('/search/:keyword', isAuth, searchPostsByKeyword)
 //post status

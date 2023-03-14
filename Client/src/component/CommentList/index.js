@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
 import { Grid, useMediaQuery } from "@material-ui/core";
@@ -9,16 +9,13 @@ import { Store } from "../../Store";
 import { commentsLoading$, commentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { Select } from "antd";
-import { toast } from "react-toastify";
-import { getError } from "../../utils";
-import { fetchCmtsByMostLikes, fetchRecentlyCmts } from "../../api";
+
 const { Option } = Select;
 const { TextArea } = Input;
 const { Text } = Typography;
 export default function CommentList({ post }) {
   const dispatch = useDispatch();
   const comments = useSelector(commentsState$);
-  // const [comments, setComments] = useState([]);
   const isLoading = useSelector(commentsLoading$);
   const [selectedcdt, setSelectedcdt] = useState("recently");
   const { state } = useContext(Store);
@@ -26,26 +23,6 @@ export default function CommentList({ post }) {
   React.useEffect(() => {
     dispatch(actions.getConditionCmts.getCmtsRequest({ status: selectedcdt }));
   }, [dispatch, selectedcdt]);
-  // useEffect(() => {
-  //   const fetchCmts = async () => {
-  //     try {
-  //       setisLoading(true);
-  //       let data = [];
-  //       if (selectedcdt === "recently") {
-  //         ({ data } = await fetchRecentlyCmts(post._id));
-  //       } else if (selectedcdt === "mostLikes") {
-  //         ({ data } = await fetchCmtsByMostLikes(post._id));
-  //       }
-  //       setComments(data);
-  //     } catch (err) {
-  //       toast.error(getError(err));
-  //     } finally {
-  //       setisLoading(false);
-  //     }
-  //   };
-  //   fetchCmts();
-  // }, [post._id, selectedcdt]);
-
   const user = state.userInfo;
   const [comment, setcomment] = React.useState({
     author: "",
@@ -56,7 +33,7 @@ export default function CommentList({ post }) {
     (value) => {
       setSelectedcdt(value);
     },
-    [selectedcdt]
+    []
   );
   const commenthandler = React.useCallback(() => {
     dispatch(actions.createComments.createCommentsRequest(comment));

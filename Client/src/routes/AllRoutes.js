@@ -10,7 +10,7 @@ import AdminRoute from "../component/ProtectedRoute/AdminRoute";
 import PostDetails from "../pages/AuthPages/PostDetails";
 import SearchPage from "../pages/AuthPages/SearchPage";
 import DepartmentPage from "../pages/AuthPages/DepartmentPage";
-import CategoryPage from "../pages/AuthPages/CategoryPage";
+import TopicPage from "../pages/AuthPages/TopicPage";
 export const AllRoutes = [
   {
     path: "/",
@@ -70,8 +70,8 @@ export const AllRoutes = [
     element: <DepartmentPage />,
   },
   {
-    path: "/categories",
-    element: <CategoryPage />,
+    path: "/topics",
+    element: <TopicPage />,
   },
 ];
 export default AllRoutes;

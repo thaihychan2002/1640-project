@@ -14,7 +14,7 @@ export const INIT_STATE = {
     isLoading: false,
     data: [],
   },
-  categories: {
+  topics: {
     isLoading: false,
     data: [],
   },

@@ -2,7 +2,7 @@ import { Button, Modal, Tabs } from "antd";
 import React, { useState } from "react";
 import UserManage from "./UserManage";
 import DepartmentManage from "./DepartmentManage.js/index.js";
-import CategoryManage from "./CategoryManage";
+import TopicManage from "./TopicManage";
 import { useDispatch } from "react-redux";
 import * as actions from "../../redux/actions";
 import {
@@ -28,13 +28,13 @@ const DashBoard = () => {
     dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
   React.useEffect(() => {
-    dispatch(actions.getCategories.getCategoriesRequest());
+    dispatch(actions.getTopics.getTopicsRequest());
   }, [dispatch]);
   const children = [
     <UserManage />,
     <RoleManage />,
     <DepartmentManage />,
-    <CategoryManage />,
+    <TopicManage />,
     <PostManage />,
   ];
   const childrenReport = [<PieChart />, <BarChart />];
@@ -42,7 +42,7 @@ const DashBoard = () => {
     <span>User Manage</span>,
     <span>Role Manage</span>,
     <span>Department Manage</span>,
-    <span>Category Manage</span>,
+    <span>Topic Manage</span>,
     <span>Post Manage</span>,
   ];
   const icons = [

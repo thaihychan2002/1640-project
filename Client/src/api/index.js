@@ -39,8 +39,8 @@ export const fetchRecentlyPosts = () =>
   axiosInstance.get("/posts/viewRecentlyPosts");
 export const fetchPostsByDepartment = (departmentID) =>
   axiosInstance.post("/posts/viewPostsByDepartment/", { id: departmentID });
-export const fetchPostsByCategory = (categoryID) =>
-  axiosInstance.post("/posts/viewPostsByCategory/", { id: categoryID });
+export const fetchPostsByTopic = (topicID) =>
+  axiosInstance.post("/posts/viewPostsByTopic/", { id: topicID });
 //search posts
 export const searchPostsByKeyword = (keyword) =>
   axiosInstance.get(`/posts/search/${keyword}`);
@@ -75,14 +75,16 @@ export const updateDepartments = (payload) =>
 export const deleteDepartments = (payload) =>
   axiosInstance.delete(`/departments/delete/${payload}`, payload);
 
-// category
-export const fetchCategories = () => axiosInstance.get(`/categories`);
-export const createCategories = (payload) =>
-  axiosInstance.post(`/categories/create`, payload);
-export const updateCategories = (payload) =>
-  axiosInstance.put(`/categories/update`, payload);
-export const deleteCategories = (payload) =>
-  axiosInstance.delete(`/categories/delete/${payload}`, payload);
+// Topic
+export const fetchTopics = () => axiosInstance.get(`/topics`);
+export const createTopics = (payload) =>
+  axiosInstance.post(`/topics/create`, payload);
+export const updateTopics = (payload) =>
+  axiosInstance.put(`/topics/update`, payload);
+  export const updateTopicStatus = (payload) =>
+  axiosInstance.put(`/topics/updatestatus`, payload);
+export const deleteTopics = (payload) =>
+  axiosInstance.delete(`/topics/delete/${payload}`, payload);
 
 // comment
 export const fetchComments = (payload) =>

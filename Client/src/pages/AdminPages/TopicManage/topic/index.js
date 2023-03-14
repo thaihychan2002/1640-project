@@ -4,18 +4,20 @@ import * as actions from "../../../../redux/actions";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Modal, Input, DatePicker, Typography } from "antd";
+import moment from "moment";
 const { TextArea } = Input;
 
-export default function Category({ record_cat }) {
+export default function Topic({ record_Topic }) {
   const dispatch_ca = useDispatch();
   const [ModalCatUpdate, setModalCatUpdate] = useState(false);
-  const [data, setdata] = React.useState({});
-  const [defaultValue] = React.useState({
-    name: record_cat.name,
-    description: record_cat.description,
-    begin: record_cat.begindate,
-    end: record_cat.enddate,
+  const [data, setdata] = React.useState({
+    name: record_Topic.name,
+    description: record_Topic.description,
+    begin: record_Topic.begindate,
+    end: record_Topic.enddate,
+    status: record_Topic.status,
   });
+ 
   const handleOk = React.useCallback(() => {
     setModalCatUpdate(false);
   }, []);
@@ -24,21 +26,19 @@ export default function Category({ record_cat }) {
   }, []);
   const onUpdateHandler = React.useCallback(() => {
     dispatch_ca(
-      actions.updateCategories.updateCategoriesRequest({
-        _id: record_cat.key,
+      actions.updateTopics.updateTopicsRequest({
+        _id: record_Topic.key,
         ...data,
       })
     );
     handleOk();
     setdata({ _id: "", name: "", begin: "", end: "" });
-  }, [data, dispatch_ca, record_cat, handleOk]);
+  }, [data, dispatch_ca, record_Topic, handleOk]);
   function onSelectBegin(date, dateString) {
     data.begin = dateString;
-    console.log(data.begin);
   }
   function onSelectEnd(date, dateString) {
     data.end = dateString;
-    console.log(data.end);
   }
   return (
     <>
@@ -56,14 +56,14 @@ export default function Category({ record_cat }) {
       >
         <Grid container spacing={2} alignItems="stretch">
           <Grid item xs={12} lg={12} className="row-new-post">
-            <center>Update category</center>
+            <center>Update Topicegory</center>
           </Grid>
           <Grid item xs={6} lg={6} className="row-new-post">
             <Typography>Begin date of the collection</Typography>
             <DatePicker format="MM-DD-YYYY" onChange={onSelectBegin} />
             <Input
               disabled
-              placeholder={"CURRENT BEGIN DATE: " + defaultValue.begin}
+              placeholder={"CURRENT BEGIN DATE: " + record_Topic.begindate}
             ></Input>
           </Grid>
           <Grid item xs={6} lg={6} className="row-new-post">
@@ -71,22 +71,22 @@ export default function Category({ record_cat }) {
             <DatePicker format="MM-DD-YYYY" onChange={onSelectEnd} />
             <Input
               disabled
-              placeholder={"CURRENT END DATE: " + defaultValue.end}
+              placeholder={"CURRENT END DATE: " + record_Topic.enddate}
             ></Input>
           </Grid>
           <Grid item xs={12} lg={12} className="row-new-post">
-            <Typography>Write the name of the category</Typography>
+            <Typography>Write the name of the Topicegory</Typography>
             <Input
               allowClear
               autoSize={{
                 minRows: 3,
                 maxRows: 5,
               }}
-              placeholder={"CURRENT NAME: " + defaultValue.name}
+              placeholder={"CURRENT NAME: " + record_Topic.name}
               size="large"
               value={data.name}
               onChange={(e) =>
-                setdata({ ...data, name: e.target.value, _id: record_cat.key })
+                setdata({ ...data, name: e.target.value })
               }
               required
             />
@@ -97,7 +97,7 @@ export default function Category({ record_cat }) {
                 minRows: 3,
                 maxRows: 5,
               }}
-              placeholder={"CURRENT DESCRIBE: " + defaultValue.description}
+              placeholder={"CURRENT DESCRIBE: " + record_Topic.description}
               size="large"
               value={data.description}
               onChange={(e) =>
