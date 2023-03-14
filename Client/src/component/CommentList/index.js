@@ -4,7 +4,7 @@ import * as actions from "../../redux/actions";
 import { Grid, useMediaQuery } from "@material-ui/core";
 import Comment from "./Comment";
 import { Link } from "react-router-dom";
-import { Input, Button, Typography } from "antd";
+import { Input, Button, Typography, Switch } from "antd";
 import { Store } from "../../Store";
 import { commentsLoading$, commentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
@@ -27,6 +27,7 @@ export default function CommentList({ post }) {
   const [comment, setcomment] = React.useState({
     author: "",
     content: "",
+    isAnonymous: false,
     postID: post._id,
   });
   const changeCommentsView = React.useCallback(
@@ -82,13 +83,37 @@ export default function CommentList({ post }) {
           required
         />
       </Grid>
-
-      <Grid item xs={10} sm={8} />
-      <Grid item xs={2} sm={2}>
+      <Grid item xs={1} sm={1} />
+      <Grid
+        item
+        xs={11}
+        sm={9}
+        style={{ display: "flex", justifyContent: "space-between  " }}
+      >
+        <div>
+          <Switch
+            style={{ width: "200px", top: "20px" }}
+            checkedChildren="Anonymous"
+            unCheckedChildren={user.fullName}
+            onChange={(checked) =>
+              setcomment({
+                ...comment,
+                isAnonymous: checked,
+              })
+            }
+          />
+        </div>
+        <div>
+          <Button type="primary" block onClick={commenthandler}>
+            Post
+          </Button>
+        </div>
+      </Grid>
+      {/* <Grid item xs={2} sm={2}>
         <Button type="primary" block onClick={commenthandler}>
           Post
         </Button>
-      </Grid>
+      </Grid> */}
       <Grid style={{ marginTop: "40px" }} item xs={12} sm={12}>
         <div
           style={{
@@ -100,7 +125,7 @@ export default function CommentList({ post }) {
             defaultValue="View Recently"
             onChange={changeCommentsView}
             style={{
-              width: isXs ? "50%" : "20%",
+              width: isXs ? "50%" : "50%",
               marginBottom: "20px",
             }}
           >

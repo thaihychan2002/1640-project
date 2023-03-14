@@ -105,35 +105,34 @@ export const updatePosts = async (req, res, next) => {
   try {
     const resultDepartments = await DepartmentModel.distinct('_id')
     const resultTopics = await TopicsModel.distinct('_id')
-    // const updatePostSchema = joi.object({
-    //   title: joi.string().min(3).allow(),
-    //   content: joi.string().min(10).allow(),
-    //   _id: joi.string().required(),
-    //   author: joi
-    //     .object({
-    //       _id: joi.string().required(),
-    //     })
-    //     .unknown(true)
-    //     .required(),
-    //   department: joi
-    //     .string()
-    //     .valid(...resultDepartments.map((id) => id.toString()))
-    //     .allow(),
-    //   topic: joi
-    //     .string()
-    //     .valid(...resultTopics.map((id) => id.toString()))
-    //     .allow(),
-    //   attachment: joi.allow(),
-    //   isAnonymous: joi.boolean().allow(),
-    //   likeCount: joi.number().valid(0).allow(),
-    //   view: joi.number().valid(0).allow(),
-    // })
-
-    // await updatePostSchema.validateAsync(req.body)
+    const updatePostSchema = joi.object({
+      title: joi.string().min(3).allow(),
+      content: joi.string().min(10).allow(),
+      _id: joi.string().required(),
+      author: joi
+        .object({
+          _id: joi.string().required(),
+        })
+        .unknown(true)
+        .required(),
+      department: joi
+        .string()
+        .valid(...resultDepartments.map((id) => id.toString()))
+        .allow(),
+      topic: joi
+        .string()
+        .valid(...resultTopics.map((id) => id.toString()))
+        .allow(),
+      attachment: joi.allow(),
+      isAnonymous: joi.boolean().allow(),
+      likeCount: joi.number().valid(0).allow(),
+      view: joi.number().valid(0).allow(),
+    })
+    await updatePostSchema.validateAsync(req.body)
     const updatePosts = req.body
     const post = await PostModel.findByIdAndUpdate(
       { _id: updatePosts._id },
-      updatePosts,
+      { ...updatePosts, status: 'Pending' },
       { new: true }
     )
       .populate('author')

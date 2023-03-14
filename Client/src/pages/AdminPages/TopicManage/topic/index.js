@@ -52,7 +52,7 @@ export default function Topic({ record_Topic }) {
         onOk={handleOk}
         onCancel={handleOk}
         footer={null}
-        className="container"
+        style={{ width: 400, height: 380 }}
       >
         <Grid container spacing={2} alignItems="stretch">
           <Grid item xs={12} lg={12} className="row-new-post">
@@ -105,7 +105,12 @@ export default function Topic({ record_Topic }) {
               }
               required
             />
-            <Button type="primary" block onClick={onUpdateHandler}>
+            <Button
+              type="primary"
+              block
+              onClick={onUpdateHandler}
+              style={{ marginTop: 15 }}
+            >
               Update
             </Button>
           </Grid>

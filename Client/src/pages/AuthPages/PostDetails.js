@@ -49,7 +49,10 @@ const PostDetails = () => {
     return animalList[randomIndex];
   };
 
-  const animal = getRandomAnimal();
+  const [animal, setAnimal] = useState("");
+  useEffect(() => {
+    setAnimal(getRandomAnimal());
+  }, []);
   const [likeActive, setLikeActive] = React.useState(false);
   const [dislikeActive, setDislikeActive] = React.useState(false);
   const onLikeBtnClick = React.useCallback(() => {
