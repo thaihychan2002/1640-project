@@ -82,9 +82,9 @@ const UserManage = () => {
   });
   const data = users?.map((user) => ({
     key: user._id,
-    fullName: user?.fullName,
-    email: user?.email,
-    role: user?.role?.name,
+    fullName: user.fullName,
+    email: user.email,
+    role: user.role.name,
   }));
   // users?.map((user) => console.log(user.role.name));
 

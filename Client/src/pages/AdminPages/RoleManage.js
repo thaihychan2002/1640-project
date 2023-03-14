@@ -110,20 +110,18 @@ const RoleManage = () => {
           onOk={handleClose}
           onCancel={handleClose}
           footer={null}
-          style={{ width: 100, height: 150 }}
+          className="container-user"
         >
           <Grid container spacing={2} alignItems="stretch">
             <Grid item xs={12} lg={12} className="row-new-post">
               <center>Create new role</center>
             </Grid>
-            <Grid item xs={3} lg={3} />
-            <Grid item xs={6} lg={6} className="row-new-post">
+            <Grid item xs={12} lg={12} className="row-new-post">
               <Input
                 allowClear
                 placeholder="Write the name of role"
                 size="large"
                 onChange={(e) => setRole(e.target.value)}
-                style={{ marginBottom: 15 }}
                 required
               />
               <Button

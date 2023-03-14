@@ -11,12 +11,12 @@ import {
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import moment from "moment";
-import React, { useRef, useContext, useState, useEffect } from "react";
+import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
 import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
-import { Modal, Button, Input, Select, Switch } from "antd";
+import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
@@ -24,8 +24,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { animalList } from "./anonymousAnimal.js";
 import CommentList from "../../CommentList/index.js";
 import * as actions from "../../../redux/actions";
-import { countViewBySlug } from "../../../api/index.js";
-import ReactQuill from "react-quill";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -50,7 +48,6 @@ export default function Post({ post }) {
     department: post.department.name,
     category: post.categories.name,
     attachment: post.attachment,
-    isAnonymous: post.isAnonymous,
   });
   // Anonymous Animals
   const getRandomAnimal = () => {
@@ -58,10 +55,8 @@ export default function Post({ post }) {
     return animalList[randomIndex];
   };
 
-  const [animal, setAnimal] = useState("");
-  useEffect(() => {
-    setAnimal(getRandomAnimal());
-  }, []);
+  const animal = getRandomAnimal();
+
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
@@ -132,7 +127,6 @@ export default function Post({ post }) {
         ...data,
       })
     );
-
     handleOk();
   }, [dispatch, data, post, handleOk]);
   const onDislikeBtnClick = React.useCallback(() => {
@@ -163,17 +157,6 @@ export default function Post({ post }) {
       }
     }
   }, [dispatch, post, likeActive, dislikeActive]);
-  const countView = async (slug) => {
-    await countViewBySlug(slug);
-  };
-  const modules = {
-    toolbar: [[{ size: [] }], ["bold", "italic", "underline"]],
-    clipboard: {
-      // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false,
-    },
-  };
-
   return (
     <>
       <Card className={classes.card} key={post._id}>
@@ -198,10 +181,7 @@ export default function Post({ post }) {
 
         <Button
           type="button"
-          onClick={() => {
-            navigate(`/idea/${post?.slug}`);
-            countView(post.slug);
-          }}
+          onClick={() => navigate(`/idea/${post?.slug}`)}
           style={{
             width: "100%",
             height: "300px",
@@ -228,37 +208,28 @@ export default function Post({ post }) {
             variant="body2"
             component="p"
             color="textSecondary"
-            dangerouslySetInnerHTML={{
-              __html:
-                post.content.length > 528
-                  ? `${post.content.substring(0, 528)}...`
-                  : post.content,
-            }}
+            dangerouslySetInnerHTML={{ __html: post.content }}
           ></Typography>
+          <Typography>{post.view} Views</Typography>
         </CardContent>
-        <CardActions
-          style={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <div>
-            <IconButton
-              onClick={onLikeBtnClick}
-              style={{ color: likeActive ? "red" : "" }}
-            >
-              <FavoriteIcon />
-              <Typography component="span" color="textSecondary"></Typography>
-            </IconButton>
-            <IconButton
-              onClick={onDislikeBtnClick}
-              style={{ color: dislikeActive ? "blue" : "" }}
-            >
-              -<FavoriteIcon />
-              <Typography component="span" color="textSecondary"></Typography>
-            </IconButton>
-            {`${post.likeCount} likes`}
-          </div>
-          <div>{post.view} Views</div>
+        <CardActions>
+          <IconButton
+            onClick={onLikeBtnClick}
+            style={{ color: likeActive ? "red" : "" }}
+          >
+            <FavoriteIcon />
+            <Typography component="span" color="textSecondary"></Typography>
+          </IconButton>
+          <IconButton
+            onClick={onDislikeBtnClick}
+            style={{ color: dislikeActive ? "blue" : "" }}
+          >
+            -<FavoriteIcon />
+            <Typography component="span" color="textSecondary"></Typography>
+          </IconButton>
+          {`${post.likeCount} likes`}
         </CardActions>
-        {/* <Grid
+        <Grid
           container
           spacing={2}
           alignItems="stretch"
@@ -281,7 +252,7 @@ export default function Post({ post }) {
               Show comments
             </Button>
           </Grid>
-        </Grid> */}
+        </Grid>
       </Card>
       <Modal
         open={Modalcomment}
@@ -369,20 +340,23 @@ export default function Post({ post }) {
               </div>
               <div className="user-mg">
                 <Typography>Content</Typography>
-                <ReactQuill
-                  placeholder={
-                    defaultValue.content.length > 200
-                      ? `${defaultValue.content.substring(0, 200)}...`
-                      : defaultValue.content
-                  }
-                  theme="snow"
-                  modules={modules}
+                <TextArea
+                  allowClear
+                  autoSize={{
+                    minRows: 3,
+                    maxRows: 5,
+                  }}
+                  placeholder={defaultValue.content}
+                  size="large"
                   value={data.content}
-                  onChange={(e) => setdata({ ...data, content: e })}
+                  onChange={(e) =>
+                    setdata({ ...data, content: e.target.value })
+                  }
                   required
                 />
               </div>
               <div className="user-mg">
+                <Typography>Choose department</Typography>
                 <Select
                   defaultValue={defaultValue.department}
                   style={{ width: "100%" }}
@@ -397,6 +371,7 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
+                <Typography>Choose category</Typography>
                 <Select
                   defaultValue={defaultValue.category}
                   style={{ width: "100%", top: "20px" }}
@@ -411,17 +386,6 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
-                <Switch
-                  style={{ width: "100%", top: "35px", marginBottom: 10 }}
-                  checkedChildren="Anonymous"
-                  unCheckedChildren={user.fullName}
-                  onChange={(checked) =>
-                    setdata({
-                      ...data,
-                      isAnonymous: checked,
-                    })
-                  }
-                ></Switch>
               </div>
               <Button
                 type="primary"

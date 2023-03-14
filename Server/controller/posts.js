@@ -11,19 +11,30 @@ import { DepartmentModel } from '../model/departments.js'
 import { UserModel } from '../model/users.js'
 import { Parser } from 'json2csv'
 import fs from 'fs'
+import archiver from 'archiver'
+import { createReadStream, createWriteStream } from 'fs'
+import { createGzip } from 'zlib'
+import { promisify } from 'util'
+import { pipeline } from 'stream'
 import { MongoClient, ObjectId } from 'mongodb'
 import JSZip from 'jszip'
-import { CategoriesModel } from '../model/categories.js'
+import docx from 'docx'
+import axios from 'axios'
+import HtmlDocx from 'html-docx-js'
+import Docxtemplater from 'docxtemplater'
+import path from 'path'
+import EasyDocx from 'node-easy-docx'
+import officegen from 'officegen'
+import moment from 'moment'
 
+const { Document, Packer, Paragraph, TextRun } = docx
 export const getPosts = async (req, res) => {
   try {
     const posts = await PostModel.find()
-      .sort({ createdAt: -1 })
       .populate('author', 'fullName avatar _id role department')
       .populate('categories')
       .populate('department')
       .exec()
-
     res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -34,11 +45,7 @@ export const getPostBySlug = async (req, res) => {
     const post = await PostModel.findOne({ slug: req.params.slug })
       .populate('author', 'fullName avatar _id role department')
       .exec()
-    if (post.status === 'Accepted') {
-      res.status(200).json(post)
-    } else {
-      res.status(404).json('Post not found')
-    }
+    res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -46,25 +53,24 @@ export const getPostBySlug = async (req, res) => {
 export const createPosts = async (req, res, next) => {
   try {
     // const result = await DepartmentModel.distinct('name')
-    const resultDepartments = await DepartmentModel.distinct('_id')
-    const resultCategories = await CategoriesModel.distinct('_id')
+    const result = await DepartmentModel.distinct('_id')
     const createPostSchema = joi.object({
       title: joi.string().min(3).required(),
       content: joi.string().required(),
       author: joi.string().required(),
       department: joi
         .string()
-        .valid(...resultDepartments.map((id) => id.toString()))
+        .valid(...result.map((id) => id.toString()))
         .required(),
-      categories: joi
-        .string()
-        .valid(...resultCategories.map((id) => id.toString()))
-        .required(),
+      categories: joi.allow(),
       attachment: joi.allow(),
       isAnonymous: joi.boolean().required(),
       likeCount: joi.number().valid(0).allow(),
       view: joi.number().valid(0).allow(),
     })
+    .populate('author')
+    .populate('categories')
+    .populate('department')
     await createPostSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
@@ -75,10 +81,6 @@ export const createPosts = async (req, res, next) => {
     }
     post.slug = slug(req.body.title)
     await post.save()
-    // const createdpost = await PostModel.findOne({ _id: post._id })
-    //   .populate('author')
-    //   .populate('categories')
-    //   .populate('department')
     // send email
     let mailOptions = {
       from: process.env.GMAIL_USER,
@@ -101,38 +103,12 @@ export const createPosts = async (req, res, next) => {
     next(err)
   }
 }
-export const updatePosts = async (req, res, next) => {
+export const updatePosts = async (req, res) => {
   try {
-    const resultDepartments = await DepartmentModel.distinct('_id')
-    const resultCategories = await CategoriesModel.distinct('_id')
-    const updatePostSchema = joi.object({
-      title: joi.string().min(3).allow(),
-      content: joi.string().min(10).allow(),
-      _id: joi.string().required(),
-      author: joi
-        .object({
-          _id: joi.string().required(),
-        })
-        .unknown(true)
-        .required(),
-      department: joi
-        .string()
-        .valid(...resultDepartments.map((id) => id.toString()))
-        .allow(),
-      categories: joi
-        .string()
-        .valid(...resultCategories.map((id) => id.toString()))
-        .allow(),
-      attachment: joi.allow(),
-      isAnonymous: joi.boolean().allow(),
-      likeCount: joi.number().valid(0).allow(),
-      view: joi.number().valid(0).allow(),
-    })
-    await updatePostSchema.validateAsync(req.body)
     const updatePosts = req.body
     const post = await PostModel.findByIdAndUpdate(
       { _id: updatePosts._id },
-      { ...updatePosts, status: 'Pending' },
+      updatePosts,
       { new: true }
     )
       .populate('author')
@@ -140,10 +116,7 @@ export const updatePosts = async (req, res, next) => {
       .populate('department')
     res.status(200).json(post)
   } catch (err) {
-    if (err.isJoi === true) {
-      res.status(422).send({ message: `${err.details[0].message}` })
-    }
-    next(err)
+    res.status(500).json({ error: err })
   }
 }
 export const deletePosts = async (req, res) => {
@@ -166,7 +139,7 @@ export const deletePostByAdmin = async (req, res) => {
     const post = await PostModel.findById(req.params.id)
     if (post) {
       await post.remove()
-      res.status(200).send(post)
+      res.status(200).send({ message: 'Post Deleted' })
     } else {
       res.status(404).send({ message: 'Cannot delete other post' })
     }
@@ -281,9 +254,8 @@ export const searchPostsByKeyword = async (req, res) => {
       }
       return accumulator
     }, [])
-    res
-      .status(200)
-      .send(uniquePosts?.filter((post) => post.status === 'Accepted'))
+    console.log(uniquePosts)
+    res.status(200).send(uniquePosts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -291,38 +263,9 @@ export const searchPostsByKeyword = async (req, res) => {
 
 export const viewPostsByDepartment = async (req, res) => {
   try {
-    const departmentID = req.body.id
-    const posts = await PostModel.find({ department: departmentID })
-      .sort({ createdAt: -1 })
-
-      .populate('author')
-      .exec()
-    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
-    res.status(200).json(filteredPosts)
-  } catch (err) {
-    res.status(500).json({ error: err })
-  }
-}
-export const viewPostsByCategories = async (req, res) => {
-  try {
-    const categoryID = req.body.id
-    const posts = await PostModel.find({ categories: categoryID })
-      .sort({ createdAt: -1 })
-      .populate('author')
-      .exec()
-    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
-    res.status(200).json(filteredPosts)
-  } catch (err) {
-    res.status(500).json({ error: err })
-  }
-}
-export const countViewPostBySlug = async (req, res) => {
-  try {
-    const slug = req.body.slug
-    const post = await PostModel.findOne({ slug: slug })
-    post.view = post.view + 1
-    const updateView = await post.save()
-    res.status(200).json(updateView)
+    const department = req.params.department
+    const posts = await PostModel.find({ department })
+    res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -389,43 +332,141 @@ export const exportPost = async (req, res) => {
     client.close()
   }
 }
+// export const downloadPost = async (req, res) => {
+//   const uri =
+//     'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/posts?retryWrites=true&w=majority'
+//   const client = await MongoClient.connect(uri, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   const db = client.db('test')
+//   try {
+//     const data = await db
+//       .collection('posts')
+//       .findOne({ _id: new ObjectId(req.body._id) })
+//     const fields = [
+//       'title',
+//       'content',
+//       'attachment',
+//       'department',
+//       'categories',
+//       'view',
+//       'likeCount',
+//     ]
+//     const json2csvParser = new Parser({ fields })
+//     const csv = json2csvParser.parse(data)
+
+//     const zip = new JSZip()
+//     zip.file('idea.csv', csv)
+
+//     const zipName = 'idea.zip'
+//     const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+
+//     res.setHeader('Content-Type', 'application/zip')
+//     res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`)
+//     res.send(zipContent)
+//     return zipName
+//   } catch (err) {
+//     console.error(err)
+//   } finally {
+//     client.close()
+//   }
+// }
+
 export const downloadPost = async (req, res) => {
-  const uri =
-    'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/posts?retryWrites=true&w=majority'
-  const client = await MongoClient.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  const db = client.db('test')
   try {
-    const data = await db
-      .collection('posts')
-      .findOne({ _id: new ObjectId(req.body._id) })
-    const fields = [
-      'title',
-      'content',
-      'attachment',
-      'department',
-      'categories',
-      'view',
-      'likeCount',
-    ]
-    const json2csvParser = new Parser({ fields })
-    const csv = json2csvParser.parse(data)
+    const slug = req.body.slug
+    const post = await PostModel.findOne({ slug: slug })
+    if (!post) {
+      return res.status(404).send('Post not found')
+    }
+    let docx = officegen('docx')
 
-    const zip = new JSZip()
-    zip.file('idea.csv', csv)
+    docx.on('finalize', function (written) {
+      console.log('Finish to create a Microsoft Word document.')
+    })
 
-    const zipName = 'idea.zip'
-    const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+    docx.on('error', function (err) {
+      console.log(err)
+    })
 
-    res.setHeader('Content-Type', 'application/zip')
-    res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`)
-    res.send(zipContent)
+    let pObj = docx.createP()
+    pObj = docx.createP({ align: 'center' })
+    pObj.addText(`${post.title}`)
+    pObj = docx.createP()
+    pObj.options.align = 'right'
+    pObj.addText(`${moment(post.createdAt).format('LLL')}`)
+    pObj = docx.createP()
+    pObj.addText(`${post.content}`)
+    pObj = docx.createP()
+    pObj.addText(post.attachment)
+    let out = fs.createWriteStream('example.docx')
+    out.on('error', function (err) {
+      console.log(err)
+    })
+
+    // Async call to generate the output file:
+    docx.generate(out)
+
     return zipName
   } catch (err) {
     console.error(err)
-  } finally {
-    client.close()
+    res.status(500).send('Server error')
   }
 }
+
+// export const downloadPost = async (req, res) => {
+//   try {
+//     const slug = req.body.slug
+//     const post = await PostModel.findOne({ slug: slug })
+//     if (!post) {
+//       return res.status(404).send('Post not found')
+//     }
+//     let docx = officegen('docx')
+
+//     docx.on('finalize', function (written) {
+//       console.log('Finish to create a Microsoft Word document.')
+//     })
+
+//     docx.on('error', function (err) {
+//       console.log(err)
+//     })
+
+//     let pObj = docx.createP()
+//     pObj = docx.createP({ align: 'center' })
+//     pObj.addText(`${post.title}`)
+//     pObj = docx.createP()
+//     pObj.options.align = 'right'
+//     pObj.addText(`${moment(post.createdAt).format('LLL')}`)
+//     pObj = docx.createP()
+//     pObj.addText(`${post.content}`)
+//     pObj = docx.createP()
+//     pObj.addText(post.attachment)
+//     let out = fs.createWriteStream('example.docx')
+//     out.on('error', function (err) {
+//       console.log(err)
+//     })
+
+//     // Async call to generate the output file:
+//     docx.generate(out)
+//     ;async () => {
+//       try {
+//         const zip = new JSZip()
+//         zip.file('example.docx', fs.readFileSync('example.docx'))
+//         const zipName = 'example.zip'
+//         const content = await zip.generateAsync({ type: 'nodebuffer' })
+//         res.setHeader('Content-Type', 'application/zip')
+
+//         res.setHeader(`Content-Disposition', 'attachment; filename=${zipName}`)
+//         res.status(200).send(content)
+//         return zipName
+//       } catch (err) {
+//         console.error(err)
+//         res.status(500).send('Server error')
+//       }
+//     }
+//   } catch (err) {
+//     console.error(err)
+//     res.status(500).send('Server error')
+//   }
+// }

@@ -1,18 +1,19 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
-import { Grid, useMediaQuery } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Comment from "./Comment";
 import { Link } from "react-router-dom";
-import { Input, Button, Typography, Switch } from "antd";
+import { Input, Button } from "antd";
 import { Store } from "../../Store";
 import { commentsLoading$, commentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { Select } from "antd";
-
+import { toast } from "react-toastify";
+import { getError } from "../../utils";
+import { fetchCmtsByMostLikes, fetchRecentlyCmts } from "../../api";
 const { Option } = Select;
 const { TextArea } = Input;
-const { Text } = Typography;
 export default function CommentList({ post }) {
   const dispatch = useDispatch();
   const comments = useSelector(commentsState$);
@@ -20,9 +21,8 @@ export default function CommentList({ post }) {
   const isLoading = useSelector(commentsLoading$);
   const [selectedcdt, setSelectedcdt] = useState("recently");
   const { state } = useContext(Store);
-  const isXs = useMediaQuery("(max-width:400px");
   React.useEffect(() => {
-    dispatch(actions.getConditionCmts.getCmtsRequest({ status: selectedcdt }));
+      dispatch(actions.getConditionCmts.getCmtsRequest({status:selectedcdt}));
   }, [dispatch, selectedcdt]);
   // useEffect(() => {
   //   const fetchCmts = async () => {
@@ -48,51 +48,30 @@ export default function CommentList({ post }) {
   const [comment, setcomment] = React.useState({
     author: "",
     content: "",
-    isAnonymous: false,
     postID: post._id,
   });
-  const changeCommentsView = React.useCallback(
-    (value) => {
-      setSelectedcdt(value);
-    },
-    [selectedcdt]
-  );
+  const changeCommentsView = React.useCallback((value) => {
+    setSelectedcdt(value);
+    console.log(selectedcdt)
+  }, [selectedcdt]);
   const commenthandler = React.useCallback(() => {
     dispatch(actions.createComments.createCommentsRequest(comment));
   }, [comment, dispatch]);
   return (
     <Grid container spacing={1} alignItems="stretch">
-      <Grid container>
-        <Grid item xs={false} sm={1} />
-        <Grid
-          item
-          xs={12}
-          sm={9}
-          style={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <div>
-            <Link to="/profile">
-              <img alt={user?.fullName} src={user?.avatar} />
-            </Link>
-            {user.fullName}
-          </div>
-          <div>
-            <Text type="secondary" style={{ marginLeft: "-10%" }}>
-              {comments.length} comments
-            </Text>
-          </div>
-        </Grid>
+      <Grid item xs={12} sm={12}>
+        <div>
+          <Link to="/profile">
+            <img alt={user?.fullName} src={user?.avatar} />
+          </Link>
+          {user.fullName}
+        </div>
       </Grid>
-      <Grid item xs={false} sm={1} />
-      <Grid item xs={12} sm={11}>
+      <Grid item xs={12} sm={12}>
         <TextArea
-          placeholder="Any comments?"
+          placeholder="Any comments ?"
           className="idea-create"
           allowClear
-          autoSize={{
-            minRows: 3,
-            maxRows: 5,
-          }}
           size="large"
           onChange={(e) =>
             setcomment({
@@ -104,56 +83,24 @@ export default function CommentList({ post }) {
           required
         />
       </Grid>
-      <Grid item xs={1} sm={1} />
-      <Grid
-        item
-        xs={11}
-        sm={9}
-        style={{ display: "flex", justifyContent: "space-between  " }}
-      >
-        <div>
-          <Switch
-            style={{ width: "200px", top: "20px" }}
-            checkedChildren="Anonymous"
-            unCheckedChildren={user.fullName}
-            onChange={(checked) =>
-              setcomment({
-                ...comment,
-                isAnonymous: checked,
-              })
-            }
-          />
-        </div>
-        <div>
-          <Button type="primary" block onClick={commenthandler}>
-            Post
-          </Button>
-        </div>
-      </Grid>
-      {/* <Grid item xs={2} sm={2}>
-        <Button type="primary" block onClick={commenthandler}>
-          Post
-        </Button>
-      </Grid> */}
-      <Grid style={{ marginTop: "40px" }} item xs={12} sm={12}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "start",
-          }}
-        >
+      <Grid item xs={9} sm={9}>
+        <div style={{ display: "flex", justifyContent: "end" }}>
           <Select
             defaultValue="View Recently"
             onChange={changeCommentsView}
-            style={{
-              width: isXs ? "50%" : "50%",
-              marginBottom: "20px",
-            }}
+            style={{ width: "50%" }}
           >
             <Option value="recently">View Recently </Option>
             <Option value="mostLikes">View Most Likes </Option>
           </Select>
         </div>
+      </Grid>
+      <Grid item xs={3} sm={3}>
+        <Button type="primary" block onClick={commenthandler}>
+          Post
+        </Button>
+      </Grid>
+      <Grid style={{ marginTop: "40px" }} item xs={12} sm={12}>
         {isLoading ? (
           <LoadingBox />
         ) : (

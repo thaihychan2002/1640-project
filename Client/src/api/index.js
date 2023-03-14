@@ -23,8 +23,6 @@ export const createPosts = (payload) =>
   axiosInstance.post(`/posts/create`, payload);
 export const updatePosts = (payload) =>
   axiosInstance.put(`/posts/update`, payload);
-export const countViewBySlug = (slug) =>
-  axiosInstance.put("/posts/countView", { slug: slug });
 export const deletePosts = (payload) =>
   axiosInstance.delete(`/posts/delete/${payload}`, payload);
 export const deletePostByAdmin = (payload) =>
@@ -37,10 +35,8 @@ export const fetchPostsByMostLikes = () =>
   axiosInstance.get("/posts/viewPostsByMostLikes");
 export const fetchRecentlyPosts = () =>
   axiosInstance.get("/posts/viewRecentlyPosts");
-export const fetchPostsByDepartment = (departmentID) =>
-  axiosInstance.post("/posts/viewPostsByDepartment/", { id: departmentID });
-export const fetchPostsByCategory = (categoryID) =>
-  axiosInstance.post("/posts/viewPostsByCategory/", { id: categoryID });
+export const fetchPostsByDepartment = () =>
+  axiosInstance.get("/posts/viewPostsByDepartment/:department");
 //search posts
 export const searchPostsByKeyword = (keyword) =>
   axiosInstance.get(`/posts/search/${keyword}`);
@@ -53,13 +49,28 @@ export const rejectPost = (payload) =>
 export const downloadCSV = () =>
   axiosInstance.get("/posts/export", { responseType: "blob" });
 
-export const downloadZip = (postID) =>
+// export const downloadZip = (postID) =>
+//   axiosInstance.post(
+//     "/posts/download",
+//     { _id: postID },
+//     { responseType: "blob" }
+//   );
+export const downloadZip = (slug) =>
   axiosInstance.post(
     "/posts/download",
-    { _id: postID },
-    { responseType: "blob" }
+    { slug: slug },
+    {
+      responseType: "blob",
+    }
   );
-
+// export const downloadZip = (slug) =>
+//   axiosInstance.post(
+//     "/posts/download",
+//     { slug: slug },
+//     {
+//       responseType: "blob",
+//     }
+//   );
 //role
 export const fetchRoles = () => axiosInstance.get("/roles");
 export const createRole = (name) =>
