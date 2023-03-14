@@ -1,122 +1,53 @@
-import { Grid, useMediaQuery } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import "../../component/assets/css/PostDetails.css";
-import { IconButton, Typography } from "@material-ui/core";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import React, { useEffect, useState } from "react";
-import { downloadZip, fetchPostBySlug } from "../../api";
+import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { downloadCSV, downloadZip, fetchPostBySlug } from "../../api";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import { animalList } from "../../component/PostList/Post/anonymousAnimal.js";
-import * as actions from "../../redux/actions";
-import DownloadButton from "../../component/DownloadButton/index.js";
-import NotFound from "../NotAuthPages/NotFound.js";
-import { Helmet } from "react-helmet-async";
-import { useDispatch, useSelector } from "react-redux";
-import CommentList from "../../component/CommentList";
-import { commentsState$ } from "../../redux/seclectors";
+import { Button } from "antd";
+import axios from "axios";
+import DownloadButton from "../../component/DownloadButton";
+
 const PostDetails = () => {
-  const [allData, setAllData] = useState({});
+  const [allData, setAllData] = useState({
+    _id: "",
+    title: "",
+    author: "",
+    attachment: "",
+    content: "",
+    createdAt: "",
+    isAnonymous: false,
+  });
   const params = useParams();
   const { slug } = params;
-  const comments = useSelector(commentsState$);
-  const dispatch = useDispatch();
-  const isXs = useMediaQuery("(max-width:400px)");
-
   useEffect(() => {
     const fetchPost = async () => {
       const { data } = await fetchPostBySlug(slug);
       setAllData({
+        ...allData,
         _id: data._id,
         slug: data.slug,
         title: data.title,
         author: data?.author?.fullName,
         authorAvatar: data.author?.avatar,
         attachment: data.attachment,
-        likeCount: data.likeCount,
-        view: data.view,
         content: data.content,
         createdAt: data.createdAt,
         isAnonymous: data.isAnonymous,
       });
     };
     fetchPost();
-  }, [slug]);
-  React.useEffect(() => {
-    dispatch(actions.getComments.getCommentsRequest(allData));
-    // dispatch(
-    //   actions.updatePosts.updatePostsRequest({
-    //     _id: allData._id,
-    //     view: allData.view + 1,
-    //   })
-    // );
-  }, [dispatch, allData]);
+  }, [slug,allData]);
+  console.log(allData.slug);
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
   };
 
-  const [animal, setAnimal] = useState("");
-  useEffect(() => {
-    setAnimal(getRandomAnimal());
-  }, []);
-  const [likeActive, setLikeActive] = React.useState(false);
-  const [dislikeActive, setDislikeActive] = React.useState(false);
-  const onLikeBtnClick = React.useCallback(() => {
-    if (likeActive) {
-      setLikeActive(false);
-      dispatch(
-        actions.updatePosts.updatePostsRequest({
-          _id: allData._id,
-          likeCount: allData.likeCount - 1,
-        })
-      );
-    } else {
-      setLikeActive(true);
-      dispatch(
-        actions.updatePosts.updatePostsRequest({
-          _id: allData._id,
-          likeCount: allData.likeCount + 1,
-        })
-      );
-      if (dislikeActive) {
-        setDislikeActive(false);
-        dispatch(
-          actions.updatePosts.updatePostsRequest({
-            _id: allData._id,
-            likeCount: allData.likeCount + 2,
-          })
-        );
-      }
-    }
-  }, [dispatch, allData, likeActive, dislikeActive]);
-  const onDislikeBtnClick = React.useCallback(() => {
-    if (dislikeActive) {
-      setDislikeActive(false);
-      dispatch(
-        actions.updatePosts.updatePostsRequest({
-          _id: allData._id,
-          likeCount: allData.likeCount + 1,
-        })
-      );
-    } else {
-      setDislikeActive(true);
-      dispatch(
-        actions.updatePosts.updatePostsRequest({
-          _id: allData._id,
-          likeCount: allData.likeCount - 1,
-        })
-      );
-      if (likeActive) {
-        setLikeActive(false);
-        dispatch(
-          actions.updatePosts.updatePostsRequest({
-            _id: allData._id,
-            likeCount: allData.likeCount - 2,
-          })
-        );
-      }
-    }
-  }, [dispatch, allData, likeActive, dislikeActive]);
+  const animal = getRandomAnimal();
+
   const downloadPost = async () => {
     try {
       const id = allData._id;
@@ -131,101 +62,114 @@ const PostDetails = () => {
       console.error(err);
     }
   };
-  return (
-    <div>
-      {allData._id ? (
-        <Grid container spacing={2} alignItems="stretch">
-          <Helmet>
-            <title>{allData.title}</title>
-          </Helmet>
-          <Grid item xs={false} sm={2} />
-          <Grid item xs={12} sm={10}>
-            <div className="post">
-              <div className="postTop">
-                <div
-                  className="postTopLeft"
-                  style={{ marginBottom: 15, marginTop: 15 }}
-                >
-                  {allData.isAnonymous ? (
-                    <>
-                      <img
-                        className="postImage"
-                        src={animal.avatar}
-                        alt={`${animal.name} Avatar`}
-                      />
-                      <span className="postUsername">
-                        {" "}
-                        Anonymous {animal.name}{" "}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <img
-                        className="postImage"
-                        src={allData.authorAvatar}
-                        alt={allData.author}
-                      />
-                      <span className="postUsername"> {allData.author} </span>
-                    </>
-                  )}
-                  {/* <img className="postImage" src={allData.authorAvatar} alt="" /> */}
-                </div>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span className="postTitle">{allData.title}</span>
+  // const downloadPost = async (slug) => {
+  //   try {
+  //     slug = allData.slug;
+  //     const response = await downloadZip(slug);
+  //     // Create a temporary URL for the downloaded file
+  //     const url = window.URL.createObjectURL(new Blob([response.data]));
 
-                <span className="postDate">
-                  {moment(allData.createdAt).format("LLL")}
-                </span>
-              </div>
-              <div
-                className="postContent"
-                dangerouslySetInnerHTML={{ __html: allData.content }}
-              ></div>
-              <center>
-                <img className="postImg" src={allData.attachment} alt="" />
-              </center>
-              <div style={{ marginLeft: isXs ? "59%" : "80%" }}>
-                <DownloadButton
-                  download={downloadPost}
-                  textDownload={"Download ZIP"}
-                />
-              </div>
-              <div className="postBottom">
-                <IconButton
-                  onClick={onLikeBtnClick}
-                  style={{ color: likeActive ? "red" : "" }}
-                >
-                  <FavoriteIcon />
-                  <Typography component="span" color="textSecondary">
-                    Like
-                  </Typography>
-                </IconButton>
-                <IconButton
-                  onClick={onDislikeBtnClick}
-                  style={{ color: dislikeActive ? "blue" : "" }}
-                >
-                  -<FavoriteIcon />
-                  <Typography component="span" color="textSecondary">
-                    Dislike
-                  </Typography>
-                </IconButton>
-                {`${allData.likeCount} likes`}
-                <div className="postBottomRight">
-                  <span> {allData.view} Views </span>
-                </div>
-              </div>
-              <br />
-              <br />
-              <CommentList post={allData}></CommentList>
+  //     // Create a link element and click it to download the file
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", `post-${slug}.docx`);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  return (
+    <Grid container spacing={2} alignItems="stretch">
+      <Grid item xs={2} sm={2}></Grid>
+      <Grid item xs={10} sm={10}>
+        {/* <h1>Post Details</h1> */}
+        <div className="post">
+          <div className="postTop">
+            <div className="postTopLeft" style={{ marginBottom: 15 }}>
+              {allData.isAnonymous ? (
+                <>
+                  <img
+                    className="postImage"
+                    src={animal.avatar}
+                    alt={`${animal.name} Avatar`}
+                  />
+                  <span className="postUsername">
+                    {" "}
+                    Anonymous {animal.name}{" "}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <img
+                    className="postImage"
+                    src={allData.authorAvatar}
+                    alt={allData.author}
+                  />
+                  <span className="postUsername"> {allData.author} </span>
+                </>
+              )}
+              {/* <img className="postImage" src={allData.authorAvatar} alt="" /> */}
             </div>
-          </Grid>
-        </Grid>
-      ) : (
-        <NotFound />
-      )}
-    </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span className="postTitle">{allData.title}</span>
+
+            <span className="postDate">
+              {moment(allData.createdAt).format("LLL")}
+            </span>
+          </div>
+          <div
+            className="postContent"
+            dangerouslySetInnerHTML={{ __html: allData.content }}
+          ></div>
+          <center>
+            <img className="postImg" src={allData.attachment} alt="" />
+          </center>
+          <div style={{ marginLeft: "80%" }}>
+            <DownloadButton
+              download={downloadPost}
+              textDownload={"Download ZIP"}
+            />
+          </div>
+          <div className="postBottom">
+            <div className="postBottomLeft">
+              <LikeOutlined style={{ fontSize: "32px" }} />
+              <span className="postLikeCounter"> 10 </span>
+              <DislikeOutlined style={{ fontSize: "32px" }} />
+              <span className="postDislikeCounter"> 10 </span>
+            </div>
+            <div className="postBottomRight">
+              <span className="postCommentText"> 10 comments </span>
+            </div>
+          </div>
+          <br />
+          <div>comments</div>
+          <br />
+          <div>
+            <img
+              className="postImage"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/1200px-Google_Chrome_icon_%28February_2022%29.svg.png"
+              alt=""
+            />
+            <span className="postUsername"> phat </span>
+            <span className="postComment"> sfdlkasdjlfjladsjfl</span>
+          </div>
+          <br />
+          <div>
+            <img
+              className="postImage"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Google_Chrome_icon_%28February_2022%29.svg/1200px-Google_Chrome_icon_%28February_2022%29.svg.png"
+              alt=""
+            />
+            <span className="postUsername"> phat </span>
+            <span className="postComment"> sfdlkasdjlfjladsjfl</span>
+          </div>
+        </div>
+      </Grid>
+    </Grid>
   );
 };
-
 export default PostDetails;

@@ -9,16 +9,12 @@ import {
   deleteUser,
   updateUser,
   updateUserProfile,
-  refresh,
-  logout,
 } from '../controller/users.js'
 import { isAuth, isAdmin } from '../utils.js'
 const router = express.Router()
 
-router.get('/', getUsers)
-router.get('/refresh', refresh)
+router.get('/', isAuth, getUsers)
 router.post('/getUserByID/', isAuth, getUserById)
-router.post('/logout', logout)
 router.post('/login', loginUsers)
 router.post('/google/login', loginGoogleUsers)
 router.post('/register', registerUsers)

@@ -23,7 +23,6 @@ const Login = () => {
   const submitHandler = async () => {
     try {
       const { data } = await loginUser(email, password);
-      console.log(data);
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", data.token);
       navigate(redirect || "/");

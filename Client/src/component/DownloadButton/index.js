@@ -2,12 +2,7 @@ import { downloadZip } from "../../api";
 import "../assets/css/DownloadButton.css";
 export default function DownloadButton({ download, textDownload }) {
   return (
-    <button
-      type="button"
-      className="download-button"
-      onClick={download}
-      style={{ zIndex: 0 }}
-    >
+    <button type="button" className="download-button" onClick={download}>
       <div className="docs">
         <svg
           className="css-i6dzq1"
