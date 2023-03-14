@@ -15,27 +15,31 @@ import {
   exportPost,
   downloadPost,
   getPostBySlug,
+  viewPostsByCategories,
+  countViewPostBySlug,
 } from '../controller/posts.js'
 import { isAuth, isAdmin } from '../utils.js'
 const router = express.Router()
 
-router.get('/', getPosts)
-router.get('/idea/:slug', getPostBySlug)
+router.get('/', isAuth, getPosts)
+router.get('/idea/:slug', isAuth, getPostBySlug)
 router.post('/create', isAuth, createPosts)
 router.put('/update', isAuth, updatePosts)
+router.put('/countView', isAuth, countViewPostBySlug)
 router.delete('/delete/:id', isAuth, deletePosts)
 router.delete('/deletePost/:id', isAdmin, deletePostByAdmin)
 // view posts
-router.get('/viewPostsByMostViews', viewPostsByMostViews)
-router.get('/viewPostsByMostLikes', viewPostsByMostLikes)
-router.get('/viewRecentlyPosts', viewRecentlyPosts)
-router.get('/viewPostsByDepartment/:department', viewPostsByDepartment)
+router.get('/viewPostsByMostViews', isAuth, viewPostsByMostViews)
+router.get('/viewPostsByMostLikes', isAuth, viewPostsByMostLikes)
+router.get('/viewRecentlyPosts', isAuth, viewRecentlyPosts)
+router.post('/viewPostsByDepartment/', isAuth, viewPostsByDepartment)
+router.post('/viewPostsByCategory/', isAuth, viewPostsByCategories)
 //search posts
-router.get('/search/:keyword', searchPostsByKeyword)
+router.get('/search/:keyword', isAuth, searchPostsByKeyword)
 //post status
-router.put('/accept', updatePostToAccepted)
-router.put('/reject', updatePostToRejected)
+router.put('/accept', isAdmin, updatePostToAccepted)
+router.put('/reject', isAdmin, updatePostToRejected)
 //export posts
-router.get('/export', exportPost)
-router.post('/download', downloadPost)
+router.get('/export', isAdmin, exportPost)
+router.post('/download', isAdmin, downloadPost)
 export default router

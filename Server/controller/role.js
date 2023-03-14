@@ -1,3 +1,7 @@
+import {
+  createRoleSchema,
+  updateRoleSchema,
+} from '../helpers/validation_schema.js'
 import { RoleModel } from '../model/role.js'
 export const getRole = async (req, res) => {
   try {
@@ -7,7 +11,7 @@ export const getRole = async (req, res) => {
     res.status(500).send({ error: err.message })
   }
 }
-export const createRole = async (req, res) => {
+export const createRole = async (req, res, next) => {
   try {
     await createRoleSchema.validateAsync(req.body)
     const newRole = req.body
@@ -15,7 +19,10 @@ export const createRole = async (req, res) => {
     await role.save()
     res.status(200).json(role)
   } catch (err) {
-    res.status(500).send({ error: err.message })
+    if (err.isJoi === true) {
+      res.status(422).send({ message: `${err.details[0].message}` })
+    }
+    next(err)
   }
 }
 export const deleteRole = async (req, res) => {
@@ -27,8 +34,9 @@ export const deleteRole = async (req, res) => {
     res.status(500).json({ error: err })
   }
 }
-export const updateRole = async (req, res) => {
+export const updateRole = async (req, res, next) => {
   try {
+    await updateRoleSchema.validateAsymc(req.body)
     const updateRole = req.body
     const role = await RoleModel.findByIdAndUpdate(
       { _id: updateRole._id },
@@ -37,6 +45,9 @@ export const updateRole = async (req, res) => {
     )
     res.status(200).json(role)
   } catch (err) {
-    res.status(500).json({ error: err })
+    if (err.isJoi === true) {
+      res.status(422).send({ message: `${err.details[0].message}` })
+    }
+    next(err)
   }
 }

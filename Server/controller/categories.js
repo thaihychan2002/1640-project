@@ -1,5 +1,8 @@
 import { CategoriesModel } from '../model/categories.js'
-import { createCategorySchema } from '../helpers/validation_schema.js'
+import {
+  createCategorySchema,
+  updateCategorySchema,
+} from '../helpers/validation_schema.js'
 export const getCate = async (req, res) => {
   try {
     const category = await CategoriesModel.find()
@@ -33,8 +36,9 @@ export const deleteCate = async (req, res) => {
     res.status(500).json({ error: err })
   }
 }
-export const updateCate = async (req, res) => {
+export const updateCate = async (req, res, next) => {
   try {
+    await updateCategorySchema.validateAsync(req.body)
     const updateCategory = req.body
     const Category = await CategoriesModel.findByIdAndUpdate(
       { _id: updateCategory._id },
@@ -43,6 +47,9 @@ export const updateCate = async (req, res) => {
     )
     res.status(200).json(Category)
   } catch (err) {
-    res.status(500).json({ error: err })
+    if (err.isJoi === true) {
+      res.status(422).send({ message: `${err.details[0].message}` })
+    }
+    next(err)
   }
 }

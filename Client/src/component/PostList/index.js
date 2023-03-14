@@ -10,6 +10,7 @@ import { useMediaQuery } from "@material-ui/core";
 import { Select } from "antd";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
+
 const { Option } = Select;
 export default function PostList() {
   const dispatch = useDispatch();
@@ -70,7 +71,7 @@ export default function PostList() {
         {isLoading ? (
           <LoadingBox />
         ) : (
-          posts?.map((post) => <Post key={post._id} post={post} />)
+          posts?.map((post) => <Post post={post} key={post._id} />)
         )}
       </Grid>
     </Grid>

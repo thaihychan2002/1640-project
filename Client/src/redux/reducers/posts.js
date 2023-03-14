@@ -36,26 +36,28 @@ export default function postsReducers(state = INIT_STATE.posts, action) {
     case getType(updatePosts.updatePostsSuccess):
       return {
         ...state,
-        data: state.data.map((post) =>
+        data: state.data?.map((post) =>
           post._id === action.payload._id ? action.payload : post
         ),
       };
     case getType(updatePostAccept.updatePostAcceptSuccess):
+      const newDataUpdate = state?.data?.filter((post) => {
+        return post._id !== action.payload._id;
+      });
       return {
         ...state,
-        data: state.data.map((post) =>
-          post._id === action.payload._id ? action.payload : post
-        ),
+        data: newDataUpdate,
       };
     case getType(updatePostReject.updatePostRejectSuccess):
+      const newDataReject = state?.data?.filter((post) => {
+        return post._id !== action.payload._id;
+      });
       return {
         ...state,
-        data: state.data.map((post) =>
-          post._id === action.payload._id ? action.payload : post
-        ),
+        data: newDataReject,
       };
     case getType(deletePosts.deletePostsSuccess):
-      const newData = state.data.filter((post) => {
+      const newData = state?.data?.filter((post) => {
         return post._id !== action.payload._id;
       });
       return {
@@ -64,7 +66,7 @@ export default function postsReducers(state = INIT_STATE.posts, action) {
       };
 
     case getType(deletePostByAdmin.deletePostSuccessByAdmin):
-      const newDataDelete = state.data.filter((post) => {
+      const newDataDelete = state?.data?.filter((post) => {
         return post._id !== action.payload._id;
       });
       return {

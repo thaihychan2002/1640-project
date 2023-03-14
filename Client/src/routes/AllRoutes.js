@@ -9,6 +9,8 @@ import UserRoute from "../component/ProtectedRoute/UserRoute";
 import AdminRoute from "../component/ProtectedRoute/AdminRoute";
 import PostDetails from "../pages/AuthPages/PostDetails";
 import SearchPage from "../pages/AuthPages/SearchPage";
+import DepartmentPage from "../pages/AuthPages/DepartmentPage";
+import CategoryPage from "../pages/AuthPages/CategoryPage";
 export const AllRoutes = [
   {
     path: "/",
@@ -22,10 +24,14 @@ export const AllRoutes = [
     path: "/login",
     element: <Login />,
   },
-  { path: "/register", element: <Register /> },
+  // { path: "/register", element: <Register /> },
   {
     path: "*",
-    element: <NotFound />,
+    element: (
+      <UserRoute>
+        <NotFound />
+      </UserRoute>
+    ),
   },
   {
     path: "/profile",
@@ -43,14 +49,14 @@ export const AllRoutes = [
       </AdminRoute>
     ),
   },
-  {
-    path: "/qa",
-    element: (
-      <AdminRoute>
-        <QA />
-      </AdminRoute>
-    ),
-  },
+  // {
+  //   path: "/qa",
+  //   element: (
+  //     <AdminRoute>
+  //       <QA />
+  //     </AdminRoute>
+  //   ),
+  // },
   {
     path: "/idea/:slug",
     element: <PostDetails />,
@@ -58,6 +64,14 @@ export const AllRoutes = [
   {
     path: "/search/:keyword",
     element: <SearchPage />,
+  },
+  {
+    path: "/departments",
+    element: <DepartmentPage />,
+  },
+  {
+    path: "/categories",
+    element: <CategoryPage />,
   },
 ];
 export default AllRoutes;

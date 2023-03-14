@@ -14,6 +14,26 @@ export const generateToken = (user) => {
     }
   )
 }
+export const generateAccessToken = (user) => {
+  return jwt.sign(
+    {
+      _id: user._id,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: '1d',
+    }
+  )
+}
+export const generateRefreshToken = (user) => {
+  return jwt.sign(
+    {
+      _id: user._id,
+    },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: '1d' }
+  )
+}
 export const isAuth = (req, res, next) => {
   const authorization = req.headers.authorization
   if (authorization) {
