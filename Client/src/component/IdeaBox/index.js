@@ -14,8 +14,6 @@ import { PictureOutlined, CloseOutlined } from "@ant-design/icons";
 import { Input, Select, Button } from "antd";
 import { Link } from "react-router-dom";
 import DrawExpand from "./Drawer";
-import { toast } from "react-toastify";
-import { getError } from "../../utils";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useMediaQuery } from "@material-ui/core";
@@ -97,19 +95,6 @@ export default function IdeaBox() {
 
   const user = state.userInfo;
   const holder = "What's on your mind " + user.fullName + "?";
-  const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-  ];
   const modules = {
     toolbar: [[{ size: [] }], ["bold", "italic", "underline"]],
     clipboard: {

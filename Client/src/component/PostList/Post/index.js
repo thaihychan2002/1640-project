@@ -27,7 +27,6 @@ import * as actions from "../../../redux/actions";
 import { countViewBySlug } from "../../../api/index.js";
 import ReactQuill from "react-quill";
 
-const { TextArea } = Input;
 const { Option } = Select;
 
 export default function Post({ post }) {

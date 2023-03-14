@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import "../assets/css/AccountSwitch.css";
 import { Store } from "../../Store";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Divider, Input } from "antd";
+import { Button, Divider } from "antd";
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { postsLoading$, postsState$ } from "../../redux/seclectors";
+import {  postsState$ } from "../../redux/seclectors";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import * as actions from "../../redux/actions";
@@ -23,8 +23,7 @@ export default function AccountSwitch() {
   };
   const dispatch = useDispatch();
   const posts = useSelector(postsState$);
-  const isLoading = useSelector(postsLoading$);
-  const [selectedView, setSelectedView] = useState("recently");
+  const [selectedView] = useState("recently");
   React.useEffect(() => {
     try {
       dispatch(actions.getPosts.getPostsRequest(selectedView));

@@ -4,7 +4,7 @@ import * as actions from "../../../../redux/actions";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Modal, Input, DatePicker, Typography } from "antd";
-import moment from "moment";
+
 const { TextArea } = Input;
 
 export default function Topic({ record_Topic }) {
