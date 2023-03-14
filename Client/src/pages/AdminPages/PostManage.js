@@ -1,6 +1,7 @@
 import { Grid } from "@material-ui/core";
 import { allPostsState$ } from "../../redux/seclectors/";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { AppstoreOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table, Tag, Tabs } from "antd";
 import {
@@ -11,11 +12,11 @@ import {
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import * as actions from "../../redux/actions";
-import Report from "../../component/Charts/Report";
+import { toast } from "react-toastify";
+import { getError } from "../../utils";
 export default function PostManage() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -119,7 +120,7 @@ export default function PostManage() {
 
   const filterPostsByStatus = (posts, status) =>
     posts
-      ?.filter((post) => post?.status === status)
+      ?.filter((post) => post.status === status)
       ?.map((post) => ({
         key: post._id,
         title: post.title,
@@ -154,14 +155,16 @@ export default function PostManage() {
           "Are you sure to update status of this post to accepted?"
         )
       ) {
-        dispatch(
-          actions.updatePostAccept.updatePostAcceptRequest({
-            _id: record.key,
-          })
-        );
-        setTimeout(() => {
-          dispatch(actions.getAllPosts.getAllPostsRequest());
-        }, 1000);
+        try {
+          dispatch(
+            actions.updatePostAccept.updatePostAcceptRequest({
+              _id: record.key,
+            })
+          );
+          toast.success("Updated status successfully");
+        } catch (err) {
+          toast.error(getError(err));
+        }
       }
     },
     [dispatch]
@@ -173,14 +176,16 @@ export default function PostManage() {
           "Are you sure to update status of this post to rejected?"
         )
       ) {
-        dispatch(
-          actions.updatePostReject.updatePostRejectRequest({
-            _id: record.key,
-          })
-        );
-        setTimeout(() => {
-          dispatch(actions.getAllPosts.getAllPostsRequest());
-        }, 1000);
+        try {
+          dispatch(
+            actions.updatePostReject.updatePostRejectRequest({
+              _id: record.key,
+            })
+          );
+          toast.success("Updated status successfully");
+        } catch (err) {
+          toast.error(getError(err));
+        }
       }
     },
     [dispatch]
@@ -188,17 +193,18 @@ export default function PostManage() {
   const deleteHandler = React.useCallback(
     (record) => {
       if (window.confirm("Are you sure to delete this idea?")) {
-        dispatch(
-          actions.deletePostByAdmin.deletePostRequestByAdmin(record.key)
-        );
-        setTimeout(() => {
-          dispatch(actions.getAllPosts.getAllPostsRequest());
-        }, 1000);
+        try {
+          dispatch(
+            actions.deletePostByAdmin.deletePostRequestByAdmin(record.key)
+          );
+          toast.success("Delete idea successfully");
+        } catch (err) {
+          toast.error(getError(err));
+        }
       }
     },
     [dispatch]
   );
-
   const columns = [
     {
       title: "Title",
@@ -292,12 +298,12 @@ export default function PostManage() {
       ),
     },
   ];
-
-  const tableParams = {
+  const [tableParams, setTableParams] = useState({
     pagination: {
       pageSize: 5,
     },
-  };
+  });
+
   const tabs = [
     <Table
       pagination={tableParams.pagination}
@@ -331,7 +337,6 @@ export default function PostManage() {
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
-        <Report />
         <Tabs
           tabPosition="right"
           items={new Array(4).fill(null).map((_, i) => {
