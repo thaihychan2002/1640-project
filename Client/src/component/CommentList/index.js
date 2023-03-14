@@ -61,13 +61,13 @@ export default function CommentList({ post }) {
     dispatch(actions.createComments.createCommentsRequest(comment));
   }, [comment, dispatch]);
   return (
-    <Grid container spacing={1} alignItems="stretch">
+    <Grid container spacing={1} alignItems="stretch" style={{ marginTop: 10 }}>
       <Grid container>
-        <Grid item xs={false} sm={1} />
+        <Grid item xs={2} sm={2} />
         <Grid
           item
-          xs={12}
-          sm={9}
+          xs={8}
+          sm={8}
           style={{ display: "flex", justifyContent: "space-between" }}
         >
           <div>
@@ -83,85 +83,92 @@ export default function CommentList({ post }) {
           </div>
         </Grid>
       </Grid>
-      <Grid item xs={false} sm={1} />
-      <Grid item xs={12} sm={11}>
-        <TextArea
-          placeholder="Any comments?"
-          className="idea-create"
-          allowClear
-          autoSize={{
-            minRows: 3,
-            maxRows: 5,
-          }}
-          size="large"
-          onChange={(e) =>
-            setcomment({
-              ...comment,
-              content: e.target.value,
-              author: user._id,
-            })
-          }
-          required
-        />
-      </Grid>
-      <Grid item xs={1} sm={1} />
-      <Grid
-        item
-        xs={11}
-        sm={9}
-        style={{ display: "flex", justifyContent: "space-between  " }}
-      >
-        <div>
-          <Switch
-            style={{ width: "200px", top: "20px" }}
-            checkedChildren="Anonymous"
-            unCheckedChildren={user.fullName}
-            onChange={(checked) =>
+      <Grid container>
+        <Grid item xs={2} sm={2} />
+        <Grid item xs={8} sm={8}>
+          <TextArea
+            placeholder="Any comments?"
+            className="idea-create"
+            allowClear
+            autoSize={{
+              minRows: 3,
+              maxRows: 4,
+            }}
+            size="large"
+            onChange={(e) =>
               setcomment({
                 ...comment,
-                isAnonymous: checked,
+                content: e.target.value,
+                author: user._id,
               })
             }
+            required
           />
-        </div>
-        <div>
-          <Button type="primary" block onClick={commenthandler}>
-            Post
-          </Button>
-        </div>
+        </Grid>
       </Grid>
-      {/* <Grid item xs={2} sm={2}>
-        <Button type="primary" block onClick={commenthandler}>
-          Post
-        </Button>
-      </Grid> */}
-      <Grid style={{ marginTop: "40px" }} item xs={12} sm={12}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "start",
-          }}
+      <Grid container>
+        <Grid item xs={2} sm={2} />
+        <Grid
+          item
+          xs={8}
+          sm={8}
+          style={{ display: "flex", justifyContent: "space-between  " }}
         >
-          <Select
-            defaultValue="View Recently"
-            onChange={changeCommentsView}
+          <div>
+            <Switch
+              style={{ width: "200px", top: "20px" }}
+              checkedChildren="Anonymous"
+              unCheckedChildren={user.fullName}
+              onChange={(checked) =>
+                setcomment({
+                  ...comment,
+                  isAnonymous: checked,
+                })
+              }
+            />
+          </div>
+          <div>
+            <Button
+              type="primary"
+              style={{ marginTop: 15 }}
+              block
+              onClick={commenthandler}
+            >
+              Post
+            </Button>
+          </div>
+        </Grid>
+      </Grid>
+
+      {comments.length > 0 && (
+        <Grid style={{ marginTop: "100px" }} item xs={12} sm={12}>
+          <div
             style={{
-              width: isXs ? "50%" : "50%",
-              marginBottom: "20px",
+              display: "flex",
+              justifyContent: "start",
             }}
           >
-            <Option value="recently">View Recently </Option>
-            <Option value="mostLikes">View Most Likes </Option>
-          </Select>
-        </div>
-        {isLoading ? (
-          <LoadingBox />
-        ) : (
-          comments?.map((comment) => (
-            <Comment key={comment._id} comment={comment} />
-          ))
-        )}
-      </Grid>
+            <Select
+              defaultValue="View Recently"
+              onChange={changeCommentsView}
+              style={{
+                width: isXs ? "50%" : "50%",
+                marginBottom: "20px",
+              }}
+            >
+              <Option value="recently">View Recently </Option>
+              <Option value="mostLikes">View Most Likes </Option>
+            </Select>
+          </div>
+          {isLoading ? (
+            <LoadingBox />
+          ) : (
+            comments?.map((comment) => (
+              <Comment key={comment._id} comment={comment} />
+            ))
+          )}
+        </Grid>
+      )}
     </Grid>
   );
 }

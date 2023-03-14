@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
 import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
-import { Modal, Button, Input, Select, Switch } from "antd";
+import { Modal, Button, Input, Select, Switch, Dropdown, Space } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
@@ -47,8 +47,8 @@ export default function Post({ post }) {
     title: post.title,
     author: post.author || "none",
     content: post.content,
-    department: post.department.name,
-    category: post.categories.name,
+    department: post?.department?.name,
+    category: post?.categories?.name,
     attachment: post.attachment,
     isAnonymous: post.isAnonymous,
   });
@@ -173,7 +173,16 @@ export default function Post({ post }) {
       matchVisual: false,
     },
   };
-
+  const items = [
+    {
+      key: "1",
+      label: <div>Report</div>,
+    },
+    {
+      key: "2",
+      label: <div>Save post</div>,
+    },
+  ];
   return (
     <>
       <Card className={classes.card} key={post._id}>
@@ -182,17 +191,34 @@ export default function Post({ post }) {
             post.isAnonymous ? (
               <img src={animal.avatar} alt={`${animal.name} Avatar`} />
             ) : (
-              <img src={post.author.avatar} alt={post.author.fullName} />
+              <img src={post?.author?.avatar} alt={post?.author?.fullName} />
             )
           }
           title={
-            post.isAnonymous ? `Anonymous ${animal.name}` : post.author.fullName
+            post.isAnonymous
+              ? `Anonymous ${animal.name}`
+              : post?.author?.fullName
           }
           subheader={moment(post.createdAt).format("LLL")}
           action={
-            <IconButton onClick={viewModal} title="Edit post">
-              <MoreVertIcon />
-            </IconButton>
+            post.author._id === user._id ? (
+              <IconButton onClick={viewModal} title="Edit post">
+                <MoreVertIcon />
+              </IconButton>
+            ) : (
+              <IconButton title="Edit post">
+                <Dropdown
+                  menu={{
+                    items,
+                  }}
+                  trigger={["click"]}
+                >
+                  <Space onClick={(e) => e.preventDefault()}>
+                    <MoreVertIcon />
+                  </Space>
+                </Dropdown>
+              </IconButton>
+            )
           }
         />
 
@@ -230,9 +256,9 @@ export default function Post({ post }) {
             color="textSecondary"
             dangerouslySetInnerHTML={{
               __html:
-                post.content.length > 528
-                  ? `${post.content.substring(0, 528)}...`
-                  : post.content,
+                post?.content?.length > 528
+                  ? `${post?.content.substring(0, 528)}...`
+                  : post?.content,
             }}
           ></Typography>
         </CardContent>
@@ -258,38 +284,42 @@ export default function Post({ post }) {
           </div>
           <div>{post.view} Views</div>
         </CardActions>
-        {/* <Grid
+        <Grid
           container
           spacing={2}
           alignItems="stretch"
-          style={{ marginLeft: "20px" }}
+          style={{ marginLeft: "20px", paddingBottom: "10px" }}
         >
-          <Grid item xs={8} lg={8} className="idea">
+          <Grid item xs={9} lg={9} className="idea">
             <div>
               <Link to="/profile">
                 <img alt={user?.fullName} src={user?.avatar} />
               </Link>
             </div>
             <Input
-              placeholder="Any comments ?"
+              placeholder="Any comments?"
               className="idea-create"
               onClick={viewComment}
             />
           </Grid>
-          <Grid item xs={4} lg={4} className="idea">
-            <Button type="link" onClick={viewComment}>
+          <Grid item xs={3} lg={3} className="idea">
+            <Button
+              type="link"
+              onClick={viewComment}
+              style={{ display: "flex", justifyContent: "end" }}
+            >
               Show comments
             </Button>
           </Grid>
-        </Grid> */}
+        </Grid>
       </Card>
       <Modal
         open={Modalcomment}
         onOk={commentclose}
         onCancel={commentclose}
         footer={null}
-        style={{ height: "200px" }}
-        className="container"
+        style={{ width: "500px", height: "250px" }}
+        className="container-comment"
       >
         <CommentList post={post}></CommentList>
       </Modal>
@@ -371,9 +401,9 @@ export default function Post({ post }) {
                 <Typography>Content</Typography>
                 <ReactQuill
                   placeholder={
-                    defaultValue.content.length > 200
-                      ? `${defaultValue.content.substring(0, 200)}...`
-                      : defaultValue.content
+                    defaultValue?.content?.length > 200
+                      ? `${defaultValue?.content.substring(0, 200)}...`
+                      : defaultValue?.content
                   }
                   theme="snow"
                   modules={modules}
@@ -432,26 +462,6 @@ export default function Post({ post }) {
                 Update
               </Button>
             </div>
-          </Grid>
-        </Grid>
-      </Modal>
-      <Modal
-        open={Modaloption}
-        onOk={handleoption}
-        onCancel={handleoption}
-        footer={null}
-        className="container"
-      >
-        <Grid container spacing={2} alignItems="stretch">
-          <Grid item xs={12} lg={12}>
-            <Button type="primary" block>
-              Report
-            </Button>
-          </Grid>
-          <Grid item xs={12} lg={12}>
-            <Button type="primary" block>
-              Save post
-            </Button>
           </Grid>
         </Grid>
       </Modal>

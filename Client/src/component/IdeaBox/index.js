@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState } from "react";
+import React, { useRef, useContext, useState, useEffect } from "react";
 import { Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
@@ -39,6 +39,8 @@ export default function IdeaBox() {
   const { isShow } = useSelector(modalState$);
   const { state } = useContext(Store);
   const { userInfo } = state;
+  const user = state.userInfo;
+
   const [data, setdata] = React.useState({
     title: "",
     author: "",
@@ -48,10 +50,7 @@ export default function IdeaBox() {
     attachment: "",
     isAnonymous: false,
   });
-  const departget = (e) => {
-    setdata({ ...data, department: e });
-    data.department = departmentref.current.value;
-  };
+
   const categet = (e) => {
     setdata({ ...data, categories: e });
     data.categories = cateref.current.value;
@@ -95,7 +94,6 @@ export default function IdeaBox() {
     };
   };
 
-  const user = state.userInfo;
   const holder = "What's on your mind " + user.fullName + "?";
   const formats = [
     "header",
@@ -202,6 +200,7 @@ export default function IdeaBox() {
                       ...data,
                       title: e.target.value,
                       author: userInfo._id,
+                      department: userInfo.department._id,
                     })
                   }
                   required
@@ -218,20 +217,6 @@ export default function IdeaBox() {
                 />
               </div>
               <div className="user-mg">
-                <Select
-                  defaultValue="Choose a department"
-                  style={{ width: "100%" }}
-                  size="large"
-                  required
-                  onChange={(e) => departget(e)}
-                  ref={departmentref}
-                >
-                  {departments?.map((department) => (
-                    <Option key={department._id} value={department._id}>
-                      {department.name}
-                    </Option>
-                  ))}
-                </Select>
                 <Select
                   defaultValue="Choose a category"
                   style={{ width: "100%", top: "20px" }}

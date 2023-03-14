@@ -9,12 +9,14 @@ import { URL, token } from "./config.js";
 //config axios
 const axiosInstance = axios.create({
   baseURL: URL,
+  withCredentials: true,
 });
 axiosInstance.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
-
+export const refresh = () =>
+  axios.get(`${URL}/users/refresh`, { withCredentials: true });
 // posts
 export const fetchPosts = () => axiosInstance.get(`/posts`);
 export const fetchPostBySlug = (slug) =>
@@ -103,14 +105,30 @@ export const fetchRecentlyCmts = (payload) =>
 export const fetchUsers = () => axiosInstance.get(`/users`);
 export const fetchUserByID = (userID) =>
   axiosInstance.post(`/users/getUserById/`, { userID });
+//logout user
+export const logout = () => axiosInstance.post(`/users/logout`);
 //login user
 export const loginUser = (email, password) =>
-  axios.post(`${URL}/users/login/`, { email, password });
+  axios.post(
+    `${URL}/users/login/`,
+    { email, password },
+    { withCredentials: true }
+  );
 export const loginGoogleUser = (email, fullName, avatar) =>
-  axios.post(`${URL}/users/google/login/`, { email, fullName, avatar });
+  axios.post(
+    `${URL}/users/google/login/`,
+    { email, fullName, avatar },
+    { withCredentials: true }
+  );
 //register user
-export const registerUser = (fullName, email, password, roleUser) =>
-  axios.post(`${URL}/users/register/`, { fullName, email, password, roleUser });
+export const registerUser = (fullName, email, password, roleUser, department) =>
+  axios.post(`${URL}/users/register/`, {
+    fullName,
+    email,
+    password,
+    roleUser,
+    department,
+  });
 export const registerGoogleUser = (fullName, email, avatar, password) =>
   axios.post(`${URL}/users/google/register`, {
     fullName,
@@ -119,8 +137,8 @@ export const registerGoogleUser = (fullName, email, avatar, password) =>
     password,
   });
 // update user
-export const updateUser = (userID, roleID) =>
-  axiosInstance.put(`/users/updateUser/`, { userID, roleID });
+export const updateUser = (userID, roleID, departmentID) =>
+  axiosInstance.put(`/users/updateUser/`, { userID, roleID, departmentID });
 export const updateUserProfile = (userID, fullName, data) =>
   axiosInstance.put(`/users/updateUserProfile/`, {
     fullName,

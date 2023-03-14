@@ -5,6 +5,7 @@ export const registerUserSchema = joi.object({
   fullName: joi.string().min(3).required(),
   password: joi.string().min(3).required(),
   roleUser: joi.string().required(),
+  department: joi.string().required(),
 })
 export const updateUserSchema = joi.object({
   fullName: joi.string().min(3).allow(''),
@@ -13,7 +14,8 @@ export const updateUserSchema = joi.object({
 })
 export const updateUserByAdminSchema = joi.object({
   userID: joi.string().required(),
-  roleID: joi.string().required(),
+  roleID: joi.string().allow(''),
+  departmentID: joi.string().allow(''),
 })
 
 //posts

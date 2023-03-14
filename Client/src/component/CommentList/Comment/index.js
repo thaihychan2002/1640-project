@@ -13,7 +13,7 @@ import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import useStyles from "./styles.js";
-import { Modal, Button, Input, Switch } from "antd";
+import { Modal, Button, Input, Switch, Dropdown, Space, Menu } from "antd";
 import { Store } from "../../../Store";
 import * as actions from "../../../redux/actions";
 import { animalList } from "./anonymousAnimal.js";
@@ -128,6 +128,17 @@ export default function Comment({ comment }) {
   const deletehandler = React.useCallback(() => {
     dispatch(actions.deleteComments.deleteCommentsRequest(comment._id));
   }, [comment, dispatch]);
+  const items = [
+    {
+      key: "1",
+      label: <div onClick={Cmtoptionopen}>Update</div>,
+    },
+    {
+      key: "2",
+      label: <div onClick={deletehandler}>Delete</div>,
+    },
+  ];
+
   return (
     <>
       <Card className={classes.card} key={comment._id}>
@@ -146,8 +157,10 @@ export default function Comment({ comment }) {
           }
           subheader={moment(comment.createdAt).format("LLL")}
           action={
-            <IconButton onClick={viewModal} title="Edit comment">
-              <MoreVertIcon />
+            <IconButton title="Edit comment">
+              <Dropdown menu={{ items }} trigger={["click"]}>
+                <MoreVertIcon />
+              </Dropdown>
             </IconButton>
           }
         />
@@ -238,6 +251,10 @@ export default function Comment({ comment }) {
             placeholder="Any comments ?"
             className="idea-create"
             allowClear
+            autoSize={{
+              minRows: 1,
+              maxRows: 2,
+            }}
             size="large"
             onChange={(e) =>
               setnewcmt({
@@ -257,7 +274,7 @@ export default function Comment({ comment }) {
           >
             <div>
               <Switch
-                style={{ width: "200px", top: "20px" }}
+                style={{ width: "200px" }}
                 checkedChildren="Anonymous"
                 unCheckedChildren={user.fullName}
                 onChange={(checked) => setnewcmt({ isAnonymous: checked })}

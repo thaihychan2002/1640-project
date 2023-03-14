@@ -10,16 +10,17 @@ import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import * as actions from "../../redux/actions";
 import Search from "../Search/index";
-import { countViewBySlug } from "../../api";
+import { countViewBySlug, logout } from "../../api";
 
 export default function AccountSwitch() {
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   let user = state.userInfo;
-  const logoutHandler = () => {
+  const logoutHandler = async () => {
     ctxDispatch({ type: "USER_LOGOUT" });
     localStorage.removeItem("userInfo");
     window.location.href = "/login";
+    await logout();
   };
   const dispatch = useDispatch();
   const posts = useSelector(postsState$);

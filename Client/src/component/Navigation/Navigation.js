@@ -9,12 +9,12 @@ import Icon, {
 import "../assets/css/Navigation.css";
 import { Layout, Menu } from "antd";
 import React, { useContext } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { Store } from "../../Store";
 import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
-import { fetchUserByID } from "../../api";
+import { fetchUserByID, logout, refresh } from "../../api";
 import NavMobile from "./NavMobile";
 import { useMediaQuery } from "@material-ui/core";
 const { Sider } = Layout;
@@ -22,18 +22,22 @@ const { Sider } = Layout;
 export default function Navigation() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const isXs = useMediaQuery("(max-width:400px)");
-
+  const navigate = useNavigate();
   React.useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("userInfo");
       if (token) {
         const userID = jwtDecode(token)._id;
+        const date = jwtDecode(token).exp - Math.floor(Date.now() / 1000);
         if (userID) {
           try {
             const { data } = await fetchUserByID(userID);
             ctxDispatch({ type: "GET_USER", payload: data });
+            const response = await refresh();
+            localStorage.setItem("userInfo", response.data.token);
           } catch (err) {
             toast.error(getError(err));
+            getError(err) === "Invalid token" && navigate("/login");
           }
         }
         return;
@@ -102,10 +106,11 @@ export default function Navigation() {
           LogoutOutlined,
         ];
 
-  const logoutHandler = () => {
+  const logoutHandler = async () => {
     ctxDispatch({ type: "USER_LOGOUT" });
     localStorage.removeItem("userInfo");
     window.location.href = "/login";
+    await logout();
   };
 
   return (

@@ -18,6 +18,8 @@ import { updateUser } from "../../api/index";
 import { Select } from "antd";
 import { useContext } from "react";
 import { Store } from "../../Store";
+import { useSelector } from "react-redux";
+import { departmentsState$ } from "../../redux/seclectors";
 const { Option } = Select;
 const UserManage = () => {
   useEffect(() => {
@@ -52,15 +54,18 @@ const UserManage = () => {
     };
     fetchAllRoles();
   }, []);
+  const departments = useSelector(departmentsState$);
 
   const [role, setRole] = useState("");
   const [userID, setUserID] = useState("");
   const [roleID, setRoleID] = useState("");
+  const [departmentID, setDepartmentID] = useState("");
   const updateUserHandler = async (record) => {
+    console.log(record);
     if (window.confirm("Are you sure to update this user?")) {
       try {
-        await updateUser(userID, roleID);
-        toast.success(`User updated to ${role} successfully`);
+        await updateUser(record.key, roleID, departmentID);
+        toast.success(`User updated successfully`);
       } catch (err) {
         toast.error(getError(err));
       }
@@ -85,9 +90,8 @@ const UserManage = () => {
     fullName: user?.fullName,
     email: user?.email,
     role: user?.role?.name,
+    department: user?.department?.name,
   }));
-  // users?.map((user) => console.log(user.role.name));
-
   const columns = [
     {
       title: "Full Name",
@@ -106,20 +110,41 @@ const UserManage = () => {
       title: "Role",
       dataIndex: "role",
       key: "role",
-      width: "10%",
+      width: "20%",
       render: (_, record) => (
         <Select
           size="large"
           defaultValue={record.role}
           style={{ width: "100%" }}
           onChange={(event) => {
-            setUserID(record.key);
             setRoleID(event);
           }}
         >
           {roles?.map((role) => (
             <Option key={role._id} value={role._id}>
               {role.name}
+            </Option>
+          ))}
+        </Select>
+      ),
+    },
+    {
+      title: "Department",
+      dataIndex: "department",
+      key: "department",
+      width: "20%",
+      render: (_, record) => (
+        <Select
+          size="large"
+          defaultValue={record.department}
+          style={{ width: "100%" }}
+          onChange={(event) => {
+            setDepartmentID(event);
+          }}
+        >
+          {departments?.map((department) => (
+            <Option key={department._id} value={department._id}>
+              {department.name}
             </Option>
           ))}
         </Select>
@@ -148,6 +173,7 @@ const UserManage = () => {
   const [fullName, setFullName] = useState("");
   const [roleUser, setRoleUser] = useState("");
   const [email, setEmail] = useState("");
+  const [department, setDepartment] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -158,7 +184,7 @@ const UserManage = () => {
       return;
     }
     try {
-      await registerUser(fullName, email, password, roleUser);
+      await registerUser(fullName, email, password, roleUser, department);
       toast.success("User created successfully");
       // ctxDispatch({ type: "USER_LOGIN", payload: data });
       // localStorage.setItem("userInfo", data.token);
@@ -243,6 +269,24 @@ const UserManage = () => {
                       {roles?.map((role) => (
                         <Option key={role._id} value={role._id}>
                           {role.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    label="Department"
+                    name="department"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select department !",
+                      },
+                    ]}
+                  >
+                    <Select onChange={(e) => setDepartment(e)}>
+                      {departments?.map((department) => (
+                        <Option key={department._id} value={department._id}>
+                          {department.name}
                         </Option>
                       ))}
                     </Select>
