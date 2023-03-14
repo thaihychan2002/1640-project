@@ -1,10 +1,7 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  departmentsLoading$,
-  departmentsState$,
-} from "../../../redux/seclectors";
+import { departmentsLoading$, departmentsState$ } from "../../../redux/seclectors";
 
 import * as actions from "../../../redux/actions";
 import React, { useState } from "react";
@@ -14,9 +11,10 @@ import { Space, Table, Button, Modal, Input } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 const { TextArea } = Input;
 export default function DepartmentManage() {
-  const dispatch_de = useDispatch();
-  const departments = useSelector(departmentsState$);
-  const loading = useSelector(departmentsLoading$);
+
+  const dispatch_de = useDispatch()
+  const departments = useSelector(departmentsState$)
+  const loading = useSelector(departmentsLoading$)
   const [ModaldepOpen, setModaldepOpen] = useState(false);
   const [data, setdata] = React.useState({
     name: "",
@@ -26,17 +24,12 @@ export default function DepartmentManage() {
     name: department.name,
   }));
   const viewModal = React.useCallback(() => {
-    setModaldepOpen(true);
-  }, []);
-  const deletedepartHandler = React.useCallback(
-    (record) => {
-      console.log(record.key);
-      dispatch_de(
-        actions.deleteDepartments.deleteDepartmentsRequest(record.key)
-      );
-    },
-    [dispatch_de]
-  );
+
+   setModaldepOpen(true);
+  },[])
+  const deletedepartHandler = React.useCallback((record_dep) => {
+    dispatch_de(actions.deleteDepartments.deleteDepartmentsRequest(record_dep._id))
+  }, [dispatch_de])
   const columns = [
     {
       title: "Department",
@@ -55,7 +48,8 @@ export default function DepartmentManage() {
         </Space>
       ),
     },
-  ];
+
+  ]
   const handleclose = React.useCallback(() => {
     setModaldepOpen(false);
   }, []);
@@ -71,31 +65,29 @@ export default function DepartmentManage() {
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
       <Grid item xs={10} sm={10}>
-        <Button type="primary" onClick={viewModal}>
-          {" "}
-          Add new department
-        </Button>
-        <Modal
-          open={ModaldepOpen}
+
+        <Button type="primary" onClick={viewModal}> Add new department</Button>
+        <Modal open={ModaldepOpen}
           onOk={handleclose}
           onCancel={handleclose}
           footer={null}
-          style={{ width: 100, height: 150 }}
+          className="container"
         >
           <Grid container spacing={2} alignItems="stretch">
             <Grid item xs={12} lg={12} className="row-new-post">
               <center>Create new department</center>
             </Grid>
-            <Grid item xs={3} lg={3} />
-
-            <Grid item xs={6} lg={6} className="row-new-post">
-              <Input
+            <Grid item xs={12} lg={12} className="row-new-post">
+              <TextArea
                 allowClear
+                autoSize={{
+                  minRows: 3,
+                  maxRows: 5,
+                }}
                 placeholder="Write the name of department"
                 size="large"
                 value={data.name}
                 onChange={(e) => setdata({ ...data, name: e.target.value })}
-                style={{ marginBottom: 15 }}
                 required
               />
               <Button

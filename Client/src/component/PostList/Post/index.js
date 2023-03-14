@@ -11,12 +11,12 @@ import {
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import moment from "moment";
-import React, { useRef, useContext, useState, useEffect } from "react";
+import React, { useRef, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
 import { departmentsState$, categoriesState$ } from "../../../redux/seclectors";
-import { Modal, Button, Input, Select, Switch, Dropdown, Space } from "antd";
+import { Modal, Button, Input, Select } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
@@ -26,6 +26,8 @@ import CommentList from "../../CommentList/index.js";
 import * as actions from "../../../redux/actions";
 import { countViewBySlug } from "../../../api/index.js";
 import ReactQuill from "react-quill";
+
+const { TextArea } = Input;
 const { Option } = Select;
 
 export default function Post({ post }) {
@@ -45,10 +47,9 @@ export default function Post({ post }) {
     title: post.title,
     author: post.author || "none",
     content: post.content,
-    department: post?.department?.name,
-    category: post?.categories?.name,
+    department: post.department.name,
+    category: post.categories.name,
     attachment: post.attachment,
-    isAnonymous: post.isAnonymous,
   });
   // Anonymous Animals
   const getRandomAnimal = () => {
@@ -56,10 +57,8 @@ export default function Post({ post }) {
     return animalList[randomIndex];
   };
 
-  const [animal, setAnimal] = useState("");
-  useEffect(() => {
-    setAnimal(getRandomAnimal());
-  }, []);
+  const animal = getRandomAnimal();
+
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
@@ -130,7 +129,6 @@ export default function Post({ post }) {
         ...data,
       })
     );
-
     handleOk();
   }, [dispatch, data, post, handleOk]);
   const onDislikeBtnClick = React.useCallback(() => {
@@ -182,6 +180,7 @@ export default function Post({ post }) {
     },
   ];
 
+
   return (
     <>
       <Card className={classes.card} key={post._id}>
@@ -190,43 +189,23 @@ export default function Post({ post }) {
             post.isAnonymous ? (
               <img src={animal.avatar} alt={`${animal.name} Avatar`} />
             ) : (
-              <img src={post?.author?.avatar} alt={post?.author?.fullName} />
+              <img src={post.author.avatar} alt={post.author.fullName} />
             )
           }
           title={
-            post.isAnonymous
-              ? `Anonymous ${animal.name}`
-              : post?.author?.fullName
+            post.isAnonymous ? `Anonymous ${animal.name}` : post.author.fullName
           }
           subheader={moment(post.createdAt).format("LLL")}
           action={
-            post.author._id === user._id ? (
-              <IconButton onClick={viewModal} title="Edit post">
-                <MoreVertIcon />
-              </IconButton>
-            ) : (
-              <IconButton title="Edit post">
-                <Dropdown
-                  menu={{
-                    items,
-                  }}
-                  trigger={["click"]}
-                >
-                  <Space onClick={(e) => e.preventDefault()}>
-                    <MoreVertIcon />
-                  </Space>
-                </Dropdown>
-              </IconButton>
-            )
+            <IconButton onClick={viewModal} title="Edit post">
+              <MoreVertIcon />
+            </IconButton>
           }
         />
 
         <Button
           type="button"
-          onClick={() => {
-            navigate(`/idea/${post?.slug}`);
-            countView(post.slug);
-          }}
+          onClick={() => navigate(`/idea/${post?.slug}`)}
           style={{
             width: "100%",
             height: "300px",
@@ -253,60 +232,47 @@ export default function Post({ post }) {
             variant="body2"
             component="p"
             color="textSecondary"
-            dangerouslySetInnerHTML={{
-              __html:
-                post?.content?.length > 528
-                  ? `${post?.content.substring(0, 528)}...`
-                  : post?.content,
-            }}
+            dangerouslySetInnerHTML={{ __html: post.content }}
           ></Typography>
+          <Typography>{post.view} Views</Typography>
         </CardContent>
-        <CardActions
-          style={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <div>
-            <IconButton
-              onClick={onLikeBtnClick}
-              style={{ color: likeActive ? "red" : "" }}
-            >
-              <FavoriteIcon />
-              <Typography component="span" color="textSecondary"></Typography>
-            </IconButton>
-            <IconButton
-              onClick={onDislikeBtnClick}
-              style={{ color: dislikeActive ? "blue" : "" }}
-            >
-              -<FavoriteIcon />
-              <Typography component="span" color="textSecondary"></Typography>
-            </IconButton>
-            {`${post.likeCount} likes`}
-          </div>
-          <div>{post.view} Views</div>
+        <CardActions>
+          <IconButton
+            onClick={onLikeBtnClick}
+            style={{ color: likeActive ? "red" : "" }}
+          >
+            <FavoriteIcon />
+            <Typography component="span" color="textSecondary"></Typography>
+          </IconButton>
+          <IconButton
+            onClick={onDislikeBtnClick}
+            style={{ color: dislikeActive ? "blue" : "" }}
+          >
+            -<FavoriteIcon />
+            <Typography component="span" color="textSecondary"></Typography>
+          </IconButton>
+          {`${post.likeCount} likes`}
         </CardActions>
         <Grid
           container
           spacing={2}
           alignItems="stretch"
-          style={{ marginLeft: "20px", paddingBottom: "10px" }}
+          style={{ marginLeft: "20px" }}
         >
-          <Grid item xs={9} lg={9} className="idea">
+          <Grid item xs={8} lg={8} className="idea">
             <div>
               <Link to="/profile">
                 <img alt={user?.fullName} src={user?.avatar} />
               </Link>
             </div>
             <Input
-              placeholder="Any comments?"
+              placeholder="Any comments ?"
               className="idea-create"
               onClick={viewComment}
             />
           </Grid>
-          <Grid item xs={3} lg={3} className="idea">
-            <Button
-              type="link"
-              onClick={viewComment}
-              style={{ display: "flex", justifyContent: "end" }}
-            >
+          <Grid item xs={4} lg={4} className="idea">
+            <Button type="link" onClick={viewComment}>
               Show comments
             </Button>
           </Grid>
@@ -317,8 +283,8 @@ export default function Post({ post }) {
         onOk={commentclose}
         onCancel={commentclose}
         footer={null}
-        style={{ width: "500px", height: "250px" }}
-        className="container-comment"
+        style={{ height: "200px" }}
+        className="container"
       >
         <CommentList post={post}></CommentList>
       </Modal>
@@ -398,20 +364,23 @@ export default function Post({ post }) {
               </div>
               <div className="user-mg">
                 <Typography>Content</Typography>
-                <ReactQuill
-                  placeholder={
-                    defaultValue?.content?.length > 200
-                      ? `${defaultValue?.content.substring(0, 200)}...`
-                      : defaultValue?.content
-                  }
-                  theme="snow"
-                  modules={modules}
+                <TextArea
+                  allowClear
+                  autoSize={{
+                    minRows: 3,
+                    maxRows: 5,
+                  }}
+                  placeholder={defaultValue.content}
+                  size="large"
                   value={data.content}
-                  onChange={(e) => setdata({ ...data, content: e })}
+                  onChange={(e) =>
+                    setdata({ ...data, content: e.target.value })
+                  }
                   required
                 />
               </div>
               <div className="user-mg">
+                <Typography>Choose department</Typography>
                 <Select
                   defaultValue={defaultValue.department}
                   style={{ width: "100%" }}
@@ -426,6 +395,7 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
+                <Typography>Choose category</Typography>
                 <Select
                   defaultValue={defaultValue.category}
                   style={{ width: "100%", top: "20px" }}
@@ -440,17 +410,6 @@ export default function Post({ post }) {
                     </Option>
                   ))}
                 </Select>
-                <Switch
-                  style={{ width: "100%", top: "35px", marginBottom: 10 }}
-                  checkedChildren="Anonymous"
-                  unCheckedChildren={user.fullName}
-                  onChange={(checked) =>
-                    setdata({
-                      ...data,
-                      isAnonymous: checked,
-                    })
-                  }
-                ></Switch>
               </div>
               <Button
                 type="primary"
@@ -461,6 +420,26 @@ export default function Post({ post }) {
                 Update
               </Button>
             </div>
+          </Grid>
+        </Grid>
+      </Modal>
+      <Modal
+        open={Modaloption}
+        onOk={handleoption}
+        onCancel={handleoption}
+        footer={null}
+        className="container"
+      >
+        <Grid container spacing={2} alignItems="stretch">
+          <Grid item xs={12} lg={12}>
+            <Button type="primary" block>
+              Report
+            </Button>
+          </Grid>
+          <Grid item xs={12} lg={12}>
+            <Button type="primary" block>
+              Save post
+            </Button>
           </Grid>
         </Grid>
       </Modal>

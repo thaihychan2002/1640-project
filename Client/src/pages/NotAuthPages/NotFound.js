@@ -32,7 +32,7 @@ const NotFound = () => {
         }
       />{" "} */}
       <Grid container alignItems="stretch">
-        <Grid item xs={false} sm={1} md={2} />
+        <Grid item xs={0} sm={1} md={2} />
         <Grid item xs={12} sm={11} md={10}>
           <div>
             <div className="starsec"></div>

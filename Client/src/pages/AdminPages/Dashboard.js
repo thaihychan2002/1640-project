@@ -47,7 +47,6 @@ const DashBoard = () => {
     <BarsOutlined />,
     <BulbOutlined />,
   ];
-
   return (
     <div>
       <Helmet>

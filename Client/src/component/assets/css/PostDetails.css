@@ -46,14 +46,7 @@
   height: 500px !important;
   border-radius: 0;
 }
-@media screen and (max-width: 420px) {
-  .postImg {
-    margin-top: 15px;
-    width: 100vw !important;
-    height: 500px !important;
-    border-radius: 0;
-  }
-}
+
 .postBottom {
   display: flex;
   align-items: center;
