@@ -15,6 +15,7 @@ const { Option } = Select;
 export default function PostList() {
   const dispatch = useDispatch();
   const posts = useSelector(postsState$);
+  console.log(posts);
   const isLoading = useSelector(postsLoading$);
   const [selectedView, setSelectedView] = useState("recently");
   React.useEffect(() => {
