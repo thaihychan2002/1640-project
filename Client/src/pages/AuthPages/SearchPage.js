@@ -15,6 +15,7 @@ import { getError } from "../../utils";
 import * as actions from "../../redux/actions";
 import { useParams } from "react-router-dom";
 import { searchPostsByKeyword } from "../../api";
+import NoPost from "../../component/NoPost";
 
 export default function SearchPage() {
   const params = useParams();
@@ -47,8 +48,10 @@ export default function SearchPage() {
           {/* <PostList /> */}
           {isLoading ? (
             <LoadingBox />
-          ) : (
+          ) : posts.length > 0 ? (
             posts?.map((post) => <Post key={post._id} post={post} />)
+          ) : (
+            <NoPost />
           )}
         </Grid>
         <Grid item xs={3} sm={3}>

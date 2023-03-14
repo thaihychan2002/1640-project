@@ -70,7 +70,9 @@ img {
   border-radius: 10px;
   transition: height 0.1s ease;
 }
-
+.container-comment {
+  width: 800px !important;
+}
 .MuiContainer-root {
   padding: 0 !important;
 }

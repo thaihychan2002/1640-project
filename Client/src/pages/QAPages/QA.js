@@ -2,12 +2,11 @@ import { Grid } from "@material-ui/core";
 import { allPostsState$ } from "../../redux/seclectors";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useMemo, useCallback } from "react";
-
 import React from "react";
 import * as actions from "../../redux/actions";
 import ReactApexChart from "react-apexcharts";
 import { Helmet } from "react-helmet-async";
-import { Button, Statistic } from "antd";
+import { Statistic } from "antd";
 import CountUp from "react-countup";
 import { downloadCSV } from "../../api";
 import DownloadButton from "../../component/DownloadButton";
@@ -133,7 +132,7 @@ export default function QA() {
       },
       yaxis: {
         title: {
-          text: "Number of Posts",
+          text: "Number of Posts per day",
         },
       },
     };
