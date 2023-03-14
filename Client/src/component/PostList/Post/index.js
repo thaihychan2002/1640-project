@@ -25,7 +25,6 @@ import { animalList } from "./anonymousAnimal.js";
 import CommentList from "../../CommentList/index.js";
 import * as actions from "../../../redux/actions";
 
-const { TextArea } = Input;
 const { Option } = Select;
 
 export default function Post({ post }) {

@@ -9,15 +9,18 @@ import { Store } from "../../Store";
 import { commentsLoading$, commentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { Select } from "antd";
+
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
-import { fetchCmtsByMostLikes, fetchRecentlyCmts } from "../../api";
+
 const { Option } = Select;
 const { TextArea } = Input;
 export default function CommentList({ post }) {
   const dispatch = useDispatch();
   const comments = useSelector(commentsState$);
   // const [comments, setComments] = useState([]);
+
+  console.log(comments);
   const isLoading = useSelector(commentsLoading$);
   const [selectedcdt, setSelectedcdt] = useState("recently");
   const { state } = useContext(Store);
@@ -50,10 +53,18 @@ export default function CommentList({ post }) {
     content: "",
     postID: post._id,
   });
-  const changeCommentsView = React.useCallback((value) => {
+
+  const changeCommentsView = (value) => {
     setSelectedcdt(value);
-    console.log(selectedcdt)
-  }, [selectedcdt]);
+  };
+  React.useEffect(() => {
+    try {
+      dispatch(actions.getConditionCmts.getCmtsRequest(selectedcdt));
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  }, [dispatch, selectedcdt]);
+
   const commenthandler = React.useCallback(() => {
     dispatch(actions.createComments.createCommentsRequest(comment));
   }, [comment, dispatch]);
@@ -82,6 +93,33 @@ export default function CommentList({ post }) {
           }
           required
         />
+      </Grid>
+      <Grid item xs={9} sm={9}>
+        <div style={{ display: "flex", justifyContent: "end" }}>
+          <Select
+            defaultValue="View Recently"
+            onChange={changeCommentsView}
+            style={{ width: "50%" }}
+          >
+            <Option value="recently">View Recently </Option>
+            <Option value="mostLikes">View Most Likes </Option>
+          </Select>
+        </div>
+      </Grid>
+      <Grid item xs={3} sm={3}>
+        <Button type="primary" block onClick={commenthandler}>
+          Post
+        </Button>
+      </Grid>
+      <Grid style={{ marginTop: "40px" }} item xs={12} sm={12}>
+        {isLoading ? (
+          <LoadingBox />
+        ) : (
+          comments?.map((comment) => (
+            <Comment key={comment._id} comment={comment} />
+          ))
+        )}
+
       </Grid>
       <Grid item xs={9} sm={9}>
         <div style={{ display: "flex", justifyContent: "end" }}>
