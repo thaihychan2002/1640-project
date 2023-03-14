@@ -71,3 +71,10 @@ export const createCommentSchema = joi.object({
   author: joi.string().required(),
   postID: joi.string().required(),
 })
+//subcomments
+export const createSubcommentSchema = joi.object({
+  content: joi.string().required(),
+  author: joi.string().required(),
+  postID: joi.string().required(),
+  commentID: joi.string().required(),
+})
