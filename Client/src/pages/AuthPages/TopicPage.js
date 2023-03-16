@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, useMediaQuery } from "@material-ui/core";
+import { Container } from "@material-ui/core";
 import Header from "../../component/header/index";
 import { Grid } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
@@ -15,6 +15,7 @@ import { fetchPostsByTopic } from "../../api";
 import Post from "../../component/PostList/Post";
 import NoPost from "../../component/NoPost";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
+import Responsive from "../../component/ResponsiveCode/Responsive";
 
 const { Option } = Select;
 export default function TopicPage() {
@@ -26,8 +27,7 @@ export default function TopicPage() {
   const changePostsView = (value) => {
     setSelectedViewTopic(value);
   };
-  const isXs = useMediaQuery("(max-width:600px)");
-  const isSm = useMediaQuery("(max-width:900px)");
+  const { isXs, isMd } = Responsive();
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -72,7 +72,7 @@ export default function TopicPage() {
                   defaultValue="View Any Topics"
                   onChange={changePostsView}
                   style={{
-                    width: isXs ? "100%" : isSm ? "35%" : "25%",
+                    width: isXs ? "100%" : isMd ? "35%" : "25%",
                     marginTop: 10,
                   }}
                 >

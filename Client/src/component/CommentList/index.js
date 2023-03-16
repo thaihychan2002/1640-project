@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
-import { Grid, useMediaQuery } from "@material-ui/core";
+import { Grid} from "@material-ui/core";
 import Comment from "./Comment";
 import { Link } from "react-router-dom";
 import { Input, Button, Typography, Switch } from "antd";
@@ -9,6 +9,7 @@ import { Store } from "../../Store";
 import { commentsLoading$, commentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { Select } from "antd";
+import Responsive from "../ResponsiveCode/Responsive";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -19,7 +20,8 @@ export default function CommentList({ post }) {
   const sortedcomments= comments?.filter((comment)=>comment?.postID?._id===post._id)
   const isLoading = useSelector(commentsLoading$);
   const { state } = useContext(Store);
-  const isXs = useMediaQuery("(max-width:400px");
+  const { isXs } = Responsive();
+
   const user = state.userInfo;
   const [comment, setcomment] = React.useState({
     author: "",

@@ -1,4 +1,4 @@
-import { Grid, useMediaQuery } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import "../../component/assets/css/PostDetails.css";
 import { IconButton, Typography } from "@material-ui/core";
 import FavoriteIcon from "@material-ui/icons/Favorite";
@@ -13,13 +13,13 @@ import NotFound from "../NotAuthPages/NotFound.js";
 import { Helmet } from "react-helmet-async";
 import { useDispatch} from "react-redux";
 import CommentList from "../../component/CommentList";
-
+import Responsive from "../../component/ResponsiveCode/Responsive";
 const PostDetails = () => {
   const [allData, setAllData] = useState({});
   const params = useParams();
   const { slug } = params;
   const dispatch = useDispatch();
-  const isXs = useMediaQuery("(max-width:400px)");
+  const { isXs } = Responsive();
 
   useEffect(() => {
     const fetchPost = async () => {
