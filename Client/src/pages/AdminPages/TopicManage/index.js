@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { Space, Table, Button, Modal, Input, Typography } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 import Topic from "./topic";
-import moment from "moment";
+import moment, { now } from "moment";
 import { DatePicker } from "antd";
 
 const { TextArea } = Input;
@@ -27,14 +27,16 @@ export default function TopicManage() {
     end: "",
     status: "Processing"
   });
-  
+  // moment(new Date()).format("MM:DD:YYYY")
+  const today = new Date()
+  const current =moment(today).format("MM:DD:YYYY")
   const topic = topics?.map((topic) => ({
     key: topic._id,
     name: topic.name,
     description: topic.description,
     begindate: topic.begin,
     enddate: topic.end,
-    status: topic.status
+    status: moment(topic.end).format("MM:DD:YYYY") >= current ? "Processing" : "Ended"
   }));
   const deletedepartHandler = React.useCallback(
     (record_Topic) => {
@@ -45,12 +47,11 @@ export default function TopicManage() {
     [dispatch_Topic]
   );
   const disabledPassDates = React.useCallback((current) => {
-    return current && current < moment().endOf("day");
+    return current && current < moment(today);
   }, []);
-  React.useEffect(()=>{
-    const current = moment(new Date()).format("MM:DD:YYYY")
-    topic.map((item)=>moment(item.enddate).format("MM:DD:YYYY")>=current?item:dispatch_Topic( actions.updateTopicStatus.updateTopicStatusRequest({_id:item.key,status:"Ended"})))
-  },[topic,dispatch_Topic])
+  React.useEffect(() => {
+    topics.filter((topic) => topic.status === "Processing")?.map((item) => moment(item.end).format("MM:DD:YYYY") < current && dispatch_Topic(actions.updateTopicStatus.updateTopicStatusRequest({ _id: item._id, status: "Ended" })))
+  }, [topics, dispatch_Topic, current])
   const columns = [
     {
       title: "Topic",
