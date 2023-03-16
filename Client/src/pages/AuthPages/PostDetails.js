@@ -13,13 +13,14 @@ import NotFound from "../NotAuthPages/NotFound.js";
 import { Helmet } from "react-helmet-async";
 import { useDispatch} from "react-redux";
 import CommentList from "../../component/CommentList";
-
+import { commentsState$ } from "../../redux/seclectors";
+import Responsive from "../../component/ResponsiveCode/Responsive";
 const PostDetails = () => {
   const [allData, setAllData] = useState({});
   const params = useParams();
   const { slug } = params;
   const dispatch = useDispatch();
-  const isXs = useMediaQuery("(max-width:400px)");
+  const { isXs } = Responsive();
 
   useEffect(() => {
     const fetchPost = async () => {

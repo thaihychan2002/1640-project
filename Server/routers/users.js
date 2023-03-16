@@ -11,6 +11,9 @@ import {
   updateUserProfile,
   refresh,
   logout,
+  updatePassword,
+  forgotPassword,
+  resetPassword,
 } from '../controller/users.js'
 import { isAuth, isAdmin } from '../utils.js'
 const router = express.Router()
@@ -26,4 +29,7 @@ router.post('/google/register', registerGoogleUsers)
 router.delete('/deleteUser/:id', isAdmin, deleteUser)
 router.put('/updateUser/', isAdmin, updateUser)
 router.put('/updateUserProfile/', isAuth, updateUserProfile)
+router.put('/changePassword', isAuth, updatePassword)
+router.post('/forgot-password', forgotPassword)
+router.post('/reset-password', resetPassword)
 export default router

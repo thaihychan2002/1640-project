@@ -8,7 +8,8 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { loginUser, loginGoogleUser } from "../../api/index.js";
 import jwtDecode from "jwt-decode";
 import "../../component/assets/css/Login.css";
-
+import { Grid } from "@material-ui/core";
+import Responsive from "../../component/ResponsiveCode/Responsive";
 const Login = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -51,7 +52,7 @@ const Login = () => {
       toast.error(getError(err));
     }
   };
-
+  const { isXs } = Responsive();
   useEffect(() => {
     const googleService = () => {
       window?.google?.accounts?.id?.initialize({
@@ -63,7 +64,7 @@ const Login = () => {
       const parent = document.getElementById("loginDiv");
       window?.google?.accounts?.id?.renderButton(parent, {
         type: "standard",
-        width: 400,
+        width: isXs ? 300 : 400,
         text: "signin_with",
         locale: "en-US",
       });
@@ -71,60 +72,66 @@ const Login = () => {
     };
 
     setTimeout(googleService, 100);
-  });
+  }, [isXs]);
 
   return (
-    <div className="login">
-      <Form
-        name="basic"
-        labelCol={{
-          span: 6,
-        }}
-        wrapperCol={{
-          span: 20,
-        }}
-        style={{
-          maxWidth: 400,
-        }}
-        onFinish={submitHandler}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-      >
-        <Helmet>
-          <title>Login</title>
-        </Helmet>
-        <Form.Item
-          label="Email"
-          name="email"
-          style={{ width: "100%" }}
-          rules={[
-            {
-              required: true,
-              message: "Please input your email!",
-            },
-          ]}
-        >
-          <Input onChange={(e) => setEmail(e.target.value)} />
-        </Form.Item>
+    <Grid container>
+      <Grid item xs={12}>
+        <div className="login">
+          <Form
+            name="basic"
+            labelCol={{
+              span: 6,
+            }}
+            wrapperCol={{
+              span: 20,
+            }}
+            style={{
+              maxWidth: 400,
+            }}
+            onFinish={submitHandler}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
+          >
+            <Helmet>
+              <title>Login</title>
+            </Helmet>
+            <Form.Item
+              label="Email"
+              name="email"
+              style={{ width: "100%" }}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your email!",
+                },
+              ]}
+            >
+              <Input onChange={(e) => setEmail(e.target.value)} />
+            </Form.Item>
 
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your password!",
-            },
-          ]}
-        >
-          <Input.Password onChange={(e) => setPassword(e.target.value)} />
-        </Form.Item>
-        <Form.Item style={{ display: "flex", justifyContent: "center" }}>
-          <Button type="primary" htmlType="submit" style={{ width: "100px" }}>
-            Login
-          </Button>
-        </Form.Item>
-        {/* <Form.Item
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password!",
+                },
+              ]}
+            >
+              <Input.Password onChange={(e) => setPassword(e.target.value)} />
+            </Form.Item>
+            <Form.Item style={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ width: "100px" }}
+              >
+                Login
+              </Button>
+            </Form.Item>
+            {/* <Form.Item
           wrapperCol={{
             offset: 0,
           }}
@@ -138,10 +145,25 @@ const Login = () => {
             </p>
           </div>
         </Form.Item> */}
-        <Divider>Or login by Google</Divider>
-        <div id="loginDiv"></div>
-      </Form>
-    </div>
+            <Divider>Or login by Google</Divider>
+            <div id="loginDiv"></div>
+            <center>
+              <p
+                style={{
+                  color: "#1686ff",
+                  fontSize: 16,
+                  marginTop: 15,
+                  cursor: "pointer",
+                }}
+                onClick={() => navigate("/forgot-password")}
+              >
+                Forgot password?
+              </p>
+            </center>
+          </Form>
+        </div>
+      </Grid>
+    </Grid>
   );
 };
 export default Login;

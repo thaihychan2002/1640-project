@@ -24,6 +24,9 @@ const schema = new mongoose.Schema(
     },
     role: { type: Schema.Types.ObjectId, ref: 'Role' },
     department: { type: Schema.Types.ObjectId, ref: 'Department' },
+    resetPasswordToken: { type: String, required: false },
+    resetPasswordExpires: { type: Date, required: false },
+    lastPasswordResetAt: { type: Date, required: false },
   },
   { timestamps: true }
 )

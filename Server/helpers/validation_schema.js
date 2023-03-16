@@ -4,7 +4,7 @@ import joi from 'joi'
 export const registerUserSchema = joi.object({
   email: joi.string().email().lowercase().required(),
   fullName: joi.string().min(3).required(),
-  password: joi.string().min(3).required(),
+  password: joi.string().min(6).required(),
   roleUser: joi.string().required(),
   department: joi.string().required(),
 })
@@ -17,6 +17,13 @@ export const updateUserByAdminSchema = joi.object({
   userID: joi.string().required(),
   roleID: joi.string().allow(''),
   departmentID: joi.string().allow(''),
+})
+export const forgotPasswordSchema = joi.object({
+  email: joi.string().email().required(),
+})
+export const resetPasswordSchema = joi.object({
+  token: joi.string().required(),
+  newPassword: joi.string().min(6).required(),
 })
 
 //posts

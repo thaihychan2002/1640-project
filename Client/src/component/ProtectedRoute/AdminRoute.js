@@ -13,12 +13,16 @@ export default function AdminRoute({ children }) {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("userInfo");
-        const userID = jwtDecode(token)._id;
-        const { data } = await fetchUserByID(userID);
-        if (data.role === "Admin") {
-          setNavigate(children);
+        if (token) {
+          const userID = jwtDecode(token)._id;
+          const { data } = await fetchUserByID(userID);
+          if (data.role === "Admin") {
+            setNavigate(children);
+          } else {
+            setNavigate(<Navigate to="/" />);
+          }
         } else {
-          setNavigate(<Navigate to="/" />);
+          setNavigate(<Navigate to="/login" />);
         }
       } catch (err) {
         toast.error(getError(err));

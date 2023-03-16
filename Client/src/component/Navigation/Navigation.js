@@ -17,37 +17,49 @@ import { getError } from "../../utils";
 import { fetchUserByID, logout, refresh } from "../../api";
 import NavMobile from "./NavMobile";
 import { useMediaQuery } from "@material-ui/core";
+import Responsive from "../ResponsiveCode/Responsive";
+import { token } from "../../api/config";
 const { Sider } = Layout;
 
 export default function Navigation() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const isXs = useMediaQuery("(max-width:400px)");
+  const { isXs } = Responsive();
   const navigate = useNavigate();
+
+  const role = state.userInfo.role;
+
   React.useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("userInfo");
       if (token) {
+        const logout = async () => {
+          ctxDispatch({ type: "USER_LOGOUT" });
+          localStorage.removeItem("userInfo");
+          window.location.href = "/login";
+          await logout();
+        };
         const userID = jwtDecode(token)._id;
         const date = jwtDecode(token).exp - Math.floor(Date.now() / 1000);
         if (userID) {
           try {
             const { data } = await fetchUserByID(userID);
             ctxDispatch({ type: "GET_USER", payload: data });
-            const response = await refresh();
-            localStorage.setItem("userInfo", response.data.token);
+            if (date < 3600) {
+              const response = await refresh();
+              localStorage.setItem("userInfo", response.data.token);
+            }
           } catch (err) {
             toast.error(getError(err));
-            getError(err) === "Invalid token" && navigate("/login");
+            getError(err) === "Invalid token" && logout();
           }
         }
         return;
+      } else {
+        logout();
       }
-      return;
     };
     fetchUser();
   }, [ctxDispatch]);
-
-  const role = state.userInfo.role;
   const linkRoutes =
     role === "Admin"
       ? [
@@ -71,7 +83,9 @@ export default function Navigation() {
         ]
       : ["Home", "Departments", "Topics", "Profile", "Log out"];
   // Hide navbar when route === /login
-  const withOutNavbarRoutes = ["/login"];
+  const withOutNavbarRoutes = token
+    ? ["/login", "/reset-password"]
+    : ["/login", "/reset-password", "/forgot-password"];
   const { pathname } = useLocation();
   if (withOutNavbarRoutes.some((item) => pathname.includes(item))) return null;
   //
@@ -103,16 +117,15 @@ export default function Navigation() {
           ApartmentOutlined,
           BarsOutlined,
           ProfileOutlined,
+
           LogoutOutlined,
         ];
-
   const logoutHandler = async () => {
     ctxDispatch({ type: "USER_LOGOUT" });
     localStorage.removeItem("userInfo");
     window.location.href = "/login";
     await logout();
   };
-
   return (
     <div>
       {!isXs ? (
@@ -122,7 +135,7 @@ export default function Navigation() {
             mode="inline"
             defaultSelectedKeys={["0"]}
             items={[...icons].map((icon, index) => ({
-              key: String(index + 1),
+              key: String(index),
               icon: React.createElement(icon),
               label: (
                 <Link
@@ -147,7 +160,7 @@ export default function Navigation() {
             collapsedWidth="80"
             items={[...icons]
               .map((icon, index) => ({
-                key: String(index + 1),
+                key: String(index),
                 icon: React.createElement(icon),
                 label: (
                   <Link
@@ -159,7 +172,9 @@ export default function Navigation() {
                   />
                 ),
               }))
-              .filter((item) => item.key !== "4")}
+              .filter((item) =>
+                state.userInfo.role === "Admin" ? item.key !== "3" : item.key
+              )}
           />
         </div>
       )}

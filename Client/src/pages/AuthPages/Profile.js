@@ -14,6 +14,7 @@ import { token } from "../../api/config";
 import jwtDecode from "jwt-decode";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
 import { useNavigate } from "react-router-dom";
+import Responsive from "../../component/ResponsiveCode/Responsive";
 export default function Profile() {
   const navigate = useNavigate();
   // fetch user posts
@@ -21,7 +22,7 @@ export default function Profile() {
   const posts = useSelector(allPostsState$);
   const loading = useSelector(allPostsLoading$);
   const userID = jwtDecode(token)._id;
-  const isXs = useMediaQuery("(max-width:400px)");
+  const { isXs } = Responsive();
   //
   const { state } = useContext(Store);
   const user = state.userInfo;
@@ -34,10 +35,10 @@ export default function Profile() {
   const [previewSource, setPreviewSource] = useState("");
 
   const [fullName, setFullName] = useState("");
-  const [toggle, setToggle] = useState(false);
-  const toggleEdit = () => {
-    setToggle(!toggle);
-  };
+  // const [toggle, setToggle] = useState(false);
+  // const toggleEdit = () => {
+  //   setToggle(!toggle);
+  // };
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -76,89 +77,33 @@ export default function Profile() {
       <Grid container item xs={12} sm={10} md={8}>
         <Grid item xs={2} sm={3} md={2}>
           <div style={{ marginTop: "10px" }}>
-            {!previewSource ? (
-              <label htmlFor="image">
-                <img
-                  style={{
-                    width: "150px",
-                    height: "150px",
-                    borderRadius: "100px",
-                  }}
-                  src={user.avatar}
-                  alt={user.fullName}
-                />
-                {toggle && (
-                  <input
-                    type="file"
-                    id="image"
-                    name="image"
-                    onChange={handleFileInputChange}
-                    value={fileInputState}
-                    style={{ display: "none" }}
-                  />
-                )}
-              </label>
-            ) : (
-              <label htmlFor="image">
-                <img
-                  src={previewSource}
-                  alt="chosen"
-                  style={{
-                    width: "150px",
-                    height: "150px",
-                    borderRadius: "100px",
-                  }}
-                  onChange={handleFileInputChange}
-                  value={fileInputState}
-                />
-                {toggle && (
-                  <input
-                    type="file"
-                    id="image"
-                    name="image"
-                    onChange={handleFileInputChange}
-                    value={fileInputState}
-                    style={{ display: "none" }}
-                  />
-                )}
-              </label>
-            )}
+            <label htmlFor="image">
+              <img
+                src={user.avatar}
+                alt={user.fullName}
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  borderRadius: "100px",
+                }}
+                onChange={handleFileInputChange}
+                value={fileInputState}
+              />
+            </label>
           </div>
         </Grid>
         <Grid item xs={10} sm={9} md={10}>
           <div style={{ display: "flex", flexDirection: "row" }}>
-            {toggle ? (
-              <div>
-                <Input
-                  value={fullName}
-                  className="profile-name"
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-              </div>
-            ) : (
-              <div>
-                <Input
-                  value={user.fullName}
-                  className="profile-name"
-                  bordered={false}
-                />
-              </div>
-            )}
+            <div>
+              <Input
+                value={user.fullName}
+                className="profile-name"
+                bordered={false}
+              />
+            </div>
 
             <Form.Item className="edit-profile">
-              <Button onClick={() => toggleEdit()}>Edit Profile</Button>
-              {toggle && (
-                <Button
-                  style={{
-                    marginLeft: isXs ? "0px" : "10px",
-                    width: isXs && "100px",
-                    marginTop: isXs && "10px",
-                  }}
-                  onClick={(e) => updateUserProfileHandler(e)}
-                >
-                  Save
-                </Button>
-              )}
+              <Button onClick={() => navigate("/edit")}>Edit Profile</Button>
             </Form.Item>
           </div>
           <div style={{ marginLeft: isXs ? "110px" : "20px" }}>
@@ -168,7 +113,7 @@ export default function Profile() {
       </Grid>
       <Divider>Posts</Divider>
       {/* Post item */}
-      <Grid item xs={2} sm={2} />
+      <Grid item xs={false} sm={2} />
       <Grid container item xs={10} sm={10}>
         {loading ? (
           <LoadingBox />
