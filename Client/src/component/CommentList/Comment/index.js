@@ -13,7 +13,7 @@ import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import useStyles from "./styles.js";
-import { Modal, Button, Input, Switch, Dropdown, Space, Menu } from "antd";
+import { Modal, Button, Input, Switch, Dropdown } from "antd";
 import { Store } from "../../../Store";
 import * as actions from "../../../redux/actions";
 import { animalList } from "./anonymousAnimal.js";
@@ -96,13 +96,6 @@ export default function Comment({ comment }) {
     }
   }, [dispatch, comment, likecmtActive, dislikecmtActive]);
   const classes = useStyles();
-  const viewModal = React.useCallback(() => {
-    if (comment.author.fullName === user.fullName) {
-      setCmtEdit(true);
-    } else {
-      setCmtOption(true);
-    }
-  }, [user, comment]);
   const handleOk = React.useCallback(() => {
     setCmtEdit(false);
   }, []);

@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
-import { Grid, useMediaQuery } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Subcomment from "./Subcomment";
 import { Link } from "react-router-dom";
-import { Input, Button, Typography, Switch, Modal } from "antd";
+import { Input, Button, Typography, Switch } from "antd";
 import { Store } from "../../Store";
 import { subcommentsLoading$, subcommentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
