@@ -10,6 +10,7 @@ import { useMediaQuery } from "@material-ui/core";
 import { Select } from "antd";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
+import NoPost from "../NoPost";
 
 const { Option } = Select;
 export default function PostList() {
@@ -33,7 +34,7 @@ export default function PostList() {
   }, [dispatch]);
   React.useEffect(() => {
     try {
-      dispatch(actions.getCategories.getCategoriesRequest());
+      dispatch(actions.getTopics.getTopicsRequest());
     } catch (err) {
       toast.error(getError(err));
     }
@@ -70,8 +71,10 @@ export default function PostList() {
       <Grid item xs={12} sm={12}>
         {isLoading ? (
           <LoadingBox />
+        ) :posts ? (
+          posts?.filter((post)=>post?.status==='Accepted').map((post) => <Post key={post._id} post={post} />)
         ) : (
-          posts?.map((post) => <Post post={post} key={post._id} />)
+          <NoPost />
         )}
       </Grid>
     </Grid>

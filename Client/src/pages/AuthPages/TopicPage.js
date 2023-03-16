@@ -1,32 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { Container, useMediaQuery } from "@material-ui/core";
 import Header from "../../component/header/index";
-import PostList from "../../component/PostList";
 import { Grid } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
 import { FloatButton } from "antd";
-import IdeaBox from "../../component/IdeaBox";
 import { Select } from "antd";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
-import { categoriesState$ } from "../../redux/seclectors";
-import { fetchPostsByCategory } from "../../api";
+import { topicsState$ } from "../../redux/seclectors";
+import { fetchPostsByTopic } from "../../api";
 import Post from "../../component/PostList/Post";
 import NoPost from "../../component/NoPost";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
 
 const { Option } = Select;
-export default function CategoryPage() {
+export default function TopicPage() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
-  const categories = useSelector(categoriesState$);
-  const [selectedViewCategory, setSelectedViewCategory] = useState("");
+  const topics = useSelector(topicsState$);
+  const [selectedViewTopic, setSelectedViewTopic] = useState("");
   const changePostsView = (value) => {
-    setSelectedViewCategory(value);
+    setSelectedViewTopic(value);
   };
   const isXs = useMediaQuery("(max-width:600px)");
   const isSm = useMediaQuery("(max-width:900px)");
@@ -34,8 +32,8 @@ export default function CategoryPage() {
     const fetchPosts = async () => {
       try {
         setIsLoading(true);
-        const { data } = await fetchPostsByCategory(
-          selectedViewCategory || categories[0]?._id
+        const { data } = await fetchPostsByTopic(
+          selectedViewTopic || topics[0]?._id
         );
         setPosts(data);
         setIsLoading(false);
@@ -44,11 +42,11 @@ export default function CategoryPage() {
       }
     };
     fetchPosts();
-  }, [categories, selectedViewCategory]);
+  }, [topics, selectedViewTopic]);
 
   React.useEffect(() => {
     try {
-      dispatch(actions.getCategories.getCategoriesRequest());
+      dispatch(actions.getTopics.getTopicsRequest());
     } catch (err) {
       toast.error(getError(err));
     }
@@ -57,7 +55,7 @@ export default function CategoryPage() {
   return (
     <Container style={{ maxWidth: "100vw" }} className="{}">
       <Helmet>
-        <title>Categories</title>
+        <title>Topics</title>
       </Helmet>
       <Header />
       <Grid container alignItems="stretch">
@@ -71,16 +69,16 @@ export default function CategoryPage() {
             <Grid item xs={12} sm={12}>
               <div style={{ display: "flex", justifyContent: "end" }}>
                 <Select
-                  defaultValue="View Any Categories"
+                  defaultValue="View Any Topics"
                   onChange={changePostsView}
                   style={{
                     width: isXs ? "100%" : isSm ? "35%" : "25%",
                     marginTop: 10,
                   }}
                 >
-                  {categories.map((category) => (
-                    <Option key={category._id} value={category._id}>
-                      {category.name}
+                  {topics.map((topic) => (
+                    <Option key={topic._id} value={topic._id}>
+                      {topic.name}
                     </Option>
                   ))}
                 </Select>

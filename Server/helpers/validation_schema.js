@@ -1,4 +1,5 @@
 import joi from 'joi'
+
 //users
 export const registerUserSchema = joi.object({
   email: joi.string().email().lowercase().required(),
@@ -24,26 +25,33 @@ export const createPostSchema = joi.object({
   content: joi.string().required(),
   author: joi.string().required(),
   department: joi.string().valid().required(),
-  categories: joi.allow(),
+  topics: joi.allow(),
   attachment: joi.allow(),
   isAnonymous: joi.boolean().required(),
   likeCount: joi.number().valid(0).allow(),
   view: joi.number().valid(0).allow(),
 })
-//categories
-export const createCategorySchema = joi.object({
+//topics
+export const createTopicSchema = joi.object({
   name: joi.string().min(3).required(),
   description: joi.string().min(10).required(),
   begin: joi.date().greater('1-1-2023').less('12-31-2025').required(),
   end: joi.date().greater('1-1-2023').less('12-31-2025').required(),
+  status:joi.string().required(),
 })
-export const updateCategorySchema = joi.object({
+export const updateTopicSchema = joi.object({
   _id: joi.string().required(),
   name: joi.string().min(3).required(),
   description: joi.string().min(10).required(),
   begin: joi.date().greater('1-1-2023').less('12-31-2025').required(),
   end: joi.date().greater('1-1-2023').less('12-31-2025').required(),
+  status:joi.string().required(),
 })
+export const updateTopicStatusSchema = joi.object({
+  _id: joi.string().required(),
+  status:joi.string().required(),
+})
+// Role
 export const createRoleSchema = joi.object({
   name: joi.string().required(),
 })
@@ -64,4 +72,11 @@ export const createCommentSchema = joi.object({
   content: joi.string().required(),
   author: joi.string().required(),
   postID: joi.string().required(),
+})
+//subcomments
+export const createSubcommentSchema = joi.object({
+  content: joi.string().required(),
+  author: joi.string().required(),
+  postID: joi.string().required(),
+  commentID: joi.string().required(),
 })

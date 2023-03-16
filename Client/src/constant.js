@@ -14,11 +14,15 @@ export const INIT_STATE = {
     isLoading: false,
     data: [],
   },
-  categories: {
+  topics: {
     isLoading: false,
     data: [],
   },
   comments: {
+    isLoading: false,
+    data: [],
+  },
+  subcomments: {
     isLoading: false,
     data: [],
   },

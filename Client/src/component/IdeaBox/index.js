@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState, useEffect } from "react";
+import React, { useRef, useContext, useState} from "react";
 import { Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
@@ -6,7 +6,7 @@ import "../assets/css/HomeScreen.css";
 import { useDispatch, useSelector } from "react-redux";
 import { hideModal, showModal, createPosts } from "../../redux/actions";
 import {
-  categoriesState$,
+  topicsState$,
   departmentsState$,
   modalState$,
 } from "../../redux/seclectors";
@@ -14,8 +14,6 @@ import { PictureOutlined, CloseOutlined } from "@ant-design/icons";
 import { Input, Select, Button } from "antd";
 import { Link } from "react-router-dom";
 import DrawExpand from "./Drawer";
-import { toast } from "react-toastify";
-import { getError } from "../../utils";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useMediaQuery } from "@material-ui/core";
@@ -25,7 +23,7 @@ const { Option } = Select;
 export default function IdeaBox() {
   const dispatch = useDispatch();
   const departments = useSelector(departmentsState$);
-  const categories = useSelector(categoriesState$);
+  const topics = useSelector(topicsState$);
   const isXs = useMediaQuery("(max-width:600px)");
 
   const [isChecked, setIsChecked] = useState(false);
@@ -35,7 +33,7 @@ export default function IdeaBox() {
   };
 
   const departmentref = useRef(null);
-  const cateref = useRef(null);
+  const Topicref = useRef(null);
   const { isShow } = useSelector(modalState$);
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -46,14 +44,17 @@ export default function IdeaBox() {
     author: "",
     content: "",
     department: "",
-    categories: "",
+    topic: "",
     attachment: "",
     isAnonymous: false,
   });
-
-  const categet = (e) => {
-    setdata({ ...data, categories: e });
-    data.categories = cateref.current.value;
+  const departget = (e) => {
+    setdata({ ...data, department: e });
+    data.department = departmentref.current.value;
+  };
+  const Topicget = (e) => {
+    setdata({ ...data, topic: e });
+    data.topic = Topicref.current.value;
   };
   const handleOk = React.useCallback(() => {
     dispatch(hideModal());
@@ -95,19 +96,6 @@ export default function IdeaBox() {
   };
 
   const holder = "What's on your mind " + user.fullName + "?";
-  const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-  ];
   const modules = {
     toolbar: [[{ size: [] }], ["bold", "italic", "underline"]],
     clipboard: {
@@ -218,16 +206,30 @@ export default function IdeaBox() {
               </div>
               <div className="user-mg">
                 <Select
-                  defaultValue="Choose a category"
+                  defaultValue="Choose a department"
+                  style={{ width: "100%" }}
+                  size="large"
+                  required
+                  onChange={(e) => departget(e)}
+                  ref={departmentref}
+                >
+                  {departments?.map((department) => (
+                    <Option key={department._id} value={department._id}>
+                      {department.name}
+                    </Option>
+                  ))}
+                </Select>
+                <Select
+                  defaultValue="Choose a topic"
                   style={{ width: "100%", top: "20px" }}
                   size="large"
                   required
-                  onChange={(e) => categet(e)}
-                  ref={cateref}
+                  onChange={(e) => Topicget(e)}
+                  ref={Topicref}
                 >
-                  {categories?.map((category) => (
-                    <Option key={category._id} value={category._id}>
-                      {category.name}
+                  {topics?.filter((topic)=>topic?.status==="Processing")?.map((topic) => (
+                    <Option key={topic._id} value={topic._id}>
+                      {topic.name}
                     </Option>
                   ))}
                 </Select>

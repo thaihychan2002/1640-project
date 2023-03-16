@@ -17,18 +17,17 @@ import { Modal, Button, Input, Switch, Dropdown } from "antd";
 import { Store } from "../../../Store";
 import * as actions from "../../../redux/actions";
 import { animalList } from "./anonymousAnimal.js";
-import SubcommentList from "../../SubcommentList/index.js";
 const { TextArea } = Input;
 
-export default function Comment({ comment }) {
+export default function Subcomment({ subcomment }) {
   const dispatch = useDispatch();
   const { state } = useContext(Store);
   const user = state.userInfo;
-  const [CmtEdit, setCmtEdit] = useState(false);
-  const [Cmtupdate, setcmtUpdate] = useState(false);
-  const [Cmtoption, setCmtOption] = useState(false);
+  const [SubcmtEdit, setSubcmtEdit] = useState(false);
+  const [Subcmtupdate, setSubcmtUpdate] = useState(false);
+  const [Subcmtoption, setSubcmtOption] = useState(false);
   const [animal, setAnimal] = useState("");
-  const [newcmt, setnewcmt] = React.useState({});
+  const [newSubcmt, setnewSubcmt] = React.useState({});
   // Anonymous Animals
   useEffect(() => {
     setAnimal(getRandomAnimal());
@@ -37,95 +36,95 @@ export default function Comment({ comment }) {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
   };
-  const [likecmtActive, setLikecmtActive] = React.useState(false);
-  const [dislikecmtActive, setDislikecmtActive] = React.useState(false);
-  const onLikecmtClick = React.useCallback(() => {
-    if (likecmtActive) {
-      setLikecmtActive(false);
+  const [likeSubcmtActive, setLikeSubcmtActive] = React.useState(false);
+  const [dislikeSubcmtActive, setDislikeSubcmtActive] = React.useState(false);
+  const onLikeSubcmtClick = React.useCallback(() => {
+    if (likeSubcmtActive) {
+      setLikeSubcmtActive(false);
       dispatch(
-        actions.updateComments.updateCommentsRequest({
-          ...comment,
-          likeCount: comment.likeCount - 1,
+        actions.updateSubcomments.updateSubcommentsRequest({
+          ...subcomment,
+          likeCount: subcomment.likeCount - 1,
         })
       );
     } else {
-      setLikecmtActive(true);
+      setLikeSubcmtActive(true);
       dispatch(
-        actions.updateComments.updateCommentsRequest({
-          ...comment,
-          likeCount: comment.likeCount + 1,
+        actions.updateSubcomments.updateSubcommentsRequest({
+          ...subcomment,
+          likeCount: subcomment.likeCount + 1,
         })
       );
-      if (dislikecmtActive) {
-        setDislikecmtActive(false);
+      if (dislikeSubcmtActive) {
+        setDislikeSubcmtActive(false);
         dispatch(
-          actions.updateComments.updateCommentsRequest({
-            ...comment,
-            likeCount: comment.likeCount + 2,
+          actions.updateSubcomments.updateSubcommentsRequest({
+            ...subcomment,
+            likeCount: subcomment.likeCount + 2,
           })
         );
       }
     }
-  }, [dispatch, comment, likecmtActive, dislikecmtActive]);
-  const onDislikecmtClick = React.useCallback(() => {
-    if (dislikecmtActive) {
-      setDislikecmtActive(false);
+  }, [dispatch, subcomment, likeSubcmtActive, dislikeSubcmtActive]);
+  const onDislikeSubcmtClick = React.useCallback(() => {
+    if (dislikeSubcmtActive) {
+      setDislikeSubcmtActive(false);
       dispatch(
-        actions.updateComments.updateCommentsRequest({
-          ...comment,
-          likeCount: comment.likeCount + 1,
+        actions.updateSubcomments.updateSubcommentsRequest({
+          ...subcomment,
+          likeCount: subcomment.likeCount + 1,
         })
       );
     } else {
-      setDislikecmtActive(true);
+      setDislikeSubcmtActive(true);
       dispatch(
-        actions.updateComments.updateCommentsRequest({
-          ...comment,
-          likeCount: comment.likeCount - 1,
+        actions.updateSubcomments.updateSubcommentsRequest({
+          ...subcomment,
+          likeCount: subcomment.likeCount - 1,
         })
       );
-      if (likecmtActive) {
-        setLikecmtActive(false);
+      if (likeSubcmtActive) {
+        setLikeSubcmtActive(false);
         dispatch(
-          actions.updateComments.updateCommentsRequest({
-            ...comment,
-            likeCount: comment.likeCount - 2,
+          actions.updateSubcomments.updateSubcommentsRequest({
+            ...subcomment,
+            likeCount: subcomment.likeCount - 2,
           })
         );
       }
     }
-  }, [dispatch, comment, likecmtActive, dislikecmtActive]);
+  }, [dispatch, subcomment, likeSubcmtActive, dislikeSubcmtActive]);
   const classes = useStyles();
   const handleOk = React.useCallback(() => {
-    setCmtEdit(false);
+    setSubcmtEdit(false);
   }, []);
   const handleoption = React.useCallback(() => {
-    setCmtOption(false);
+    setSubcmtOption(false);
   }, []);
-  const Cmtoptionopen = React.useCallback(() => {
-    setcmtUpdate(true);
+  const Subcmtoptionopen = React.useCallback(() => {
+    setSubcmtUpdate(true);
   }, []);
-  const Cmtoptionclose = React.useCallback(() => {
-    setcmtUpdate(false);
+  const Subcmtoptionclose = React.useCallback(() => {
+    setSubcmtUpdate(false);
   }, []);
-  const updatecmthandler = React.useCallback(() => {
+  const updateSubcmthandler = React.useCallback(() => {
     dispatch(
-      actions.updateComments.updateCommentsRequest({
-        _id: comment._id,
+      actions.updateSubcomments.updateSubcommentsRequest({
+        _id: subcomment._id,
         author: user._id,
-        ...newcmt,
+        ...newSubcmt,
       })
     );
     handleOk();
-    Cmtoptionclose();
-  }, [dispatch, newcmt, comment, Cmtoptionclose, handleOk, user]);
+    Subcmtoptionclose();
+  }, [dispatch, newSubcmt, subcomment, Subcmtoptionclose, handleOk, user]);
   const deletehandler = React.useCallback(() => {
-    dispatch(actions.deleteComments.deleteCommentsRequest(comment._id));
-  }, [comment, dispatch]);
+    dispatch(actions.deleteSubcomments.deleteSubcommentsRequest(subcomment._id));
+  }, [subcomment, dispatch]);
   const itemsforuser = [
     {
       key: "1",
-      label: <div onClick={Cmtoptionopen}>Update</div>,
+      label: <div onClick={Subcmtoptionopen}>Update</div>,
     },
     {
       key: "2",
@@ -135,29 +134,34 @@ export default function Comment({ comment }) {
   const itemsforother = [
     {
       key: "1",
-      label: <div onClick={Cmtoptionopen}>Report</div>,
+      label: <div onClick={Subcmtoptionopen}>Report</div>,
+    },
+    {
+      key: "2",
+      label: <div onClick={deletehandler}>Delete</div>,
     },
   ];
+
   return (
     <>
-      <Card className={classes.card} key={comment._id}>
+      <Card className={classes.card} key={subcomment._id}>
         <CardHeader
           avatar={
-            comment.isAnonymous ? (
+            subcomment.isAnonymous ? (
               <img src={animal.avatar} alt={`${animal.name} Avatar`} />
             ) : (
-              <img src={comment.author.avatar} alt={comment.author.fullName} />
+              <img src={subcomment.author.avatar} alt={subcomment.author.fullName} />
             )
           }
           title={
-            comment.isAnonymous
+            subcomment.isAnonymous
               ? `Anonymous ${animal.name}`
-              : comment.author.fullName
+              : subcomment.author.fullName
           }
-          subheader={moment(comment.createdAt).format("LLL")}
+          subheader={moment(subcomment.createdAt).format("LLL")}
           action={
-            <IconButton title="Edit comment">
-              <Dropdown menu={comment.author.fullName === user.fullName?({ items:itemsforuser }):({items:itemsforother})} trigger={["click"]}>
+            <IconButton title="Edit subcomment">
+              <Dropdown menu={subcomment.author.fullName === user.fullName?({ items:itemsforuser }):({items:itemsforother})} trigger={["click"]}>
                 <MoreVertIcon />
               </Dropdown>
             </IconButton>
@@ -165,38 +169,29 @@ export default function Comment({ comment }) {
         />
         <CardContent>
           <Typography variant="body2" component="p" color="textSecondary">
-            {comment.content}
+            {subcomment.content}
           </Typography>
         </CardContent>
         <CardActions>
-          <Grid container spacing={2} alignItems="stretch">
-            <Grid item xs={1} lg={1}>
-              <IconButton
-                onClick={onLikecmtClick}
-                style={{ color: likecmtActive ? "red" : "" }}
-              >
-                <FavoriteIcon />
-                <Typography component="span" color="textSecondary"></Typography>
-              </IconButton>
-            </Grid>
-            <Grid item xs={4} lg={4}>
-              <IconButton
-                onClick={onDislikecmtClick}
-                style={{ color: dislikecmtActive ? "blue" : "" }}
-              >
-                -<FavoriteIcon />
-                <Typography component="span" color="textSecondary"></Typography>
-              </IconButton>
-              {`${comment.likeCount} likes`}
-            </Grid>
-            <Grid item xs={7} lg={7} alignItems="center" justifyContent="center" style={{marginTop:'15px'}}>
-              <SubcommentList comment={comment}></SubcommentList>
-            </Grid>
-          </Grid>
+          <IconButton
+            onClick={onLikeSubcmtClick}
+            style={{ color: likeSubcmtActive ? "red" : "" }}
+          >
+            <FavoriteIcon />
+            <Typography component="span" color="textSecondary"></Typography>
+          </IconButton>
+          <IconButton
+            onClick={onDislikeSubcmtClick}
+            style={{ color: dislikeSubcmtActive ? "blue" : "" }}
+          >
+            -<FavoriteIcon />
+            <Typography component="span" color="textSecondary"></Typography>
+          </IconButton>
+          {`${subcomment.likeCount} likes`}
         </CardActions>
       </Card>
       <Modal
-        open={CmtEdit}
+        open={SubcmtEdit}
         onOk={handleOk}
         onCancel={handleOk}
         footer={null}
@@ -213,7 +208,7 @@ export default function Comment({ comment }) {
                 type="primary"
                 block
                 style={{ marginBottom: "10px" }}
-                onClick={Cmtoptionopen}
+                onClick={Subcmtoptionopen}
               >
                 Update
               </Button>
@@ -230,7 +225,7 @@ export default function Comment({ comment }) {
         </Grid>
       </Modal>
       <Modal
-        open={Cmtoption}
+        open={Subcmtoption}
         onOk={handleoption}
         onCancel={handleoption}
         footer={null}
@@ -245,14 +240,14 @@ export default function Comment({ comment }) {
         </Grid>
       </Modal>
       <Modal
-        open={Cmtupdate}
-        onOk={Cmtoptionclose}
-        onCancel={Cmtoptionclose}
+        open={Subcmtupdate}
+        onOk={Subcmtoptionclose}
+        onCancel={Subcmtoptionclose}
         footer={null}
         style={{ width: 350, height: 170 }}
       >
         <Grid item xs={12} lg={12}>
-          <center>Update comment</center>
+          <center>Update subcomment</center>
         </Grid>
         <Grid item xs={12} sm={12}>
           <TextArea
@@ -265,7 +260,7 @@ export default function Comment({ comment }) {
             }}
             size="large"
             onChange={(e) =>
-              setnewcmt({
+              setnewSubcmt({
                 content: e.target.value,
               })
             }
@@ -285,7 +280,7 @@ export default function Comment({ comment }) {
                 style={{ width: "200px" }}
                 checkedChildren="Anonymous"
                 unCheckedChildren={user.fullName}
-                onChange={(checked) => setnewcmt({ isAnonymous: checked })}
+                onChange={(checked) => setnewSubcmt({ isAnonymous: checked })}
               />
             </div>
             <div>
@@ -293,7 +288,7 @@ export default function Comment({ comment }) {
                 type="primary"
                 block
                 style={{ marginBottom: "10px" }}
-                onClick={updatecmthandler}
+                onClick={updateSubcmthandler}
               >
                 Update
               </Button>

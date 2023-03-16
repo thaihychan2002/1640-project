@@ -3,7 +3,7 @@ import * as actions from "../actions";
 import * as api from "../../api";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
-import { useDispatch } from "react-redux";
+
 //post
 function* fetchPostSaga(action) {
   try {
@@ -55,7 +55,16 @@ function* updatePostSaga(action) {
     toast.error(getError(err));
   }
 }
-
+function* updatePostLikeSaga(action) {
+  try {
+    const updatedPostLike = yield call(api.updatePostsLike, action.payload);
+    yield put(actions.updatePostsLike.updatePostsLikeSuccess(updatedPostLike.data));
+  } catch (err) {
+    console.log(err);
+    yield put(actions.updatePosts.updatePostsFailure(err));
+    toast.error(getError(err));
+  }
+}
 function* updatePostAcceptSaga(action) {
   try {
     const updatedPost = yield call(api.acceptPost, action.payload);
@@ -150,49 +159,60 @@ function* deleteDepartmentSaga(action) {
     toast.error(getError(err));
   }
 }
-// category
-function* fetchCategorySaga(action) {
+// topic
+function* fetchTopicSaga(action) {
   try {
-    const categories = yield call(api.fetchCategories);
-    yield put(actions.getCategories.getCategoriesSuccess(categories.data));
+    const topics = yield call(api.fetchTopics);
+    yield put(actions.getTopics.getTopicsSuccess(topics.data));
   } catch (err) {
-    yield put(actions.getCategories.getCategoriesFailure(err));
+    yield put(actions.getTopics.getTopicsFailure(err));
     toast.error(getError(err));
   }
 }
-function* createCategorySaga(action) {
+function* createTopicSaga(action) {
   try {
-    const categories = yield call(api.createCategories, action.payload);
+    const topics = yield call(api.createTopics, action.payload);
     yield put(
-      actions.createCategories.createCategoriesSuccess(categories.data)
+      actions.createTopics.createTopicsSuccess(topics.data)
     );
-    toast.success("Created category successfully");
+    toast.success("Created topic successfully");
   } catch (err) {
-    yield put(actions.createCategories.createCategoriesFailure(err));
+    yield put(actions.createTopics.createTopicsFailure(err));
     toast.error(getError(err));
   }
 }
-function* updateCategorySaga(action) {
+function* updateTopicSaga(action) {
   try {
-    const categories = yield call(api.updateCategories, action.payload);
+    const topics = yield call(api.updateTopics, action.payload);
     yield put(
-      actions.updateCategories.updateCategoriesSuccess(categories.data)
+      actions.updateTopics.updateTopicsSuccess(topics.data)
     );
-    toast.success("Updated category successfully");
+    toast.success("Updated topic successfully");
   } catch (err) {
-    yield put(actions.updateCategories.updateCategoriesFailure(err));
+    yield put(actions.updateTopics.updateTopicsFailure(err));
     toast.error(getError(err));
   }
 }
-function* deleteCategorySaga(action) {
+function* updateTopicStatusSaga(action) {
   try {
-    const categories = yield call(api.deleteCategories, action.payload);
+    const topics = yield call(api.updateTopicStatus, action.payload);
     yield put(
-      actions.deleteCategories.deleteCategoriesSuccess(categories.data)
+      actions.updateTopicStatus.updateTopicStatusSuccess(topics.data)
     );
-    toast.success("Deleted category successfully");
   } catch (err) {
-    yield put(actions.deleteCategories.deleteCategoriesFailure(err));
+    yield put(actions.updateTopics.updateTopicsFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* deleteTopicSaga(action) {
+  try {
+    const topics = yield call(api.deleteTopics, action.payload);
+    yield put(
+      actions.deleteTopics.deleteTopicsSuccess(topics.data)
+    );
+    toast.success("Deleted topic successfully");
+  } catch (err) {
+    yield put(actions.deleteTopics.deleteTopicsFailure(err));
     toast.error(getError(err));
   }
 }
@@ -250,11 +270,52 @@ function* deleteCommentSaga(action) {
     toast.error(getError(err));
   }
 }
+// Subcomment
+function* fetchSubcommentSaga(action) {
+  try {
+    const subcomments = yield call(api.fetchSubcomments, action.payload);
+    yield put(actions.getSubcomments.getSubcommentsSuccess(subcomments.data));
+  } catch (err) {
+    yield put(actions.getSubcomments.getSubcommentsFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* createSubcommentSaga(action) {
+  try {
+    const subcomments = yield call(api.createSubcomments, action.payload);
+    yield put(actions.createSubcomments.createSubcommentsSuccess(subcomments.data));
+    toast.success("Comment replied");
+  } catch (err) {
+    yield put(actions.createSubcomments.createSubcommentsFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* updateSubcommentSaga(action) {
+  try {
+    const subcomments = yield call(api.updateSubcomments, action.payload);
+    yield put(actions.updateSubcomments.updateSubcommentsSuccess(subcomments.data));
+    toast.success("Updated reply successfully");
+  } catch (err) {
+    yield put(actions.updateSubcomments.updateSubcommentsFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* deleteSubcommentSaga(action) {
+  try {
+    const subcomments = yield call(api.deleteSubcomments, action.payload);
+    yield put(actions.deleteSubcomments.deleteSubcommentsSuccess(subcomments.data));
+    toast.success("Deleted reply successfully");
+  } catch (err) {
+    yield put(actions.deleteSubcomments.deleteSubcommentsFailure(err));
+    toast.error(getError(err));
+  }
+}
 function* mysaga() {
   //post
   yield takeLatest(actions.getPosts.getPostsRequest, fetchPostSaga);
   yield takeLatest(actions.getAllPosts.getAllPostsRequest, fetchAllPostsSaga);
   yield takeLatest(actions.updatePosts.updatePostsRequest, updatePostSaga);
+  yield takeLatest(actions.updatePostsLike.updatePostsLikeRequest, updatePostLikeSaga);
   yield takeLatest(
     actions.updatePostAccept.updatePostAcceptRequest,
     updatePostAcceptSaga
@@ -286,22 +347,26 @@ function* mysaga() {
     actions.updateDepartments.updateDepartmentsRequest,
     updateDepartmentSaga
   );
-  //category
+  //topic
   yield takeLatest(
-    actions.getCategories.getCategoriesRequest,
-    fetchCategorySaga
+    actions.getTopics.getTopicsRequest,
+    fetchTopicSaga
   );
   yield takeLatest(
-    actions.createCategories.createCategoriesRequest,
-    createCategorySaga
+    actions.createTopics.createTopicsRequest,
+    createTopicSaga
   );
   yield takeLatest(
-    actions.deleteCategories.deleteCategoriesRequest,
-    deleteCategorySaga
+    actions.deleteTopics.deleteTopicsRequest,
+    deleteTopicSaga
   );
   yield takeLatest(
-    actions.updateCategories.updateCategoriesRequest,
-    updateCategorySaga
+    actions.updateTopics.updateTopicsRequest,
+    updateTopicSaga
+  );
+  yield takeLatest(
+    actions.updateTopicStatus.updateTopicStatusRequest,
+    updateTopicStatusSaga
   );
   //Comment
   yield takeLatest(
@@ -320,6 +385,20 @@ function* mysaga() {
   yield takeLatest(
     actions.updateComments.updateCommentsRequest,
     updateCommentSaga
+  );
+  //Subcomment
+  yield takeLatest(actions.getSubcomments.getSubcommentsRequest, fetchSubcommentSaga);
+  yield takeLatest(
+    actions.createSubcomments.createSubcommentsRequest,
+    createSubcommentSaga
+  );
+  yield takeLatest(
+    actions.deleteSubcomments.deleteSubcommentsRequest,
+    deleteSubcommentSaga
+  );
+  yield takeLatest(
+    actions.updateSubcomments.updateSubcommentsRequest,
+    updateSubcommentSaga
   );
 }
 export default mysaga;

@@ -4,12 +4,12 @@ import cors from 'cors'
 import posts from './routers/posts.js'
 import users from './routers/users.js'
 import departments from './routers/departments.js'
-import categories from './routers/categories.js'
+import topics from './routers/topics.js'
 import comments from './routers/comments.js'
+import subcomments from './routers/subcomments.js'
 import mongoose from 'mongoose'
 import morgan from 'morgan'
 import roles from './routers/role.js'
-import { DepartmentModel } from './model/departments.js'
 import { v2 as cloudinary } from 'cloudinary'
 import { fileURLToPath } from 'url'
 import path from 'path'
@@ -46,8 +46,9 @@ app.use('/posts', posts)
 app.use('/users', users)
 app.use('/roles', roles)
 app.use('/departments', departments)
-app.use('/categories', categories)
+app.use('/topics', topics)
 app.use('/comments', comments)
+app.use('/subcomments',subcomments)
 app.get('/', (req, res) => {
   res.send('SUCCESS')
   console.log('SUCCESS')

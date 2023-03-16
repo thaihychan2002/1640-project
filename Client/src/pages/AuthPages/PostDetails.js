@@ -11,14 +11,13 @@ import * as actions from "../../redux/actions";
 import DownloadButton from "../../component/DownloadButton/index.js";
 import NotFound from "../NotAuthPages/NotFound.js";
 import { Helmet } from "react-helmet-async";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import CommentList from "../../component/CommentList";
-import { commentsState$ } from "../../redux/seclectors";
+
 const PostDetails = () => {
   const [allData, setAllData] = useState({});
   const params = useParams();
   const { slug } = params;
-  const comments = useSelector(commentsState$);
   const dispatch = useDispatch();
   const isXs = useMediaQuery("(max-width:400px)");
 
@@ -43,12 +42,6 @@ const PostDetails = () => {
   }, [slug]);
   React.useEffect(() => {
     dispatch(actions.getComments.getCommentsRequest(allData));
-    // dispatch(
-    //   actions.updatePosts.updatePostsRequest({
-    //     _id: allData._id,
-    //     view: allData.view + 1,
-    //   })
-    // );
   }, [dispatch, allData]);
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
@@ -65,7 +58,7 @@ const PostDetails = () => {
     if (likeActive) {
       setLikeActive(false);
       dispatch(
-        actions.updatePosts.updatePostsRequest({
+        actions.updatePostsLike.updatePostsLikeRequest({
           _id: allData._id,
           likeCount: allData.likeCount - 1,
         })
@@ -73,7 +66,7 @@ const PostDetails = () => {
     } else {
       setLikeActive(true);
       dispatch(
-        actions.updatePosts.updatePostsRequest({
+        actions.updatePostsLike.updatePostsLikeRequest({
           _id: allData._id,
           likeCount: allData.likeCount + 1,
         })
@@ -81,7 +74,7 @@ const PostDetails = () => {
       if (dislikeActive) {
         setDislikeActive(false);
         dispatch(
-          actions.updatePosts.updatePostsRequest({
+          actions.updatePostsLike.updatePostsLikeRequest({
             _id: allData._id,
             likeCount: allData.likeCount + 2,
           })
@@ -93,7 +86,7 @@ const PostDetails = () => {
     if (dislikeActive) {
       setDislikeActive(false);
       dispatch(
-        actions.updatePosts.updatePostsRequest({
+        actions.updatePostsLike.updatePostsLikeRequest({
           _id: allData._id,
           likeCount: allData.likeCount + 1,
         })
@@ -101,7 +94,7 @@ const PostDetails = () => {
     } else {
       setDislikeActive(true);
       dispatch(
-        actions.updatePosts.updatePostsRequest({
+        actions.updatePostsLike.updatePostsLikeRequest({
           _id: allData._id,
           likeCount: allData.likeCount - 1,
         })
@@ -109,7 +102,7 @@ const PostDetails = () => {
       if (likeActive) {
         setLikeActive(false);
         dispatch(
-          actions.updatePosts.updatePostsRequest({
+          actions.updatePostsLike.updatePostsLikeRequest({
             _id: allData._id,
             likeCount: allData.likeCount - 2,
           })

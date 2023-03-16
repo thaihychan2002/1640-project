@@ -19,8 +19,12 @@ const schema = new mongoose.Schema(
     end: {
       type: String,
       require: true,
-    }
+    },
+    status: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
-export const CategoriesModel = mongoose.model("Category", schema);
+export const TopicsModel = mongoose.model("Topic", schema);
