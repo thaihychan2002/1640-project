@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState, useEffect } from "react";
+import React, { useRef, useContext, useState} from "react";
 import { Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
