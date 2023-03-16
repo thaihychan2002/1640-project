@@ -15,7 +15,7 @@ import React, { useRef, useContext, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
-import { departmentsState$, topicsState$ } from "../../../redux/seclectors";
+import { commentsState$, departmentsState$, topicsState$ } from "../../../redux/seclectors";
 import { Modal, Button, Input, Select, Switch, Dropdown, Space } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
@@ -36,6 +36,8 @@ export default function Post({ post }) {
   const user = state.userInfo;
   const departments = useSelector(departmentsState$);
   const topics = useSelector(topicsState$);
+  const comments = useSelector(commentsState$);
+  const sortedcmt = comments?.filter((comment) => comment?.postID?._id === post._id)
   const [Modalupdate, setModalUpdate] = useState(false);
   const [Modalcomment, setModalcomment] = useState(false);
   const departmentref = useRef(null);
@@ -55,7 +57,9 @@ export default function Post({ post }) {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
   };
-
+  React.useEffect(() => {
+    dispatch(actions.getComments.getCommentsRequest());
+  }, [dispatch])
   const [animal, setAnimal] = useState("");
   useEffect(() => {
     setAnimal(getRandomAnimal());
@@ -68,19 +72,18 @@ export default function Post({ post }) {
     setdata({ ...data, topics: e });
     data.topics = caetgoryref.current.value;
   };
-  const getcmt = React.useCallback(() => {
-    dispatch(actions.getComments.getCommentsRequest(post));
-  }, [dispatch, post]);
+
   const handleOk = React.useCallback(() => {
     setModalUpdate(false);
   }, []);
   const commentclose = React.useCallback(() => {
+    dispatch(actions.getComments.getCommentsRequest());
     setModalcomment(false);
-  }, []);
+  }, [dispatch]);
   const viewComment = React.useCallback(() => {
-    getcmt();
+
     setModalcomment(true);
-  }, [getcmt]);
+  }, []);
   const viewModal = React.useCallback(() => {
     setModalUpdate(true);
   }, []);
@@ -299,7 +302,7 @@ export default function Post({ post }) {
               onClick={viewComment}
               style={{ display: "flex", justifyContent: "end" }}
             >
-              Show comments
+              Show {sortedcmt.length} comments
             </Button>
           </Grid>
         </Grid>

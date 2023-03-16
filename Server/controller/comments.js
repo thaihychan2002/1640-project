@@ -2,24 +2,22 @@ import { CommentModel } from '../model/comments.js'
 import { PostModel } from '../model/posts.js'
 import { transporter } from '../utils.js'
 
-let conditionID
+
 export const getComment = async (req, res) => {
   try {
     const newcomment = req.body
-    const comment = await CommentModel.find({ postID: newcomment._id })
+    const comment = await CommentModel.find()
       .populate('author')
       .populate('postID')
       .exec()
-    conditionID = newcomment._id
     res.status(200).json(comment)
   } catch (err) {
     res.status(500).json({ error: err })
   }
 }
 export const viewCmtByMostLikes = async (req, res) => {
-  const CDID = conditionID
   try {
-    const comments = await CommentModel.find({ postID: CDID })
+    const comments = await CommentModel.find()
       .sort({ likeCount: -1 })
       .populate('author')
       .populate('postID')
@@ -31,8 +29,8 @@ export const viewCmtByMostLikes = async (req, res) => {
 }
 export const viewRecentlyCmt = async (req, res) => {
   try {
-    const CDID = conditionID
-    const comments = await CommentModel.find({ postID: CDID })
+  
+    const comments = await CommentModel.find()
       .sort({ createdAt: -1 })
       .populate('author')
       .populate('postID')
@@ -92,8 +90,8 @@ export const updateComment = async (req, res) => {
       updateComment,
       { new: true }
     )
-    .populate('author')
-    .populate('postID')
+      .populate('author')
+      .populate('postID')
     res.status(200).json(comment)
   } catch (err) {
     res.status(500).json({ error: err })

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
 import { Grid, useMediaQuery } from "@material-ui/core";
@@ -16,13 +16,10 @@ const { Text } = Typography;
 export default function CommentList({ post }) {
   const dispatch = useDispatch();
   const comments = useSelector(commentsState$);
+  const sortedcomments= comments?.filter((comment)=>comment?.postID?._id===post._id)
   const isLoading = useSelector(commentsLoading$);
-  const [selectedcdt, setSelectedcdt] = useState("recently");
   const { state } = useContext(Store);
   const isXs = useMediaQuery("(max-width:400px");
-  React.useEffect(() => {
-    dispatch(actions.getConditionCmts.getCmtsRequest({ status: selectedcdt }));
-  }, [dispatch, selectedcdt]);
   const user = state.userInfo;
   const [comment, setcomment] = React.useState({
     author: "",
@@ -32,9 +29,9 @@ export default function CommentList({ post }) {
   });
   const changeCommentsView = React.useCallback(
     (value) => {
-      setSelectedcdt(value);
+      dispatch(actions.getConditionCmts.getCmtsRequest({ status: value}));
     },
-    []
+    [dispatch]
   );
   const commenthandler = React.useCallback(() => {
     dispatch(actions.createComments.createCommentsRequest(comment));
@@ -57,7 +54,7 @@ export default function CommentList({ post }) {
           </div>
           <div>
             <Text type="secondary" style={{ marginLeft: "-10%" }}>
-              {comments.length} comments
+              {sortedcomments.length} comments
             </Text>
           </div>
         </Grid>
@@ -128,7 +125,7 @@ export default function CommentList({ post }) {
             }}
           >
             <Select
-              defaultValue="View Recently"
+              defaultValue="View by default"
               onChange={changeCommentsView}
               style={{
                 width: isXs ? "50%" : "50%",
@@ -142,7 +139,7 @@ export default function CommentList({ post }) {
           {isLoading ? (
             <LoadingBox />
           ) : (
-            comments?.map((comment) => (
+            sortedcomments?.map((comment) => (
               <Comment key={comment._id} comment={comment} />
             ))
           )}
