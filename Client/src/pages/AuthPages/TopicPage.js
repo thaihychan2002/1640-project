@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, useMediaQuery } from "@material-ui/core";
+import { Container } from "@material-ui/core";
 import Header from "../../component/header/index";
 import { Grid } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";

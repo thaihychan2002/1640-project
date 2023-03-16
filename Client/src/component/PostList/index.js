@@ -6,7 +6,6 @@ import Post from "./Post";
 import IdeaBox from "../IdeaBox";
 import { postsState$, postsLoading$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
-import { useMediaQuery } from "@material-ui/core";
 import { Select } from "antd";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
