@@ -5,6 +5,7 @@ import modal from "./modal.js";
 import departments from "./departments.js";
 import topics from "./topics.js";
 import comments from "./comments.js"
+import subcomments from "./subcomments.js"
 export default combineReducers({
   posts,
   modal,
@@ -12,4 +13,5 @@ export default combineReducers({
   topics,
   allPosts,
   comments,
+  subcomments,
 });

@@ -55,7 +55,16 @@ function* updatePostSaga(action) {
     toast.error(getError(err));
   }
 }
-
+function* updatePostLikeSaga(action) {
+  try {
+    const updatedPostLike = yield call(api.updatePostsLike, action.payload);
+    yield put(actions.updatePostsLike.updatePostsLikeSuccess(updatedPostLike.data));
+  } catch (err) {
+    console.log(err);
+    yield put(actions.updatePosts.updatePostsFailure(err));
+    toast.error(getError(err));
+  }
+}
 function* updatePostAcceptSaga(action) {
   try {
     const updatedPost = yield call(api.acceptPost, action.payload);
@@ -261,11 +270,52 @@ function* deleteCommentSaga(action) {
     toast.error(getError(err));
   }
 }
+// Subcomment
+function* fetchSubcommentSaga(action) {
+  try {
+    const subcomments = yield call(api.fetchSubcomments, action.payload);
+    yield put(actions.getSubcomments.getSubcommentsSuccess(subcomments.data));
+  } catch (err) {
+    yield put(actions.getSubcomments.getSubcommentsFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* createSubcommentSaga(action) {
+  try {
+    const subcomments = yield call(api.createSubcomments, action.payload);
+    yield put(actions.createSubcomments.createSubcommentsSuccess(subcomments.data));
+    toast.success("Comment replied");
+  } catch (err) {
+    yield put(actions.createSubcomments.createSubcommentsFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* updateSubcommentSaga(action) {
+  try {
+    const subcomments = yield call(api.updateSubcomments, action.payload);
+    yield put(actions.updateSubcomments.updateSubcommentsSuccess(subcomments.data));
+    toast.success("Updated reply successfully");
+  } catch (err) {
+    yield put(actions.updateSubcomments.updateSubcommentsFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* deleteSubcommentSaga(action) {
+  try {
+    const subcomments = yield call(api.deleteSubcomments, action.payload);
+    yield put(actions.deleteSubcomments.deleteSubcommentsSuccess(subcomments.data));
+    toast.success("Deleted reply successfully");
+  } catch (err) {
+    yield put(actions.deleteSubcomments.deleteSubcommentsFailure(err));
+    toast.error(getError(err));
+  }
+}
 function* mysaga() {
   //post
   yield takeLatest(actions.getPosts.getPostsRequest, fetchPostSaga);
   yield takeLatest(actions.getAllPosts.getAllPostsRequest, fetchAllPostsSaga);
   yield takeLatest(actions.updatePosts.updatePostsRequest, updatePostSaga);
+  yield takeLatest(actions.updatePostsLike.updatePostsLikeRequest, updatePostLikeSaga);
   yield takeLatest(
     actions.updatePostAccept.updatePostAcceptRequest,
     updatePostAcceptSaga
@@ -335,6 +385,20 @@ function* mysaga() {
   yield takeLatest(
     actions.updateComments.updateCommentsRequest,
     updateCommentSaga
+  );
+  //Subcomment
+  yield takeLatest(actions.getSubcomments.getSubcommentsRequest, fetchSubcommentSaga);
+  yield takeLatest(
+    actions.createSubcomments.createSubcommentsRequest,
+    createSubcommentSaga
+  );
+  yield takeLatest(
+    actions.deleteSubcomments.deleteSubcommentsRequest,
+    deleteSubcommentSaga
+  );
+  yield takeLatest(
+    actions.updateSubcomments.updateSubcommentsRequest,
+    updateSubcommentSaga
   );
 }
 export default mysaga;

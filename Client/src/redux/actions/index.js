@@ -24,6 +24,11 @@ export const updatePosts = createActions({
   updatePostsSuccess: (payload) => payload,
   updatePostsFailure: (err) => err,
 });
+export const updatePostsLike = createActions({
+  updatePostsLikeRequest: (payload) => payload,
+  updatePostsLikeSuccess: (payload) => payload,
+  updatePostsLikeFailure: (err) => err,
+});
 export const updatePostAccept = createActions({
   updatePostAcceptRequest: (payload) => payload,
   updatePostAcceptSuccess: (payload) => payload,
@@ -116,6 +121,27 @@ export const deleteComments = createActions({
   deleteCommentsRequest: (payload) => payload,
   deleteCommentsSuccess: (payload) => payload,
   deleteCommentsFailure: (err) => err,
+});
+//Subcomment
+export const getSubcomments = createActions({
+  getSubcommentsRequest: (payload) => payload,
+  getSubcommentsSuccess: (payload) => payload,
+  getSubcommentsFailure: (err) => err,
+});
+export const createSubcomments = createActions({
+  createSubcommentsRequest: (payload) => payload,
+  createSubcommentsSuccess: (payload) => payload,
+  createSubcommentsFailure: (err) => err,
+});
+export const updateSubcomments = createActions({
+  updateSubcommentsRequest: (payload) => payload,
+  updateSubcommentsSuccess: (payload) => payload,
+  updateSubcommentsFailure: (err) => err,
+});
+export const deleteSubcomments = createActions({
+  deleteSubcommentsRequest: (payload) => payload,
+  deleteSubcommentsSuccess: (payload) => payload,
+  deleteSubcommentsFailure: (err) => err,
 });
 export const showModal = createAction("SHOW_CREATE_POST_MODEL");
 export const hideModal = createAction("HIDE_CREATE_POST_MODAL");

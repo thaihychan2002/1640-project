@@ -13,6 +13,7 @@ import roles from './routers/role.js'
 import { v2 as cloudinary } from 'cloudinary'
 import { fileURLToPath } from 'url'
 import path from 'path'
+import cookieParser from 'cookie-parser'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
@@ -23,14 +24,31 @@ const URI =
 app.use(bodyParser.json({ limit: '30mb' }))
 app.use(bodyParser.urlencoded({ limit: '30mb' }))
 app.use(morgan('combined'))
-app.use(cors())
+app.use(cookieParser())
+const allowOrigin = ['http://localhost:3000']
+const corsOptions = {
+  credentials: true,
+  origin: allowOrigin,
+  allowedHeaders: [
+    'Origin',
+    'Content-Type',
+    'Accept',
+    'x-access-token',
+    'authorization',
+    'x-signature',
+  ],
+  methods: 'GET, HEAD, OPTIONS, PUT, PATCH, POST, DELETE',
+  preflightContinue: false,
+}
+app.use(cors(corsOptions))
+
 app.use('/posts', posts)
 app.use('/users', users)
 app.use('/roles', roles)
 app.use('/departments', departments)
 app.use('/topics', topics)
 app.use('/comments', comments)
-app.use('/subcomment',subcomments)
+app.use('/subcomments',subcomments)
 app.get('/', (req, res) => {
   res.send('SUCCESS')
   console.log('SUCCESS')

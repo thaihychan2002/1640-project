@@ -22,4 +22,8 @@ export const INIT_STATE = {
     isLoading: false,
     data: [],
   },
+  subcomments: {
+    isLoading: false,
+    data: [],
+  },
 };

@@ -58,7 +58,7 @@ const PostDetails = () => {
     if (likeActive) {
       setLikeActive(false);
       dispatch(
-        actions.updatePosts.updatePostsRequest({
+        actions.updatePostsLike.updatePostsLikeRequest({
           _id: allData._id,
           likeCount: allData.likeCount - 1,
         })
@@ -66,7 +66,7 @@ const PostDetails = () => {
     } else {
       setLikeActive(true);
       dispatch(
-        actions.updatePosts.updatePostsRequest({
+        actions.updatePostsLike.updatePostsLikeRequest({
           _id: allData._id,
           likeCount: allData.likeCount + 1,
         })
@@ -74,7 +74,7 @@ const PostDetails = () => {
       if (dislikeActive) {
         setDislikeActive(false);
         dispatch(
-          actions.updatePosts.updatePostsRequest({
+          actions.updatePostsLike.updatePostsLikeRequest({
             _id: allData._id,
             likeCount: allData.likeCount + 2,
           })
@@ -86,7 +86,7 @@ const PostDetails = () => {
     if (dislikeActive) {
       setDislikeActive(false);
       dispatch(
-        actions.updatePosts.updatePostsRequest({
+        actions.updatePostsLike.updatePostsLikeRequest({
           _id: allData._id,
           likeCount: allData.likeCount + 1,
         })
@@ -94,7 +94,7 @@ const PostDetails = () => {
     } else {
       setDislikeActive(true);
       dispatch(
-        actions.updatePosts.updatePostsRequest({
+        actions.updatePostsLike.updatePostsLikeRequest({
           _id: allData._id,
           likeCount: allData.likeCount - 1,
         })
@@ -102,7 +102,7 @@ const PostDetails = () => {
       if (likeActive) {
         setLikeActive(false);
         dispatch(
-          actions.updatePosts.updatePostsRequest({
+          actions.updatePostsLike.updatePostsLikeRequest({
             _id: allData._id,
             likeCount: allData.likeCount - 2,
           })

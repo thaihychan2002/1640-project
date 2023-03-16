@@ -45,7 +45,7 @@ export const getPostBySlug = async (req, res) => {
 }
 export const createPosts = async (req, res, next) => {
   try {
-    // const result = await DepartmentModel.distinct('name')
+    const result = await DepartmentModel.distinct('name')
     const resultDepartments = await DepartmentModel.distinct('_id')
     const resultTopics = await TopicsModel.distinct('_id')
     const createPostSchema = joi.object({
@@ -75,16 +75,26 @@ export const createPosts = async (req, res, next) => {
     }
     post.slug = slug(req.body.title)
     await post.save()
-    const createdpost = await PostModel.findOne({ _id: post._id, status:"Accepted" })
+    const createdpost = await PostModel.findOne({ _id: post._id })
       .populate('author')
       .populate('topic')
       .populate('department')
     // send email
+
+    const users = await UserModel.find({
+      department: req.body.department,
+    }).populate('role', 'name')
+
+    const coordinator = users.filter(
+      (user) => user.role.name === 'QA Coordinator'
+    )
+    const email = coordinator.map((cor) => cor.email)
+    // send email to coordinator
     let mailOptions = {
       from: process.env.GMAIL_USER,
-      to: 'lyhungphat25@gmail.com',
+      to: email.join(', '),
       subject: 'New idea posted',
-      text: 'Hello there, one idea of user has been sent',
+      text: 'Hello there, user of your department has been sent an idea',
     }
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -146,6 +156,25 @@ export const updatePosts = async (req, res, next) => {
     next(err)
   }
 }
+export const updatePostsLike = async (req, res, next) => {
+  try {
+    const updatePosts = req.body
+    const post = await PostModel.findByIdAndUpdate(
+      { _id: updatePosts._id },
+      { ...updatePosts },
+      { new: true }
+    )
+      .populate('author')
+      .populate('topic')
+      .populate('department')
+    res.status(200).json(post)
+  } catch (err) {
+    if (err.isJoi === true) {
+      res.status(422).send({ message: `${err.details[0].message}` })
+    }
+    next(err)
+  }
+}
 export const deletePosts = async (req, res) => {
   try {
     const post = await PostModel.findById(req.params.id)
@@ -163,9 +192,25 @@ export const deletePosts = async (req, res) => {
 }
 export const deletePostByAdmin = async (req, res) => {
   try {
-    const post = await PostModel.findById(req.params.id)
+    const post = await PostModel.findById(req.params.id).populate(
+      'author',
+      'email'
+    )
     if (post) {
       await post.remove()
+      let mailOptions = {
+        from: process.env.GMAIL_USER,
+        to: post.author.email,
+        subject: 'Your idea has been deleted',
+        text: `We are sad when your idea with title: ${post.title} has been deleted :(`,
+      }
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log('Error occurred: ' + error.message)
+        } else {
+          console.log('Email sent: ' + info.response)
+        }
+      })
       res.status(200).send(post)
     } else {
       res.status(404).send({ message: 'Cannot delete other post' })
@@ -333,7 +378,21 @@ export const updatePostToAccepted = async (req, res) => {
       { _id: updatePosts._id },
       { status: 'Accepted' },
       { new: true }
-    )
+    ).populate('author', 'email')
+    let mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: post.author.email,
+      subject: 'Your idea has been accepted',
+      text: `We are happy when your idea with title: ${post.title} has been accepted :D`,
+    }
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('Error occurred: ' + error.message)
+      } else {
+        console.log('Email sent: ' + info.response)
+      }
+    })
+
     res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })
@@ -346,7 +405,20 @@ export const updatePostToRejected = async (req, res) => {
       { _id: updatePosts._id },
       { status: 'Rejected' },
       { new: true }
-    )
+    ).populate('author', 'email')
+    let mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: post.author.email,
+      subject: 'Your idea has been rejected',
+      text: `We are sad when your idea with title: ${post.title} has been rejected :(`,
+    }
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('Error occurred: ' + error.message)
+      } else {
+        console.log('Email sent: ' + info.response)
+      }
+    })
     res.status(200).json(post)
   } catch (err) {
     res.status(500).json({ error: err })

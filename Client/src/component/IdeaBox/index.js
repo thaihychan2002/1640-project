@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState } from "react";
+import React, { useRef, useContext, useState, useEffect } from "react";
 import { Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
@@ -37,6 +37,8 @@ export default function IdeaBox() {
   const { isShow } = useSelector(modalState$);
   const { state } = useContext(Store);
   const { userInfo } = state;
+  const user = state.userInfo;
+
   const [data, setdata] = React.useState({
     title: "",
     author: "",
@@ -93,7 +95,6 @@ export default function IdeaBox() {
     };
   };
 
-  const user = state.userInfo;
   const holder = "What's on your mind " + user.fullName + "?";
   const modules = {
     toolbar: [[{ size: [] }], ["bold", "italic", "underline"]],
@@ -187,6 +188,7 @@ export default function IdeaBox() {
                       ...data,
                       title: e.target.value,
                       author: userInfo._id,
+                      department: userInfo.department._id,
                     })
                   }
                   required

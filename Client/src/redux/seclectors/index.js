@@ -11,3 +11,5 @@ export const topicsLoading$ = (state) => state.topics.isLoading;
 export const commentsState$ = (state) => state.comments.data;
 export const commentsLoading$ = (state) => state.comments.isLoading;
 export const conditionCmtState$ = (state) => state.ConditionCmt.data;
+export const subcommentsState$ = (state) => state.subcomments.data;
+export const subcommentsLoading$ = (state) => state.subcomments.isLoading;

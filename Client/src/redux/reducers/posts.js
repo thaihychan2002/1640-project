@@ -8,6 +8,7 @@ import {
   updatePostAccept,
   updatePostReject,
   deletePostByAdmin,
+  updatePostsLike,
 } from "../actions";
 
 export default function postsReducers(state = INIT_STATE.posts, action) {
@@ -34,6 +35,13 @@ export default function postsReducers(state = INIT_STATE.posts, action) {
         data: [...state.data, action.payload],
       };
     case getType(updatePosts.updatePostsSuccess):
+      return {
+        ...state,
+        data: state.data?.map((post) =>
+          post._id === action.payload._id ? action.payload : post
+        ),
+      };
+    case getType(updatePostsLike.updatePostsLikeSuccess):
       return {
         ...state,
         data: state.data?.map((post) =>

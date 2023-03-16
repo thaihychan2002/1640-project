@@ -6,7 +6,7 @@ import { transporter } from '../utils.js'
 export const getSubcomment = async (req, res) => {
     try {
         const newsubcomment = req.body
-        const subcomment = await SubcommentModel.find({ commentID: newsubcomment._id })
+        const subcomment = await SubcommentModel.find()
             .sort({ createdAt: -1 })
             .populate('author')
             .populate('postID')
@@ -43,6 +43,25 @@ export const createSubcomment = async (req, res) => {
             } else {
                 console.log('Email sent: ' + info.response)
             }
+        })
+        const mailers = await SubcommentModel.find({ commentID: req.body.commentID })
+            .populate('author')
+            .populate('postID')
+            .populate('commentID')
+            .exec()
+        mailers?.filter((mail) => mail?.commentID?._id !== comment._id && mail?.author?._id !== subcomment?.author?._id).map((mail) => {
+            transporter.sendMail({
+                from: process.env.GMAIL_USER,
+                to: `${mail.author.email}`,
+                subject: 'Your activity have a new interact',
+                text: 'Hello there, your activity have a new interact. Check it now',
+            }, (error, info) => {
+                if (error) {
+                    console.log('Error occurred: ' + error.message)
+                } else {
+                    console.log('Email sent: ' + info.response)
+                }
+            })
         })
         res.status(200).json(subcomment)
     } catch (err) {

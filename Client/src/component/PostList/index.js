@@ -72,7 +72,7 @@ export default function PostList() {
         {isLoading ? (
           <LoadingBox />
         ) :posts ? (
-          posts?.map((post) => <Post key={post._id} post={post} />)
+          posts?.filter((post)=>post?.status==='Accepted').map((post) => <Post key={post._id} post={post} />)
         ) : (
           <NoPost />
         )}
