@@ -19,6 +19,7 @@ import { getError } from "../../utils";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useMediaQuery } from "@material-ui/core";
+import Responsive from "../ResponsiveCode/Responsive";
 
 const { Option } = Select;
 
@@ -26,7 +27,7 @@ export default function IdeaBox() {
   const dispatch = useDispatch();
   const departments = useSelector(departmentsState$);
   const categories = useSelector(categoriesState$);
-  const isXs = useMediaQuery("(max-width:600px)");
+  const { isXs } = Responsive();
 
   const [isChecked, setIsChecked] = useState(false);
 

@@ -11,6 +11,11 @@ import PostDetails from "../pages/AuthPages/PostDetails";
 import SearchPage from "../pages/AuthPages/SearchPage";
 import DepartmentPage from "../pages/AuthPages/DepartmentPage";
 import CategoryPage from "../pages/AuthPages/CategoryPage";
+import AccountEdit from "../pages/AuthPages/AccountEdit";
+import ForgotPasswordSignedIn from "../component/ProfileEdit/ForgotPasswordSignedIn";
+import ResetPassword from "../component/ProfileEdit/ResetPassword";
+import { token } from "../api/config";
+import ForgotPassword from "../component/ProfileEdit/ForgotPassword";
 export const AllRoutes = [
   {
     path: "/",
@@ -40,6 +45,22 @@ export const AllRoutes = [
         <Profile />
       </UserRoute>
     ),
+  },
+  {
+    path: "/edit",
+    element: (
+      <UserRoute>
+        <AccountEdit />
+      </UserRoute>
+    ),
+  },
+  {
+    path: "/forgot-password",
+    element: token ? <ForgotPasswordSignedIn /> : <ForgotPassword />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword />,
   },
   {
     path: "/dashboard",

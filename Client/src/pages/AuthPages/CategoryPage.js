@@ -17,6 +17,7 @@ import { fetchPostsByCategory } from "../../api";
 import Post from "../../component/PostList/Post";
 import NoPost from "../../component/NoPost";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
+import Responsive from "../../component/ResponsiveCode/Responsive";
 
 const { Option } = Select;
 export default function CategoryPage() {
@@ -28,8 +29,7 @@ export default function CategoryPage() {
   const changePostsView = (value) => {
     setSelectedViewCategory(value);
   };
-  const isXs = useMediaQuery("(max-width:600px)");
-  const isSm = useMediaQuery("(max-width:900px)");
+  const { isXs, isMd } = Responsive();
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -74,7 +74,7 @@ export default function CategoryPage() {
                   defaultValue="View Any Categories"
                   onChange={changePostsView}
                   style={{
-                    width: isXs ? "100%" : isSm ? "35%" : "25%",
+                    width: isXs ? "100%" : isMd ? "35%" : "25%",
                     marginTop: 10,
                   }}
                 >

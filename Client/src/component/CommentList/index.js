@@ -9,6 +9,7 @@ import { Store } from "../../Store";
 import { commentsLoading$, commentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { Select } from "antd";
+import Responsive from "../ResponsiveCode/Responsive";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -20,7 +21,8 @@ export default function CommentList({ post }) {
   const isLoading = useSelector(commentsLoading$);
   const [selectedcdt, setSelectedcdt] = useState("recently");
   const { state } = useContext(Store);
-  const isXs = useMediaQuery("(max-width:400px");
+  const { isXs } = Responsive();
+
   React.useEffect(() => {
     dispatch(actions.getConditionCmts.getCmtsRequest({ status: selectedcdt }));
   }, [dispatch, selectedcdt]);

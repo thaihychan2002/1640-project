@@ -14,13 +14,14 @@ import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import CommentList from "../../component/CommentList";
 import { commentsState$ } from "../../redux/seclectors";
+import Responsive from "../../component/ResponsiveCode/Responsive";
 const PostDetails = () => {
   const [allData, setAllData] = useState({});
   const params = useParams();
   const { slug } = params;
   const comments = useSelector(commentsState$);
   const dispatch = useDispatch();
-  const isXs = useMediaQuery("(max-width:400px)");
+  const { isXs } = Responsive();
 
   useEffect(() => {
     const fetchPost = async () => {

@@ -1,12 +1,6 @@
 import axios from "axios";
 import { URL, token } from "./config.js";
-// import jwtDecode from "jwt-decode";
 
-// // export const userID = () =>jwtDecode(token)._id;
-// export const userID = () => {
-//   if (token) return jwtDecode(token)._id;
-// };
-//config axios
 const axiosInstance = axios.create({
   baseURL: URL,
   withCredentials: true,
@@ -15,6 +9,10 @@ axiosInstance.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+export const forgotPassword = (email) =>
+  axios.post(`${URL}/users/forgot-password`, { email });
+export const resetPassword = (token, newPassword) =>
+  axios.post(`${URL}/users/reset-password`, { token, newPassword });
 export const refresh = () =>
   axios.get(`${URL}/users/refresh`, { withCredentials: true });
 // posts
@@ -105,6 +103,7 @@ export const fetchRecentlyCmts = (payload) =>
 export const fetchUsers = () => axiosInstance.get(`/users`);
 export const fetchUserByID = (userID) =>
   axiosInstance.post(`/users/getUserById/`, { userID });
+
 //logout user
 export const logout = () => axiosInstance.post(`/users/logout`);
 //login user
@@ -144,6 +143,12 @@ export const updateUserProfile = (userID, fullName, data) =>
     fullName,
     data,
     userID,
+  });
+export const changePasswordUser = (userID, oldPassword, newPassword) =>
+  axiosInstance.put("/users/changePassword", {
+    userID,
+    oldPassword,
+    newPassword,
   });
 //delete user
 

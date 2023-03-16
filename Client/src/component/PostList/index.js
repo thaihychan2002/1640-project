@@ -10,6 +10,7 @@ import { useMediaQuery } from "@material-ui/core";
 import { Select } from "antd";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
+import Responsive from "../ResponsiveCode/Responsive";
 
 const { Option } = Select;
 export default function PostList() {
@@ -42,8 +43,7 @@ export default function PostList() {
     setSelectedView(value);
   };
 
-  const isXs = useMediaQuery("(max-width:600px)");
-  const isSm = useMediaQuery("(max-width:900px)");
+  const { isXs, isMd } = Responsive();
 
   return (
     <Grid container spacing={2} alignItems="stretch">
@@ -56,7 +56,7 @@ export default function PostList() {
             defaultValue="View Recently Posts"
             onChange={changePostsView}
             style={{
-              width: isXs ? "100%" : isSm ? "35%" : "25%",
+              width: isXs ? "100%" : isMd ? "35%" : "25%",
               marginTop: 10,
             }}
           >
