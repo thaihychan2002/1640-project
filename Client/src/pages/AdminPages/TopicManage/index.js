@@ -5,12 +5,12 @@ import {
   topicsState$,
 } from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Space, Table, Button, Modal, Input, Typography } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 import Topic from "./topic";
-import moment, { now } from "moment";
+import moment from "moment";
 import { DatePicker } from "antd";
 
 const { TextArea } = Input;
@@ -27,9 +27,10 @@ export default function TopicManage() {
     end: "",
     status: "Processing"
   });
-  // moment(new Date()).format("MM:DD:YYYY")
-  const today = new Date()
-  const current =moment(today).format("MM:DD:YYYY")
+  const today = useMemo(() => {
+    new Date();
+  }, [])
+  const current = moment(today).format("MM:DD:YYYY")
   const topic = topics?.map((topic) => ({
     key: topic._id,
     name: topic.name,
@@ -48,7 +49,7 @@ export default function TopicManage() {
   );
   const disabledPassDates = React.useCallback((current) => {
     return current && current < moment(today);
-  }, []);
+  }, [today]);
   React.useEffect(() => {
     topics.filter((topic) => topic.status === "Processing")?.map((item) => moment(item.end).format("MM:DD:YYYY") < current && dispatch_Topic(actions.updateTopicStatus.updateTopicStatusRequest({ _id: item._id, status: "Ended" })))
   }, [topics, dispatch_Topic, current])
@@ -127,7 +128,7 @@ export default function TopicManage() {
         <Modal
           open={ModalTopicOpen}
           onOk={handleclose}
-          onTopicncel={handleclose}
+          onCancel={handleclose}
           footer={null}
           style={{ width: 400, height: 350 }}
         >

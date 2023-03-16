@@ -1,23 +1,27 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import * as actions from "../../../../redux/actions";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Modal, Input, DatePicker, Typography } from "antd";
+import moment from "moment";
 
 const { TextArea } = Input;
 
 export default function Topic({ record_Topic }) {
   const dispatch_ca = useDispatch();
   const [ModalCatUpdate, setModalCatUpdate] = useState(false);
+  const today = useMemo(() => {
+    new Date();
+  }, [])
+  const current = moment(today).format("MM:DD:YYYY")
   const [data, setdata] = React.useState({
     name: record_Topic.name,
     description: record_Topic.description,
     begin: record_Topic.begindate,
     end: record_Topic.enddate,
-    status: record_Topic.status,
+    status: moment(record_Topic.enddate).format("MM:DD:YYYY") >= current ? "Processing" : "Ended"
   });
- 
   const handleOk = React.useCallback(() => {
     setModalCatUpdate(false);
   }, []);
@@ -32,7 +36,6 @@ export default function Topic({ record_Topic }) {
       })
     );
     handleOk();
-    setdata({ _id: "", name: "", begin: "", end: "" });
   }, [data, dispatch_ca, record_Topic, handleOk]);
   function onSelectBegin(date, dateString) {
     data.begin = dateString;
