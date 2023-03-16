@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
 import { Grid } from "@material-ui/core";
 import Post from "./Post";
 import IdeaBox from "../IdeaBox";
-import { postsState$, postsLoading$ } from "../../redux/seclectors";
+import { postsState$, postsLoading$,topicsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { Select } from "antd";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
+import moment from "moment";
 import Responsive from "../ResponsiveCode/Responsive";
 
 const { Option } = Select;
@@ -16,7 +17,12 @@ export default function PostList() {
   const dispatch = useDispatch();
   const posts = useSelector(postsState$);
   const isLoading = useSelector(postsLoading$);
+  const topics = useSelector(topicsState$);
   const [selectedView, setSelectedView] = useState("recently");
+  const today = useMemo(() => {
+    new Date();
+  }, [])
+  const current = moment(today).format("MM:DD:YYYY")
   React.useEffect(() => {
     try {
       dispatch(actions.getPosts.getPostsRequest(selectedView));
@@ -38,6 +44,9 @@ export default function PostList() {
       toast.error(getError(err));
     }
   }, [dispatch]);
+  React.useEffect(() => {
+    topics.filter((topic) => topic.status === "Processing")?.map((item) => moment(item.end).format("MM:DD:YYYY") < current && dispatch(actions.updateTopicStatus.updateTopicStatusRequest({ _id: item._id, status: "Ended" })))
+  }, [topics, dispatch, current])
   const changePostsView = (value) => {
     setSelectedView(value);
   };

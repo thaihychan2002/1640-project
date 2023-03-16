@@ -5,7 +5,7 @@ import {
   topicsState$,
 } from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Space, Table, Button, Modal, Input, Typography } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
@@ -27,14 +27,17 @@ export default function TopicManage() {
     end: "",
     status: "Processing"
   });
-  
+  const today = useMemo(() => {
+    new Date();
+  }, [])
+  const current = moment(today).format("MM:DD:YYYY")
   const topic = topics?.map((topic) => ({
     key: topic._id,
     name: topic.name,
     description: topic.description,
     begindate: topic.begin,
     enddate: topic.end,
-    status: topic.status
+    status: moment(topic.end).format("MM:DD:YYYY") >= current ? "Processing" : "Ended"
   }));
   const deletedepartHandler = React.useCallback(
     (record_Topic) => {
@@ -45,12 +48,11 @@ export default function TopicManage() {
     [dispatch_Topic]
   );
   const disabledPassDates = React.useCallback((current) => {
-    return current && current < moment().endOf("day");
-  }, []);
-  React.useEffect(()=>{
-    const current = moment(new Date()).format("MM:DD:YYYY")
-    topic.map((item)=>moment(item.enddate).format("MM:DD:YYYY")>=current?item:dispatch_Topic( actions.updateTopicStatus.updateTopicStatusRequest({_id:item.key,status:"Ended"})))
-  },[topic,dispatch_Topic])
+    return current && current < moment(today);
+  }, [today]);
+  React.useEffect(() => {
+    topics.filter((topic) => topic.status === "Processing")?.map((item) => moment(item.end).format("MM:DD:YYYY") < current && dispatch_Topic(actions.updateTopicStatus.updateTopicStatusRequest({ _id: item._id, status: "Ended" })))
+  }, [topics, dispatch_Topic, current])
   const columns = [
     {
       title: "Topic",
@@ -126,7 +128,7 @@ export default function TopicManage() {
         <Modal
           open={ModalTopicOpen}
           onOk={handleclose}
-          onTopicncel={handleclose}
+          onCancel={handleclose}
           footer={null}
           style={{ width: 400, height: 350 }}
         >
