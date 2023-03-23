@@ -4,7 +4,11 @@ import * as actions from "../../redux/actions";
 import { Grid } from "@material-ui/core";
 import Post from "./Post";
 import IdeaBox from "../IdeaBox";
-import { postsState$, postsLoading$,topicsState$ } from "../../redux/seclectors";
+import {
+  postsState$,
+  postsLoading$,
+  topicsState$,
+} from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 import { Select } from "antd";
 import { toast } from "react-toastify";
@@ -21,8 +25,8 @@ export default function PostList() {
   const [selectedView, setSelectedView] = useState("recently");
   const today = useMemo(() => {
     new Date();
-  }, [])
-  const current = moment(today).format("MM:DD:YYYY")
+  }, []);
+  const current = moment(today).format("MM:DD:YYYY");
   React.useEffect(() => {
     try {
       dispatch(actions.getPosts.getPostsRequest(selectedView));
@@ -39,14 +43,32 @@ export default function PostList() {
   }, [dispatch]);
   React.useEffect(() => {
     try {
+      dispatch(actions.getCategory.getCategoryRequest());
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  }, [dispatch]);
+  React.useEffect(() => {
+    try {
       dispatch(actions.getTopics.getTopicsRequest());
     } catch (err) {
       toast.error(getError(err));
     }
   }, [dispatch]);
   React.useEffect(() => {
-    topics.filter((topic) => topic.status === "Processing")?.map((item) => moment(item.end).format("MM:DD:YYYY") < current && dispatch(actions.updateTopicStatus.updateTopicStatusRequest({ _id: item._id, status: "Ended" })))
-  }, [topics, dispatch, current])
+    topics
+      .filter((topic) => topic.status === "Processing")
+      ?.map(
+        (item) =>
+          moment(item.end).format("MM:DD:YYYY") < current &&
+          dispatch(
+            actions.updateTopicStatus.updateTopicStatusRequest({
+              _id: item._id,
+              status: "Ended",
+            })
+          )
+      );
+  }, [topics, dispatch, current]);
   const changePostsView = (value) => {
     setSelectedView(value);
   };
@@ -79,7 +101,9 @@ export default function PostList() {
         {isLoading ? (
           <LoadingBox />
         ) : (
-          posts?.filter((post) => post?.status === 'Accepted').map((post) => <Post key={post._id} post={post} />)
+          posts
+            ?.filter((post) => post?.status === "Accepted")
+            .map((post) => <Post key={post._id} post={post} />)
         )}
       </Grid>
     </Grid>

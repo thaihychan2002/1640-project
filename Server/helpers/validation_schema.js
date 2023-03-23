@@ -44,7 +44,7 @@ export const createTopicSchema = joi.object({
   description: joi.string().min(10).required(),
   begin: joi.date().greater('1-1-2023').less('12-31-2025').required(),
   end: joi.date().greater('1-1-2023').less('12-31-2025').required(),
-  status:joi.string().required(),
+  status: joi.string().required(),
 })
 export const updateTopicSchema = joi.object({
   _id: joi.string().required(),
@@ -52,11 +52,11 @@ export const updateTopicSchema = joi.object({
   description: joi.string().min(10).required(),
   begin: joi.date().greater('1-1-2023').less('12-31-2025').required(),
   end: joi.date().greater('1-1-2023').less('12-31-2025').required(),
-  status:joi.string().required(),
+  status: joi.string().required(),
 })
 export const updateTopicStatusSchema = joi.object({
   _id: joi.string().required(),
-  status:joi.string().required(),
+  status: joi.string().required(),
 })
 // Role
 export const createRoleSchema = joi.object({
@@ -71,6 +71,14 @@ export const createDepartmentSchema = joi.object({
   name: joi.string().required(),
 })
 export const updateDepartmentSchema = joi.object({
+  _id: joi.string().required(),
+  name: joi.string().required(),
+})
+//categories
+export const createCategorySchema = joi.object({
+  name: joi.string().required(),
+})
+export const updateCategorySchema = joi.object({
   _id: joi.string().required(),
   name: joi.string().required(),
 })

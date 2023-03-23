@@ -58,7 +58,9 @@ function* updatePostSaga(action) {
 function* updatePostLikeSaga(action) {
   try {
     const updatedPostLike = yield call(api.updatePostsLike, action.payload);
-    yield put(actions.updatePostsLike.updatePostsLikeSuccess(updatedPostLike.data));
+    yield put(
+      actions.updatePostsLike.updatePostsLikeSuccess(updatedPostLike.data)
+    );
   } catch (err) {
     console.log(err);
     yield put(actions.updatePosts.updatePostsFailure(err));
@@ -159,6 +161,50 @@ function* deleteDepartmentSaga(action) {
     toast.error(getError(err));
   }
 }
+//category
+function* fetchCategorySaga(action) {
+  try {
+    const categories = yield call(api.fetchCategory);
+    yield put(actions.getCategory.getCategorySuccess(categories.data));
+  } catch (err) {
+    yield put(actions.getCategory.getCategoryFailure(err));
+    toast.error(getError(err));
+  }
+}
+
+function* createCategorySaga(action) {
+  try {
+    const categories = yield call(api.createCategory, action.payload);
+    yield put(actions.createCategory.createCategorySuccess(categories.data));
+    toast.success("Created category successfully");
+  } catch (err) {
+    yield put(actions.createCategory.createCategoryFailure(err));
+    toast.error(getError(err));
+  }
+}
+
+function* updateCategorySaga(action) {
+  try {
+    const categories = yield call(api.updateCategory, action.payload);
+    yield put(actions.updateCategory.updateCategorySuccess(categories.data));
+    toast.success("Updated category successfully");
+  } catch (err) {
+    yield put(actions.updateCategory.updateCategoryFailure(err));
+    toast.error(getError(err));
+  }
+}
+
+function* deleteCategorySaga(action) {
+  try {
+    const categories = yield call(api.deleteCategory, action.payload);
+    yield put(actions.deleteCategory.deleteCategorySuccess(categories.data));
+    toast.success("Deleted category successfully");
+  } catch (err) {
+    yield put(actions.deleteCategory.deleteCategoryFailure(err));
+    toast.error(getError(err));
+  }
+}
+
 // topic
 function* fetchTopicSaga(action) {
   try {
@@ -172,9 +218,7 @@ function* fetchTopicSaga(action) {
 function* createTopicSaga(action) {
   try {
     const topics = yield call(api.createTopics, action.payload);
-    yield put(
-      actions.createTopics.createTopicsSuccess(topics.data)
-    );
+    yield put(actions.createTopics.createTopicsSuccess(topics.data));
     toast.success("Created topic successfully");
   } catch (err) {
     yield put(actions.createTopics.createTopicsFailure(err));
@@ -184,9 +228,7 @@ function* createTopicSaga(action) {
 function* updateTopicSaga(action) {
   try {
     const topics = yield call(api.updateTopics, action.payload);
-    yield put(
-      actions.updateTopics.updateTopicsSuccess(topics.data)
-    );
+    yield put(actions.updateTopics.updateTopicsSuccess(topics.data));
     toast.success("Updated topic successfully");
   } catch (err) {
     yield put(actions.updateTopics.updateTopicsFailure(err));
@@ -196,9 +238,7 @@ function* updateTopicSaga(action) {
 function* updateTopicStatusSaga(action) {
   try {
     const topics = yield call(api.updateTopicStatus, action.payload);
-    yield put(
-      actions.updateTopicStatus.updateTopicStatusSuccess(topics.data)
-    );
+    yield put(actions.updateTopicStatus.updateTopicStatusSuccess(topics.data));
   } catch (err) {
     yield put(actions.updateTopics.updateTopicsFailure(err));
     toast.error(getError(err));
@@ -207,9 +247,7 @@ function* updateTopicStatusSaga(action) {
 function* deleteTopicSaga(action) {
   try {
     const topics = yield call(api.deleteTopics, action.payload);
-    yield put(
-      actions.deleteTopics.deleteTopicsSuccess(topics.data)
-    );
+    yield put(actions.deleteTopics.deleteTopicsSuccess(topics.data));
     toast.success("Deleted topic successfully");
   } catch (err) {
     yield put(actions.deleteTopics.deleteTopicsFailure(err));
@@ -283,7 +321,9 @@ function* fetchSubcommentSaga(action) {
 function* createSubcommentSaga(action) {
   try {
     const subcomments = yield call(api.createSubcomments, action.payload);
-    yield put(actions.createSubcomments.createSubcommentsSuccess(subcomments.data));
+    yield put(
+      actions.createSubcomments.createSubcommentsSuccess(subcomments.data)
+    );
     toast.success("Comment replied");
   } catch (err) {
     yield put(actions.createSubcomments.createSubcommentsFailure(err));
@@ -293,7 +333,9 @@ function* createSubcommentSaga(action) {
 function* updateSubcommentSaga(action) {
   try {
     const subcomments = yield call(api.updateSubcomments, action.payload);
-    yield put(actions.updateSubcomments.updateSubcommentsSuccess(subcomments.data));
+    yield put(
+      actions.updateSubcomments.updateSubcommentsSuccess(subcomments.data)
+    );
     toast.success("Updated reply successfully");
   } catch (err) {
     yield put(actions.updateSubcomments.updateSubcommentsFailure(err));
@@ -303,7 +345,9 @@ function* updateSubcommentSaga(action) {
 function* deleteSubcommentSaga(action) {
   try {
     const subcomments = yield call(api.deleteSubcomments, action.payload);
-    yield put(actions.deleteSubcomments.deleteSubcommentsSuccess(subcomments.data));
+    yield put(
+      actions.deleteSubcomments.deleteSubcommentsSuccess(subcomments.data)
+    );
     toast.success("Deleted reply successfully");
   } catch (err) {
     yield put(actions.deleteSubcomments.deleteSubcommentsFailure(err));
@@ -315,7 +359,10 @@ function* mysaga() {
   yield takeLatest(actions.getPosts.getPostsRequest, fetchPostSaga);
   yield takeLatest(actions.getAllPosts.getAllPostsRequest, fetchAllPostsSaga);
   yield takeLatest(actions.updatePosts.updatePostsRequest, updatePostSaga);
-  yield takeLatest(actions.updatePostsLike.updatePostsLikeRequest, updatePostLikeSaga);
+  yield takeLatest(
+    actions.updatePostsLike.updatePostsLikeRequest,
+    updatePostLikeSaga
+  );
   yield takeLatest(
     actions.updatePostAccept.updatePostAcceptRequest,
     updatePostAcceptSaga
@@ -347,23 +394,25 @@ function* mysaga() {
     actions.updateDepartments.updateDepartmentsRequest,
     updateDepartmentSaga
   );
+  //category
+  yield takeLatest(actions.getCategory.getCategoryRequest, fetchCategorySaga);
+  yield takeLatest(
+    actions.createCategory.createCategoryRequest,
+    createCategorySaga
+  );
+  yield takeLatest(
+    actions.deleteCategory.deleteCategoryRequest,
+    deleteCategorySaga
+  );
+  yield takeLatest(
+    actions.updateCategory.updateCategoryRequest,
+    updateCategorySaga
+  );
   //topic
-  yield takeLatest(
-    actions.getTopics.getTopicsRequest,
-    fetchTopicSaga
-  );
-  yield takeLatest(
-    actions.createTopics.createTopicsRequest,
-    createTopicSaga
-  );
-  yield takeLatest(
-    actions.deleteTopics.deleteTopicsRequest,
-    deleteTopicSaga
-  );
-  yield takeLatest(
-    actions.updateTopics.updateTopicsRequest,
-    updateTopicSaga
-  );
+  yield takeLatest(actions.getTopics.getTopicsRequest, fetchTopicSaga);
+  yield takeLatest(actions.createTopics.createTopicsRequest, createTopicSaga);
+  yield takeLatest(actions.deleteTopics.deleteTopicsRequest, deleteTopicSaga);
+  yield takeLatest(actions.updateTopics.updateTopicsRequest, updateTopicSaga);
   yield takeLatest(
     actions.updateTopicStatus.updateTopicStatusRequest,
     updateTopicStatusSaga
@@ -387,7 +436,10 @@ function* mysaga() {
     updateCommentSaga
   );
   //Subcomment
-  yield takeLatest(actions.getSubcomments.getSubcommentsRequest, fetchSubcommentSaga);
+  yield takeLatest(
+    actions.getSubcomments.getSubcommentsRequest,
+    fetchSubcommentSaga
+  );
   yield takeLatest(
     actions.createSubcomments.createSubcommentsRequest,
     createSubcommentSaga

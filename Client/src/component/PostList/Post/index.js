@@ -15,7 +15,12 @@ import React, { useRef, useContext, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
-import { commentsState$, departmentsState$, topicsState$ } from "../../../redux/seclectors";
+import {
+  categoryState$,
+  commentsState$,
+  departmentsState$,
+  topicsState$,
+} from "../../../redux/seclectors";
 import { Modal, Button, Input, Select, Switch, Dropdown, Space } from "antd";
 import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
@@ -36,12 +41,16 @@ export default function Post({ post }) {
   const user = state.userInfo;
   const departments = useSelector(departmentsState$);
   const topics = useSelector(topicsState$);
+  const categories = useSelector(categoryState$);
   const comments = useSelector(commentsState$);
-  const sortedcmt = comments?.filter((comment) => comment?.postID?._id === post._id)
+  const sortedcmt = comments?.filter(
+    (comment) => comment?.postID?._id === post._id
+  );
   const [Modalupdate, setModalUpdate] = useState(false);
   const [Modalcomment, setModalcomment] = useState(false);
   const departmentref = useRef(null);
   const caetgoryref = useRef(null);
+  const cateref = useRef(null);
   const [data, setdata] = React.useState({});
   const [defaultValue] = React.useState({
     title: post.title,
@@ -50,6 +59,7 @@ export default function Post({ post }) {
     department: post?.department?.name,
     topic: post?.topic?.name,
     attachment: post.attachment,
+    filePath: post?.filePath,
     isAnonymous: post.isAnonymous,
   });
   // Anonymous Animals
@@ -59,7 +69,7 @@ export default function Post({ post }) {
   };
   React.useEffect(() => {
     dispatch(actions.getComments.getCommentsRequest());
-  }, [dispatch])
+  }, [dispatch]);
   const [animal, setAnimal] = useState("");
   useEffect(() => {
     setAnimal(getRandomAnimal());
@@ -81,7 +91,6 @@ export default function Post({ post }) {
     setModalcomment(false);
   }, [dispatch]);
   const viewComment = React.useCallback(() => {
-
     setModalcomment(true);
   }, []);
   const viewModal = React.useCallback(() => {
@@ -123,6 +132,7 @@ export default function Post({ post }) {
       actions.updatePosts.updatePostsRequest({
         _id: post._id,
         author: post.author,
+        department: user.department._id,
         ...data,
       })
     );
@@ -408,32 +418,34 @@ export default function Post({ post }) {
               </div>
               <div className="user-mg">
                 <Select
-                  defaultValue={defaultValue.department}
+                  defaultValue={defaultValue.category}
                   style={{ width: "100%" }}
                   size="large"
                   required
                   onChange={(e) => departget(e)}
-                  ref={departmentref}
+                  ref={cateref}
                 >
-                  {departments?.map((department) => (
-                    <Option key={department._id} value={department._id}>
-                      {department.name}
+                  {categories?.map((category) => (
+                    <Option key={category._id} value={category._id}>
+                      {category.name}
                     </Option>
                   ))}
                 </Select>
                 <Select
                   defaultValue={defaultValue.topic}
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", top: "20px" }}
                   size="large"
                   required
                   onChange={(e) => topicget(e)}
                   ref={caetgoryref}
                 >
-                  {topics?.filter((topic) => topic?.status === "Processing")?.map((topic) => (
-                    <Option key={topic._id} value={topic._id}>
-                      {topic.name}
-                    </Option>
-                  ))}
+                  {topics
+                    ?.filter((topic) => topic?.status === "Processing")
+                    ?.map((topic) => (
+                      <Option key={topic._id} value={topic._id}>
+                        {topic.name}
+                      </Option>
+                    ))}
                 </Select>
                 <Switch
                   style={{ width: "100%", top: "35px", marginBottom: 10 }}
@@ -450,8 +462,12 @@ export default function Post({ post }) {
               <Button
                 type="primary"
                 block
-                style={{ bottom: "2%" }}
-                onClick={updatehandler}
+                style={{ bottom: "-7%" }}
+                onClick={() => {
+                  updatehandler();
+                  setdata({ ...data, department: user.department._id });
+                  console.log(data);
+                }}
               >
                 Update
               </Button>

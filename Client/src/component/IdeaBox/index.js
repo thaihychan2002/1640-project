@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState} from "react";
+import React, { useRef, useContext, useState, useEffect } from "react";
 import { Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
@@ -9,6 +9,7 @@ import {
   topicsState$,
   departmentsState$,
   modalState$,
+  categoryState$,
 } from "../../redux/seclectors";
 import { PictureOutlined, CloseOutlined } from "@ant-design/icons";
 import { Input, Select, Button } from "antd";
@@ -25,6 +26,7 @@ export default function IdeaBox() {
   const dispatch = useDispatch();
   const departments = useSelector(departmentsState$);
   const topics = useSelector(topicsState$);
+  const categories = useSelector(categoryState$);
   const { isXs } = Responsive();
 
   const [isChecked, setIsChecked] = useState(false);
@@ -34,6 +36,7 @@ export default function IdeaBox() {
   };
 
   const departmentref = useRef(null);
+  const cateref = useRef(null);
   const Topicref = useRef(null);
   const { isShow } = useSelector(modalState$);
   const { state } = useContext(Store);
@@ -47,11 +50,18 @@ export default function IdeaBox() {
     department: "",
     topic: "",
     attachment: "",
+    filePath: "",
+    filePathName: "",
     isAnonymous: false,
   });
+
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
+  };
+  const categet = (e) => {
+    setdata({ ...data, category: e });
+    data.category = cateref.current.value;
   };
   const Topicget = (e) => {
     setdata({ ...data, topic: e });
@@ -74,7 +84,6 @@ export default function IdeaBox() {
   const onClose = () => {
     setOpen(false);
   };
-
   const checkToPost = () => {
     return (
       data.title === "" ||
@@ -86,8 +95,17 @@ export default function IdeaBox() {
   const [fileInputState] = useState("");
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
-    previewFile(file);
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size exceeds 5 megabytes");
+      return;
+    }
+    if (file.type.startsWith("image/")) {
+      previewFile(file);
+    } else {
+      alert("Only accept image file");
+    }
   };
+
   const previewFile = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -96,6 +114,28 @@ export default function IdeaBox() {
     };
   };
 
+  const [filePathInputState, setFilePathInputState] = useState("");
+  const handleFilePathInputChange = (e) => {
+    const file = e.target.files[0];
+    if (file.type.startsWith("image/")) {
+      alert("Image files are not allowed");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size exceeds 5 megabytes");
+      return;
+    }
+    setFilePathInputState(file.name);
+    previewFilePath(file);
+  };
+  const previewFilePath = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      setdata({ ...data, filePath: reader.result, filePathName: file.name });
+    };
+  };
   const holder = "What's on your mind " + user.fullName + "?";
   const modules = {
     toolbar: [[{ size: [] }], ["bold", "italic", "underline"]],
@@ -207,19 +247,20 @@ export default function IdeaBox() {
               </div>
               <div className="user-mg">
                 <Select
-                  defaultValue="Choose a department"
+                  defaultValue="Choose a category"
                   style={{ width: "100%" }}
                   size="large"
                   required
-                  onChange={(e) => departget(e)}
-                  ref={departmentref}
+                  onChange={(e) => categet(e)}
+                  ref={cateref}
                 >
-                  {departments?.map((department) => (
-                    <Option key={department._id} value={department._id}>
-                      {department.name}
+                  {categories?.map((category) => (
+                    <Option key={category._id} value={category._id}>
+                      {category.name}
                     </Option>
                   ))}
                 </Select>
+
                 <Select
                   defaultValue="Choose a topic"
                   style={{ width: "100%", top: "20px" }}
@@ -228,11 +269,13 @@ export default function IdeaBox() {
                   onChange={(e) => Topicget(e)}
                   ref={Topicref}
                 >
-                  {topics?.filter((topic)=>topic?.status==="Processing")?.map((topic) => (
-                    <Option key={topic._id} value={topic._id}>
-                      {topic.name}
-                    </Option>
-                  ))}
+                  {topics
+                    ?.filter((topic) => topic?.status === "Processing")
+                    ?.map((topic) => (
+                      <Option key={topic._id} value={topic._id}>
+                        {topic.name} - End at: {topic.end}
+                      </Option>
+                    ))}
                 </Select>
               </div>
               <div>
@@ -248,10 +291,16 @@ export default function IdeaBox() {
                   }
                 />
               </div>
-
+              <div>
+                <input
+                  type="file"
+                  onChange={(e) => handleFilePathInputChange(e)}
+                  style={{ marginTop: 35 }}
+                />
+              </div>
               <div
                 style={{
-                  marginTop: isXs ? "20%" : "10%",
+                  marginTop: isXs ? "20%" : "1%",
                   fontSize: isXs ? "10px" : "16px",
                 }}
               >

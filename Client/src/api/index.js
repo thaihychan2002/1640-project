@@ -23,7 +23,7 @@ export const createPosts = (payload) =>
   axiosInstance.post(`/posts/create`, payload);
 export const updatePosts = (payload) =>
   axiosInstance.put(`/posts/update`, payload);
-  export const updatePostsLike = (payload) =>
+export const updatePostsLike = (payload) =>
   axiosInstance.put(`/posts/updateLike`, payload);
 export const countViewBySlug = (slug) =>
   axiosInstance.put("/posts/countView", { slug: slug });
@@ -52,8 +52,12 @@ export const acceptPost = (payload) =>
 export const rejectPost = (payload) =>
   axiosInstance.put("/posts/reject", payload);
 //download csv and zip
-export const downloadCSV = () =>
-  axiosInstance.get("/posts/export", { responseType: "blob" });
+export const downloadCSV = (topic) =>
+  axiosInstance.post(
+    "/posts/export",
+    { topic: topic },
+    { responseType: "blob" }
+  );
 
 export const downloadZip = (postID) =>
   axiosInstance.post(
@@ -77,8 +81,19 @@ export const updateDepartments = (payload) =>
 export const deleteDepartments = (payload) =>
   axiosInstance.delete(`/departments/delete/${payload}`, payload);
 
+// category
+export const fetchCategory = () => axiosInstance.get(`/category`);
+export const createCategory = (payload) =>
+  axiosInstance.post(`/category/create`, payload);
+export const updateCategory = (payload) =>
+  axiosInstance.put(`/category/update`, payload);
+export const deleteCategory = (payload) =>
+  axiosInstance.delete(`/category/delete/${payload}`, payload);
+
 // Topic
 export const fetchTopics = () => axiosInstance.get(`/topics`);
+export const fetchTopicsPaginated = (page = 1) =>
+  axiosInstance.get(`/topics/paginate?page=${page}`);
 export const createTopics = (payload) =>
   axiosInstance.post(`/topics/create`, payload);
 export const updateTopics = (payload) =>

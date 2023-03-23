@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core";
 import "../../component/assets/css/PostDetails.css";
 import { IconButton, Typography } from "@material-ui/core";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { downloadZip, fetchPostBySlug } from "../../api";
 import { useParams } from "react-router-dom";
 import moment from "moment";
@@ -11,16 +11,17 @@ import * as actions from "../../redux/actions";
 import DownloadButton from "../../component/DownloadButton/index.js";
 import NotFound from "../NotAuthPages/NotFound.js";
 import { Helmet } from "react-helmet-async";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import CommentList from "../../component/CommentList";
 import Responsive from "../../component/ResponsiveCode/Responsive";
+import { Store } from "../../Store";
 const PostDetails = () => {
   const [allData, setAllData] = useState({});
   const params = useParams();
   const { slug } = params;
   const dispatch = useDispatch();
   const { isXs } = Responsive();
-
+  const { state } = useContext(Store);
   useEffect(() => {
     const fetchPost = async () => {
       const { data } = await fetchPostBySlug(slug);
@@ -31,6 +32,7 @@ const PostDetails = () => {
         author: data?.author?.fullName,
         authorAvatar: data.author?.avatar,
         attachment: data.attachment,
+        filePath: data?.filePath,
         likeCount: data.likeCount,
         view: data.view,
         content: data.content,
@@ -124,6 +126,16 @@ const PostDetails = () => {
       console.error(err);
     }
   };
+  const downloadURL = async () => {
+    try {
+      const link = document.createElement("a");
+      link.href = allData.filePath;
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <div>
       {allData._id ? (
@@ -178,11 +190,29 @@ const PostDetails = () => {
               <center>
                 <img className="postImg" src={allData.attachment} alt="" />
               </center>
-              <div style={{ marginLeft: isXs ? "59%" : "80%" }}>
-                <DownloadButton
-                  download={downloadPost}
-                  textDownload={"Download ZIP"}
-                />
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                  marginTop: 15,
+                  marginBottom: 15,
+                }}
+              >
+                <div>
+                  <DownloadButton
+                    download={downloadURL}
+                    textDownload={"Download File Path"}
+                  />
+                </div>
+                <div>
+                  {state.userInfo.role === "Admin" && (
+                    <DownloadButton
+                      download={downloadPost}
+                      textDownload={"Download ZIP"}
+                    />
+                  )}
+                </div>
               </div>
               <div className="postBottom">
                 <IconButton

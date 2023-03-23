@@ -214,129 +214,133 @@ const UserManage = () => {
               onCancel={handleClose}
               footer={null}
               className="container-user"
+              style={{ width: 450, height: 430 }}
             >
-              <center className="register">
-                <Form
-                  name="basic"
-                  labelCol={{
-                    span: 8,
-                  }}
-                  wrapperCol={{
-                    span: 16,
-                  }}
-                  style={{
-                    maxWidth: 400,
-                  }}
-                  autoComplete="off"
-                  onFinish={(e) => submitHandler(e)}
-                  onFinishFailed={onFinishFailed}
-                >
-                  <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your email!",
-                      },
-                    ]}
-                  >
-                    <Input onChange={(e) => setEmail(e.target.value)} />
-                  </Form.Item>
-                  <Form.Item
-                    label="Fullname"
-                    name="fullname"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your fullname!",
-                      },
-                    ]}
-                  >
-                    <Input onChange={(e) => setFullName(e.target.value)} />
-                  </Form.Item>
-                  <Form.Item
-                    label="Role"
-                    name="role"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select role !",
-                      },
-                    ]}
-                  >
-                    <Select onChange={(e) => setRoleUser(e)}>
-                      {roles?.map((role) => (
-                        <Option key={role._id} value={role._id}>
-                          {role.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    label="Department"
-                    name="department"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select department !",
-                      },
-                    ]}
-                  >
-                    <Select onChange={(e) => setDepartment(e)}>
-                      {departments?.map((department) => (
-                        <Option key={department._id} value={department._id}>
-                          {department.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Re-Password"
-                    name="rePassword"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input your re-password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password
-                      onChange={(e) => setRePassword(e.target.value)}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      style={{ width: "100px" }}
-                    >
-                      Add
-                    </Button>
-                  </Form.Item>
-                  <Form.Item
-                    wrapperCol={{
-                      offset: 0,
+              <div>
+                <center>
+                  <p>Add a new user</p>
+                  <Form
+                    name="basic"
+                    labelCol={{
+                      span: 8,
                     }}
-                  ></Form.Item>
-                </Form>
-              </center>
+                    wrapperCol={{
+                      span: 16,
+                    }}
+                    style={{
+                      maxWidth: 400,
+                    }}
+                    autoComplete="off"
+                    onFinish={(e) => submitHandler(e)}
+                    onFinishFailed={onFinishFailed}
+                  >
+                    <Form.Item
+                      label="Email"
+                      name="email"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input your email!",
+                        },
+                      ]}
+                    >
+                      <Input onChange={(e) => setEmail(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item
+                      label="Fullname"
+                      name="fullname"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input your fullname!",
+                        },
+                      ]}
+                    >
+                      <Input onChange={(e) => setFullName(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item
+                      label="Role"
+                      name="role"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select role !",
+                        },
+                      ]}
+                    >
+                      <Select onChange={(e) => setRoleUser(e)}>
+                        {roles?.map((role) => (
+                          <Option key={role._id} value={role._id}>
+                            {role.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      label="Department"
+                      name="department"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select department !",
+                        },
+                      ]}
+                    >
+                      <Select onChange={(e) => setDepartment(e)}>
+                        {departments?.map((department) => (
+                          <Option key={department._id} value={department._id}>
+                            {department.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      label="Password"
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input your password!",
+                        },
+                      ]}
+                    >
+                      <Input.Password
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Re-Password"
+                      name="rePassword"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input your re-password!",
+                        },
+                      ]}
+                    >
+                      <Input.Password
+                        onChange={(e) => setRePassword(e.target.value)}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      style={{ display: "flex", justifyContent: "center" }}
+                    >
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        style={{ width: "100px" }}
+                      >
+                        Add
+                      </Button>
+                    </Form.Item>
+                    <Form.Item
+                      wrapperCol={{
+                        offset: 0,
+                      }}
+                    ></Form.Item>
+                  </Form>
+                </center>
+              </div>
             </Modal>
             <Table columns={columns} dataSource={data} />
           </div>

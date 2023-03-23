@@ -62,14 +62,7 @@ export default function Navigation() {
   }, [ctxDispatch]);
   const linkRoutes =
     role === "Admin"
-      ? [
-          "/",
-          "/departments",
-          "/topics",
-          "/dashboard",
-          "/profile",
-          "#signout",
-        ]
+      ? ["/", "/departments", "/topics", "/dashboard", "/profile", "#signout"]
       : ["/", "/departments", "/topics", "/profile", "#signout"];
   const navName =
     role === "Admin"
@@ -84,7 +77,7 @@ export default function Navigation() {
       : ["Home", "Departments", "Topics", "Profile", "Log out"];
   // Hide navbar when route === /login
   const withOutNavbarRoutes = token
-    ? ["/login", "/reset-password"]
+    ? ["/login", "/reset-password", "/test"]
     : ["/login", "/reset-password", "/forgot-password"];
   const { pathname } = useLocation();
   if (withOutNavbarRoutes.some((item) => pathname.includes(item))) return null;
