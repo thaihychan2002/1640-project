@@ -31,6 +31,10 @@ const schema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    dislikeCount: {
+      type: Number,
+      default: 0,
+    },
     view: {
       type: Number,
       default: 0,

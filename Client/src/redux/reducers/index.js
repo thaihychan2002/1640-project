@@ -6,6 +6,7 @@ import departments from "./departments.js";
 import topics from "./topics.js";
 import comments from "./comments.js"
 import subcomments from "./subcomments.js"
+import actionslog from './actionslog.js'
 export default combineReducers({
   posts,
   modal,
@@ -14,4 +15,5 @@ export default combineReducers({
   allPosts,
   comments,
   subcomments,
+  actionslog,
 });

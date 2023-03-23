@@ -14,6 +14,7 @@ import fs from 'fs'
 import { MongoClient, ObjectId } from 'mongodb'
 import JSZip from 'jszip'
 import { TopicsModel } from '../model/topics.js'
+import { ActionLogModel } from '../model/actionLogs.js'
 
 export const getPosts = async (req, res) => {
   try {
@@ -31,10 +32,13 @@ export const getPosts = async (req, res) => {
 }
 export const getPostBySlug = async (req, res) => {
   try {
-    const post = await PostModel.findOne({ slug: req.params.slug })
+    const post = await PostModel.findOne({ slug: req.params.slug, status: 'Accepted' })
       .populate('author', 'fullName avatar _id role department')
+      .populate('topic')
+      .populate('department')
       .exec()
-    if (post.status === 'Accepted') {
+      console.log(post)
+    if (post) {
       res.status(200).json(post)
     } else {
       res.status(404).json('Post not found')
@@ -196,6 +200,9 @@ export const deletePostByAdmin = async (req, res) => {
       'author',
       'email'
     )
+    await ActionLogModel.deleteMany({ postID: req.params.id }, {
+      new: true,
+    })
     if (post) {
       await post.remove()
       let mailOptions = {
@@ -336,26 +343,29 @@ export const searchPostsByKeyword = async (req, res) => {
 
 export const viewPostsByDepartment = async (req, res) => {
   try {
-    const departmentID = req.body.id
-    const posts = await PostModel.find({ department: departmentID })
+    const departmentID = req.body
+    const posts = await PostModel.find({ department: departmentID._id, status: 'Accepted' })
       .sort({ createdAt: -1 })
-      .populate('author')
-      .exec()
-    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
-    res.status(200).json(filteredPosts)
+      .populate('author', 'fullName avatar _id role department')
+      .populate('topic')
+      .populate('department')
+      .lean()
+    res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
 }
 export const viewPostsByTopics = async (req, res) => {
   try {
-    const topicID = req.body.id
-    const posts = await PostModel.find({ topic: topicID })
+    const topicID = req.body
+    console.log('topicID', topicID)
+    const posts = await PostModel.find({ topic: topicID._id, status: 'Accepted' })
       .sort({ createdAt: -1 })
-      .populate('author')
-      .exec()
-    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
-    res.status(200).json(filteredPosts)
+      .populate('author', 'fullName avatar _id role department')
+      .populate('topic')
+      .populate('department')
+      .lean()
+    res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
   }

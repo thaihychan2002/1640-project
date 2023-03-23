@@ -1,4 +1,4 @@
-import { takeLatest, call, put } from "redux-saga/effects";
+import { takeLatest, call, put, takeEvery, take, takeMaybe, takeLeading } from "redux-saga/effects";
 import * as actions from "../actions";
 import * as api from "../../api";
 import { toast } from "react-toastify";
@@ -27,6 +27,37 @@ function* fetchAllPostsSaga(action) {
     yield put(actions.getAllPosts.getAllPostsSuccess(allPosts?.data));
   } catch (err) {
     yield put(actions.getAllPosts.getAllPostsFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* fetchPostsByTopic(action) {
+  try {
+    const PostsbyTopic =  yield call(api.fetchPostsByTopic, action.payload);
+    yield put(actions.viewPostsByTopics.viewPostSuccessByTopics(PostsbyTopic.data));
+    console.log('postbytopic',action.payload)
+    console.log(PostsbyTopic)
+  } catch (err) {
+    yield put(actions.viewPostsByTopics.viewPostFailureByTopics(err));
+    toast.error(getError(err));
+  }
+}
+function* fetchPostsByDepartment(action) {
+  try {
+    const PostsbyDepartment = yield call(api.fetchPostsByDepartment, action.payload);
+    yield put(actions.viewPostsByDepartment.viewPostSuccessByDepartment(PostsbyDepartment.data));
+    console.log('postbydepart',action.payload)
+    console.log(PostsbyDepartment)
+  } catch (err) {
+    yield put(actions.viewPostsByDepartment.viewPostFailureByDepartment(err));
+    toast.error(getError(err));
+  }
+}
+function* fetchPostsBySlug(action) {
+  try {
+    const PostsbySlug = yield call(api.fetchPostBySlug, action.payload);
+    yield put(actions.viewPostsBySlug.viewPostSuccessBySlug(PostsbySlug.data));
+  } catch (err) {
+    yield put(actions.viewPostsBySlug.viewPostFailureBySlug(err));
     toast.error(getError(err));
   }
 }
@@ -310,12 +341,61 @@ function* deleteSubcommentSaga(action) {
     toast.error(getError(err));
   }
 }
+//Action
+function* fetchActionSaga(action) {
+  try {
+    const getactions = yield call(api.fetchActionsLog, action.payload);
+    yield put(actions.getActionsLog.getActionsLogSuccess(getactions.data));
+  } catch (err) {
+    yield put(actions.getActionsLog.getActionsLogFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* createActionSaga(action) {
+  try {
+    const createactions = yield call(api.createActionsLog, action.payload);
+    yield put(actions.createActionsLog.createActionsLogSuccess(createactions.data));
+  } catch (err) {
+    yield put(actions.createActionsLog.createActionsLogFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* updateActionSaga(action) {
+  try {
+    const updatedactions = yield call(api.updateActionsLog, action.payload);
+    yield put(actions.updateActionsLog.updateActionsLogSuccess(updatedactions.data));
+  } catch (err) {
+    yield put(actions.updateActionsLog.updateActionsLogFailure(err));
+    toast.error(getError(err));
+  }
+}
+function* filterActionSaga(action) {
+  try {
+    const filteractions = yield call(api.filterActionsLog, action.payload);
+    yield put(actions.filterActionsLog.filterActionsLogSuccess(filteractions.data));
+  } catch (err) {
+    yield put(actions.filterActionsLog.filterActionsLogFailure(err));
+    toast.error(getError(err));
+  }
+}
 function* mysaga() {
   //post
-  yield takeLatest(actions.getPosts.getPostsRequest, fetchPostSaga);
-  yield takeLatest(actions.getAllPosts.getAllPostsRequest, fetchAllPostsSaga);
-  yield takeLatest(actions.updatePosts.updatePostsRequest, updatePostSaga);
-  yield takeLatest(actions.updatePostsLike.updatePostsLikeRequest, updatePostLikeSaga);
+  yield takeLatest(
+    actions.getPosts.getPostsRequest,
+    fetchPostSaga
+  );
+  yield takeLatest(
+    actions.getAllPosts.getAllPostsRequest,
+    fetchAllPostsSaga
+  );
+  yield takeLatest(
+    actions.updatePosts.updatePostsRequest,
+    updatePostSaga
+  );
+  yield takeLatest(
+    actions.updatePostsLike.updatePostsLikeRequest,
+    updatePostLikeSaga
+  );
   yield takeLatest(
     actions.updatePostAccept.updatePostAcceptRequest,
     updatePostAcceptSaga
@@ -324,11 +404,29 @@ function* mysaga() {
     actions.updatePostReject.updatePostRejectRequest,
     updatePostRejectSaga
   );
-  yield takeLatest(actions.createPosts.createPostsRequest, createPostSaga);
-  yield takeLatest(actions.deletePosts.deletePostsRequest, deletePostSaga);
+  yield takeLatest(
+    actions.createPosts.createPostsRequest,
+    createPostSaga
+  );
+  yield takeLatest(
+    actions.deletePosts.deletePostsRequest,
+    deletePostSaga
+  );
   yield takeLatest(
     actions.deletePostByAdmin.deletePostRequestByAdmin,
     deletePostByAdminSaga
+  );
+  yield takeLatest(
+    actions.viewPostsByTopics.viewPostRequestByTopics,
+    fetchPostsByTopic
+  );
+  yield takeLatest(
+    actions.viewPostsByDepartment.viewPostRequestByDepartment,
+    fetchPostsByDepartment
+  );
+  yield takeLatest(
+    actions.viewPostsBySlug.viewPostRequestBySlug,
+    fetchPostsBySlug
   );
   //department
   yield takeLatest(
@@ -399,6 +497,23 @@ function* mysaga() {
   yield takeLatest(
     actions.updateSubcomments.updateSubcommentsRequest,
     updateSubcommentSaga
+  );
+  //Action
+  yield takeLeading(
+    actions.getActionsLog.getActionsLogRequest,
+    fetchActionSaga
+  );
+  yield takeLatest(
+    actions.createActionsLog.createActionsLogRequest,
+    createActionSaga
+  );
+  yield takeLatest(
+    actions.updateActionsLog.updateActionsLogRequest,
+    updateActionSaga
+  );
+  yield takeLatest(
+    actions.filterActionsLog.filterActionsLogRequest,
+    filterActionSaga
   );
 }
 export default mysaga;

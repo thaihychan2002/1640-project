@@ -1,4 +1,7 @@
 export const postsState$ = (state) => state.posts.data;
+export const postsdetailState$ = (state) => state.posts.detailed;
+export const poststopicState$ = (state) => state.posts.topicview;
+export const postsdepartmentState$ = (state) => state.posts.departmentview;
 export const allPostsState$ = (state) => state.allPosts.data;
 export const allPostsLoading$ = (state) => state.allPosts.isLoading;
 export const postsToken$ = (state) => state.posts.token;
@@ -13,3 +16,5 @@ export const commentsLoading$ = (state) => state.comments.isLoading;
 export const conditionCmtState$ = (state) => state.ConditionCmt.data;
 export const subcommentsState$ = (state) => state.subcomments.data;
 export const subcommentsLoading$ = (state) => state.subcomments.isLoading;
+export const actionslogState$ = (state) => state.actionslog.data;
+export const actionslogLoading$ = (state) => state.actionslog.isLoading;

@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import * as actions from "../../redux/actions";
 import Search from "../Search/index";
-import { countViewBySlug, logout } from "../../api";
+import { logout } from "../../api";
 
 export default function AccountSwitch() {
   const navigate = useNavigate();
@@ -50,10 +50,6 @@ export default function AccountSwitch() {
       setRandomPosts(randomPosts);
     }
   }, [posts]);
-  const countView = async (slug) => {
-    console.log(slug);
-    await countViewBySlug(slug);
-  };
   return (
     <div className="account-switch">
       <Grid container alignItems="stretch">
@@ -105,7 +101,6 @@ export default function AccountSwitch() {
                 type="button"
                 onClick={() => {
                   navigate(`/idea/${post?.slug}`);
-                  countView(post.slug);
                 }}
               >
                 View

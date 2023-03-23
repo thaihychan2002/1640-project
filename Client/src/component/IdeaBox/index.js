@@ -1,10 +1,9 @@
-import React, { useRef, useContext, useState} from "react";
+import React, { useRef, useContext, useState } from "react";
 import { Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
 import "../assets/css/HomeScreen.css";
 import { useDispatch, useSelector } from "react-redux";
-import { hideModal, showModal, createPosts } from "../../redux/actions";
 import {
   topicsState$,
   departmentsState$,
@@ -16,7 +15,7 @@ import { Link } from "react-router-dom";
 import DrawExpand from "./Drawer";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
+import * as actions from '../../redux/actions'
 import Responsive from "../ResponsiveCode/Responsive";
 
 const { Option } = Select;
@@ -25,7 +24,6 @@ export default function IdeaBox() {
   const dispatch = useDispatch();
   const departments = useSelector(departmentsState$);
   const topics = useSelector(topicsState$);
-  const { isXs } = Responsive();
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -58,13 +56,13 @@ export default function IdeaBox() {
     data.topic = Topicref.current.value;
   };
   const handleOk = React.useCallback(() => {
-    dispatch(hideModal());
+    dispatch(actions.hideModal());
   }, [dispatch]);
   const viewModal = React.useCallback(() => {
-    dispatch(showModal());
+    dispatch(actions.showModal());
   }, [dispatch]);
   const onSubmit = React.useCallback(() => {
-    dispatch(createPosts.createPostsRequest(data));
+    dispatch(actions.createPosts.createPostsRequest(data));
     handleOk();
   }, [data, dispatch, handleOk]);
   const [open, setOpen] = useState(false);
@@ -74,6 +72,7 @@ export default function IdeaBox() {
   const onClose = () => {
     setOpen(false);
   };
+
 
   const checkToPost = () => {
     return (
@@ -105,6 +104,8 @@ export default function IdeaBox() {
     },
   };
 
+
+  const { isXs } = Responsive();
   return (
     <div>
       <Grid container spacing={2} alignItems="stretch">
@@ -118,6 +119,7 @@ export default function IdeaBox() {
             &nbsp; What's on your mind?
           </div>
         </Grid>
+
       </Grid>
       <Modal
         open={isShow}
@@ -228,7 +230,7 @@ export default function IdeaBox() {
                   onChange={(e) => Topicget(e)}
                   ref={Topicref}
                 >
-                  {topics?.filter((topic)=>topic?.status==="Processing")?.map((topic) => (
+                  {topics?.filter((topic) => topic?.status === "Processing")?.map((topic) => (
                     <Option key={topic._id} value={topic._id}>
                       {topic.name}
                     </Option>

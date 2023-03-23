@@ -9,7 +9,7 @@ import {
 import { isAuth, isAdmin } from '../utils.js'
 
 const router = express.Router()
-router.get('/', isAuth, getTopic)
+router.get('/', getTopic)
 router.post('/create', isAdmin, createTopic)
 router.delete('/delete/:id', isAdmin, deleteTopic)
 router.put('/update', isAdmin, updateTopic)

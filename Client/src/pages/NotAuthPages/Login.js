@@ -1,10 +1,10 @@
 import { Button, Divider, Form, Input } from "antd";
 import { Helmet } from "react-helmet-async";
-import { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import { Store } from "../../Store";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loginUser, loginGoogleUser } from "../../api/index.js";
 import jwtDecode from "jwt-decode";
 import "../../component/assets/css/Login.css";
@@ -15,7 +15,6 @@ const Login = () => {
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get("redirect");
   const redirect = redirectInUrl ? redirectInUrl : "/";
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -37,7 +36,7 @@ const Login = () => {
     console.log("Failed:", errorInfo);
   };
 
-  const handleCallbackResponse = async (response) => {
+  const handleCallbackResponse = useCallback( async (response) => {
     let user = jwtDecode(response.credential);
     let email = user.email;
     let fullName = user.name;
@@ -51,7 +50,7 @@ const Login = () => {
     } catch (err) {
       toast.error(getError(err));
     }
-  };
+  },[ctxDispatch,navigate,redirect]);
   const { isXs } = Responsive();
   useEffect(() => {
     const googleService = () => {
@@ -72,7 +71,7 @@ const Login = () => {
     };
 
     setTimeout(googleService, 100);
-  }, [isXs]);
+  }, [isXs,handleCallbackResponse]);
 
   return (
     <Grid container>

@@ -7,6 +7,7 @@ import departments from './routers/departments.js'
 import topics from './routers/topics.js'
 import comments from './routers/comments.js'
 import subcomments from './routers/subcomments.js'
+import actions from './routers/actionLogs.js'
 import mongoose from 'mongoose'
 import morgan from 'morgan'
 import roles from './routers/role.js'
@@ -48,7 +49,8 @@ app.use('/roles', roles)
 app.use('/departments', departments)
 app.use('/topics', topics)
 app.use('/comments', comments)
-app.use('/subcomments',subcomments)
+app.use('/subcomments', subcomments)
+app.use('/actions', actions)
 app.get('/', (req, res) => {
   res.send('SUCCESS')
   console.log('SUCCESS')

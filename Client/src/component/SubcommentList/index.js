@@ -16,16 +16,16 @@ const { Text } = Typography;
 export default function SubcommentList({ comment }) {
   const dispatch = useDispatch();
   const subcomments = useSelector(subcommentsState$);
-  const sortedcomments =subcomments?.filter((subcomment)=>subcomment?.commentID?._id===comment._id)
+  const sortedcomments = subcomments?.filter((subcomment) => subcomment?.commentID?._id === comment._id)
   const isLoading = useSelector(subcommentsLoading$);
   const [reply, setreply] = useState(false)
   const [viewsubcomment, setviewsubcomment] = useState(false)
   const { state } = useContext(Store);
-
+  const user = state.userInfo;
   React.useEffect(() => {
     dispatch(actions.getSubcomments.getSubcommentsRequest());
   }, [dispatch]);
-  const user = state.userInfo;
+
   const [subcomment, setsubcomment] = React.useState({
     author: "",
     content: "",
@@ -39,10 +39,10 @@ export default function SubcommentList({ comment }) {
     setreply(false);
   }, [subcomment, dispatch]);
   const replyhandle = React.useCallback(() => {
-    reply?setreply(false):setreply(true);
+    reply ? setreply(false) : setreply(true);
   }, [reply])
   const viewreply = React.useCallback(() => {
-   viewsubcomment?setviewsubcomment(false):setviewsubcomment(true);
+    viewsubcomment ? setviewsubcomment(false) : setviewsubcomment(true);
   }, [viewsubcomment])
   return (
     <>
@@ -145,17 +145,17 @@ export default function SubcommentList({ comment }) {
           </Grid>
         </Grid>
       }
-        {viewsubcomment &&subcomments.length > 0 && (
-          <Grid style={{ marginTop: "100px" }} item xs={12} sm={12}>
-            {isLoading ? (
-              <LoadingBox />
-            ) : (
-              sortedcomments?.map((subcomment) => (
-                <Subcomment key={subcomment._id} subcomment={subcomment} />
-              ))
-            )}
-          </Grid>
-        )}</>
+      {viewsubcomment && subcomments.length > 0 && (
+        <Grid style={{ marginTop: "100px" }} item xs={12} sm={12}>
+          {isLoading ? (
+            <LoadingBox />
+          ) : (
+            sortedcomments?.map((subcomment) => (
+              <Subcomment key={subcomment._id} subcomment={subcomment} />
+            ))
+          )}
+        </Grid>
+      )}</>
 
   );
 }
