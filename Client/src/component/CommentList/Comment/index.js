@@ -10,7 +10,7 @@ import {
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import moment from "moment";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import useStyles from "./styles.js";
 import { Modal, Button, Input, Switch, Dropdown } from "antd";
@@ -27,16 +27,15 @@ export default function Comment({ comment }) {
   const [CmtEdit, setCmtEdit] = useState(false);
   const [Cmtupdate, setcmtUpdate] = useState(false);
   const [Cmtoption, setCmtOption] = useState(false);
-  const [animal, setAnimal] = useState("");
+
   const [newcmt, setnewcmt] = React.useState({});
   // Anonymous Animals
-  useEffect(() => {
-    setAnimal(getRandomAnimal());
-  }, []);
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
   };
+  const animal = useRef("");
+  animal.current=getRandomAnimal()
   const [likecmtActive, setLikecmtActive] = React.useState(false);
   const [dislikecmtActive, setDislikecmtActive] = React.useState(false);
   const onLikecmtClick = React.useCallback(() => {
@@ -144,14 +143,14 @@ export default function Comment({ comment }) {
         <CardHeader
           avatar={
             comment.isAnonymous ? (
-              <img src={animal.avatar} alt={`${animal.name} Avatar`} />
+              <img src={animal.current.avatar} alt={`${animal.current.name} Avatar`} />
             ) : (
               <img src={comment.author.avatar} alt={comment.author.fullName} />
             )
           }
           title={
             comment.isAnonymous
-              ? `Anonymous ${animal.name}`
+              ? `Anonymous ${animal.current.name}`
               : comment.author.fullName
           }
           subheader={moment(comment.createdAt).format("LLL")}
@@ -189,7 +188,7 @@ export default function Comment({ comment }) {
               </IconButton>
               {`${comment.likeCount} likes`}
             </Grid>
-            <Grid item xs={7} lg={7} alignItems="center" justifyContent="center" style={{marginTop:'15px'}}>
+            <Grid item xs={7} lg={7}  style={{marginTop:'15px'}}>
               <SubcommentList comment={comment}></SubcommentList>
             </Grid>
           </Grid>

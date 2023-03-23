@@ -14,6 +14,7 @@ import fs from 'fs'
 import { MongoClient, ObjectId } from 'mongodb'
 import JSZip from 'jszip'
 import { TopicsModel } from '../model/topics.js'
+import { ActionLogModel } from '../model/actionLogs.js'
 
 export const getPosts = async (req, res) => {
   try {
@@ -31,10 +32,12 @@ export const getPosts = async (req, res) => {
 }
 export const getPostBySlug = async (req, res) => {
   try {
-    const post = await PostModel.findOne({ slug: req.params.slug })
+    const post = await PostModel.findOne({ slug: req.params.slug, status: 'Accepted' })
       .populate('author', 'fullName avatar _id role department')
+      .populate('topic')
+      .populate('department')
       .exec()
-    if (post.status === 'Accepted') {
+    if (post) {
       res.status(200).json(post)
     } else {
       res.status(404).json('Post not found')
@@ -45,33 +48,45 @@ export const getPostBySlug = async (req, res) => {
 }
 export const createPosts = async (req, res, next) => {
   try {
-    const result = await DepartmentModel.distinct('name')
-    const resultDepartments = await DepartmentModel.distinct('_id')
-    const resultTopics = await TopicsModel.distinct('_id')
-    const createPostSchema = joi.object({
-      title: joi.string().min(3).required(),
-      content: joi.string().required(),
-      author: joi.string().required(),
-      department: joi
-        .string()
-        .valid(...resultDepartments.map((id) => id.toString()))
-        .required(),
-      topic: joi
-        .string()
-        .valid(...resultTopics.map((id) => id.toString()))
-        .required(),
-      attachment: joi.allow(),
-      isAnonymous: joi.boolean().required(),
-      likeCount: joi.number().valid(0).allow(),
-      view: joi.number().valid(0).allow(),
-    })
-    await createPostSchema.validateAsync(req.body)
+    // const result = await DepartmentModel.distinct('name')
+    // const resultDepartments = await DepartmentModel.distinct('_id')
+    // const resultTopics = await TopicsModel.distinct('_id')
+    // const createPostSchema = joi.object({
+    //   title: joi.string().min(3).required(),
+    //   content: joi.string().required(),
+    //   author: joi.string().required(),
+    //   department: joi
+    //     .string()
+    //     .valid(...resultDepartments.map((id) => id.toString()))
+    //     .required(),
+    //   topic: joi
+    //     .string()
+    //     .valid(...resultTopics.map((id) => id.toString()))
+    //     .required(),
+    //   category: joi.string().required(),
+    //   attachment: joi.allow(),
+    //   filePath: joi.allow(),
+    //   isAnonymous: joi.boolean().required(),
+    //   likeCount: joi.number().valid(0).allow(),
+    //   view: joi.number().valid(0).allow(),
+    // })
+    // await createPostSchema.validateAsync(req.body)
     const newPost = req.body
     const post = new PostModel(newPost)
     const fileStr = post.attachment
+    console.log(newPost)
     if (fileStr) {
       const uploadedResponse = await cloudinary.uploader.upload(fileStr)
       post.attachment = uploadedResponse.url
+    }
+    if (post.filePath) {
+      const public_id = req.body.filePathName
+      const uploadedResponse = await cloudinary.uploader.upload(post.filePath, {
+        public_id: public_id,
+        unique_filename: false,
+        resource_type: 'raw', // Set this to "raw" if you want to upload files other than images.
+      })
+      post.filePath = uploadedResponse.url
     }
     post.slug = slug(req.body.title)
     await post.save()
@@ -80,29 +95,28 @@ export const createPosts = async (req, res, next) => {
       .populate('topic')
       .populate('department')
     // send email
+    // const users = await UserModel.find({
+    //   department: req.body.department,
+    // }).populate('role', 'name')
 
-    const users = await UserModel.find({
-      department: req.body.department,
-    }).populate('role', 'name')
-
-    const coordinator = users.filter(
-      (user) => user.role.name === 'QA Coordinator'
-    )
-    const email = coordinator.map((cor) => cor.email)
-    // send email to coordinator
-    let mailOptions = {
-      from: process.env.GMAIL_USER,
-      to: email.join(', '),
-      subject: 'New idea posted',
-      text: 'Hello there, user of your department has been sent an idea',
-    }
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log('Error occurred: ' + error.message)
-      } else {
-        console.log('Email sent: ' + info.response)
-      }
-    })
+    // const coordinator = users.filter(
+    //   (user) => user.role.name === 'QA Coordinator'
+    // )
+    // const email = coordinator.map((cor) => cor.email)
+    // // send email to coordinator
+    // let mailOptions = {
+    //   from: process.env.GMAIL_USER,
+    //   to: email.join(', '),
+    //   subject: 'New idea posted',
+    //   text: 'Hello there, user of your department has been sent an idea',
+    // }
+    // transporter.sendMail(mailOptions, (error, info) => {
+    //   if (error) {
+    //     console.log('Error occurred: ' + error.message)
+    //   } else {
+    //     console.log('Email sent: ' + info.response)
+    //   }
+    // })
     res.status(200).json(createdpost)
   } catch (err) {
     if (err.isJoi === true) {
@@ -133,7 +147,9 @@ export const updatePosts = async (req, res, next) => {
         .string()
         .valid(...resultTopics.map((id) => id.toString()))
         .allow(),
+      category: joi.string().allow(),
       attachment: joi.allow(),
+      filePath: joi.allow(),
       isAnonymous: joi.boolean().allow(),
       likeCount: joi.number().valid(0).allow(),
       view: joi.number().valid(0).allow(),
@@ -196,6 +212,9 @@ export const deletePostByAdmin = async (req, res) => {
       'author',
       'email'
     )
+    await ActionLogModel.deleteMany({ postID: req.params.id }, {
+      new: true,
+    })
     if (post) {
       await post.remove()
       let mailOptions = {
@@ -336,26 +355,29 @@ export const searchPostsByKeyword = async (req, res) => {
 
 export const viewPostsByDepartment = async (req, res) => {
   try {
-    const departmentID = req.body.id
-    const posts = await PostModel.find({ department: departmentID })
+    const departmentID = req.body
+    const posts = await PostModel.find({ department: departmentID._id, status: 'Accepted' })
       .sort({ createdAt: -1 })
-      .populate('author')
-      .exec()
-    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
-    res.status(200).json(filteredPosts)
+      .populate('author', 'fullName avatar _id role department')
+      .populate('topic')
+      .populate('department')
+      .lean()
+    res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
 }
 export const viewPostsByTopics = async (req, res) => {
   try {
-    const topicID = req.body.id
-    const posts = await PostModel.find({ topic: topicID })
+    const topicID = req.body
+    console.log('topicID', topicID)
+    const posts = await PostModel.find({ topic: topicID._id, status: 'Accepted' })
       .sort({ createdAt: -1 })
-      .populate('author')
-      .exec()
-    const filteredPosts = posts.filter((post) => post.status === 'Accepted')
-    res.status(200).json(filteredPosts)
+      .populate('author', 'fullName avatar _id role department')
+      .populate('topic')
+      .populate('department')
+      .lean()
+    res.status(200).json(posts)
   } catch (err) {
     res.status(500).json({ error: err })
   }
@@ -432,9 +454,13 @@ export const exportPost = async (req, res) => {
     useUnifiedTopology: true,
   })
   const db = client.db('test')
-
+  console.log(req.body)
   try {
-    const data = await db.collection('posts').find({}).toArray()
+    const data = await db
+      .collection('posts')
+      .find({ topic: new ObjectId(req.body.topic) })
+      .toArray()
+    console.log(data)
     const fields = [
       'title',
       'content',

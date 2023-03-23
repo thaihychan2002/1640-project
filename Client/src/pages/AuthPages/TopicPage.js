@@ -1,56 +1,59 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container } from "@material-ui/core";
 import Header from "../../component/header/index";
-import { Grid } from "@material-ui/core";
+import { Grid, Tabs, Tab } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
-import { FloatButton } from "antd";
+import { Button, FloatButton, Pagination } from "antd";
 import { Select } from "antd";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
-import { topicsState$ } from "../../redux/seclectors";
-import { fetchPostsByTopic } from "../../api";
+import { postsLoading$, poststopicState$, topicsState$ } from "../../redux/seclectors";
+import { fetchPostsByTopic, fetchTopics } from "../../api";
 import Post from "../../component/PostList/Post";
 import NoPost from "../../component/NoPost";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
 import Responsive from "../../component/ResponsiveCode/Responsive";
+import jwtDecode from "jwt-decode";
 
 const { Option } = Select;
 export default function TopicPage() {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
-  const topics = useSelector(topicsState$);
-  const [selectedViewTopic, setSelectedViewTopic] = useState("");
-  const changePostsView = (value) => {
-    setSelectedViewTopic(value);
-  };
-  const { isXs, isMd } = Responsive();
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setIsLoading(true);
-        const { data } = await fetchPostsByTopic(
-          selectedViewTopic || topics[0]?._id
-        );
-        setPosts(data);
-        setIsLoading(false);
-      } catch (err) {
-        toast.error(getError(err));
-      }
-    };
-    fetchPosts();
-  }, [topics, selectedViewTopic]);
+  // const [selectedViewTopic, setSelectedViewTopic] = useState("");
+  // const [visibleTopics, setVisibleTopics] = useState([]);
+  // const [topicsLimit, setTopicsLimit] = useState(1);
+  // const [loadMore, setLoadMore] = useState(false);
+  // const [value, setValue] = useState(0);
+
+  // useEffect(() => {
+  //   setVisibleTopics(topics.slice(0, topicsLimit));
+  // }, [topics, topicsLimit]);
+
+  // const changePostsView = (value) => {
+  //   setSelectedViewTopic(value);
+  // };
 
   React.useEffect(() => {
-    try {
-      dispatch(actions.getTopics.getTopicsRequest());
-    } catch (err) {
-      toast.error(getError(err));
-    }
+    dispatch(actions.getTopics.getTopicsRequest());
   }, [dispatch]);
+  const isLoading = useSelector(postsLoading$)
+  const changePostsView = (value) => {
+    settopicID(value)
+  };
+  const posts = useSelector(poststopicState$);
+  const topics = useSelector(topicsState$);
+  const [topicID, settopicID] = useState('')
+  React.useEffect(() => {
+    const token = localStorage.getItem("userInfo");
+    const user = jwtDecode(token)
+    dispatch(actions.filterActionsLog.filterActionsLogRequest({ author: user._id }));
+  }, [dispatch,isLoading])
+  const { isXs, isMd } = Responsive();
+  React.useEffect(() => {
+    dispatch(actions.viewPostsByTopics.viewPostRequestByTopics({ _id: topicID || topics[0]?._id }));
+  }, [dispatch, topicID, topics])
 
   return (
     <Container style={{ maxWidth: "100vw" }} className="{}">
@@ -60,13 +63,28 @@ export default function TopicPage() {
       <Header />
       <Grid container alignItems="stretch">
         <Grid item xs={2} sm={2} />
-
         <Grid item xs={7} sm={7}>
           <Grid container spacing={2} alignItems="stretch">
             <Grid item xs={12} sm={12}>
-              {/* <IdeaBox /> */}
             </Grid>
             <Grid item xs={12} sm={12}>
+              {/* <div>
+                <Tabs
+                  value={value}
+                  TabIndicatorProps={{ style: { backgroundColor: "#1677ff" } }}
+                  onChange={(event, newValue) => {
+                    const tabKey = topics[newValue]._id;
+                    setSelectedViewTopic(tabKey);
+                    setValue(newValue);
+                  }}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                >
+                  {topics?.map((topic) => (
+                    <Tab key={topic._id} label={topic.name} />
+                  ))}
+                </Tabs>
+              </div> */}
               <div style={{ display: "flex", justifyContent: "end" }}>
                 <Select
                   defaultValue="View Any Topics"

@@ -2,12 +2,29 @@ import { TopicsModel } from '../model/topics.js'
 import {
   createTopicSchema,
   updateTopicSchema,
-  updateTopicStatusSchema
+  updateTopicStatusSchema,
 } from '../helpers/validation_schema.js'
 export const getTopic = async (req, res) => {
   try {
     const topic = await TopicsModel.find()
     res.status(200).json(topic)
+  } catch (err) {
+    res.status(500).json({ error: err })
+  }
+}
+export const getTopicPaginated = async (req, res) => {
+  try {
+    const ITEMS_PER_PAGE = 2
+    const page = req.query.page || 1
+    const query = {}
+    const skip = (page - 1) * ITEMS_PER_PAGE
+    const countPromise = await TopicsModel.estimatedDocumentCount(query)
+    const topicsPromise = await TopicsModel.find(query)
+      .limit(ITEMS_PER_PAGE)
+      .skip(skip)
+    const [count, topics] = await Promise.all([countPromise, topicsPromise])
+    const pageCount = Math.ceil(count / ITEMS_PER_PAGE)
+    res.send({ pagination: { count, pageCount, ITEMS_PER_PAGE }, topics })
   } catch (err) {
     res.status(500).json({ error: err })
   }

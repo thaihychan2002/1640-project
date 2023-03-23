@@ -49,6 +49,21 @@ export const deletePostByAdmin = createActions({
   deletePostSuccessByAdmin: (payload) => payload,
   deletePostFailureByAdmin: (err) => err,
 });
+export const viewPostsByTopics = createActions({
+  viewPostRequestByTopics: (payload) => payload,
+  viewPostSuccessByTopics: (payload) => payload,
+  viewPostFailureByTopics: (err) => err,
+});
+export const viewPostsByDepartment = createActions({
+  viewPostRequestByDepartment: (payload) => payload,
+  viewPostSuccessByDepartment: (payload) => payload,
+  viewPostFailureByDepartment: (err) => err,
+});
+export const viewPostsBySlug = createActions({
+  viewPostRequestBySlug: (payload) => payload,
+  viewPostSuccessBySlug: (payload) => payload,
+  viewPostFailureBySlug: (err) => err,
+});
 //department
 export const getDepartments = createActions({
   getDepartmentsRequest: undefined,
@@ -69,6 +84,27 @@ export const deleteDepartments = createActions({
   deleteDepartmentsRequest: (payload) => payload,
   deleteDepartmentsSuccess: (payload) => payload,
   deleteDepartmentsFailure: (err) => err,
+});
+//category
+export const getCategory = createActions({
+  getCategoryRequest: undefined,
+  getCategorySuccess: (payload) => payload,
+  getCategoryFailure: (err) => err,
+});
+export const createCategory = createActions({
+  createCategoryRequest: (payload) => payload,
+  createCategorySuccess: (payload) => payload,
+  createCategoryFailure: (err) => err,
+});
+export const updateCategory = createActions({
+  updateCategoryRequest: (payload) => payload,
+  updateCategorySuccess: (payload) => payload,
+  updateCategoryFailure: (err) => err,
+});
+export const deleteCategory = createActions({
+  deleteCategoryRequest: (payload) => payload,
+  deleteCategorySuccess: (payload) => payload,
+  deleteCategoryFailure: (err) => err,
 });
 //topic
 export const getTopics = createActions({
@@ -142,6 +178,27 @@ export const deleteSubcomments = createActions({
   deleteSubcommentsRequest: (payload) => payload,
   deleteSubcommentsSuccess: (payload) => payload,
   deleteSubcommentsFailure: (err) => err,
+});
+//ActionLog
+export const getActionsLog = createActions({
+  getActionsLogRequest: undefined,
+  getActionsLogSuccess: (payload) => payload,
+  getActionsLogFailure: (err) => err,
+});
+export const filterActionsLog = createActions({
+  filterActionsLogRequest: (payload) => payload,
+  filterActionsLogSuccess: (payload) => payload,
+  filterActionsLogFailure: (err) => err,
+});
+export const createActionsLog = createActions({
+  createActionsLogRequest: (payload) => payload,
+  createActionsLogSuccess: (payload) => payload,
+  createActionsLogFailure: (err) => err,
+});
+export const updateActionsLog = createActions({
+  updateActionsLogRequest: (payload) => payload,
+  updateActionsLogSuccess: (payload) => payload,
+  updateActionsLogFailure: (err) => err,
 });
 export const showModal = createAction("SHOW_CREATE_POST_MODEL");
 export const hideModal = createAction("HIDE_CREATE_POST_MODAL");

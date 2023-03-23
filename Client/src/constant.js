@@ -2,6 +2,9 @@ export const INIT_STATE = {
   posts: {
     isLoading: false,
     data: [],
+    detailed: [],
+    topicview: [],
+    departmentview: [],
   },
   allPosts: {
     isLoading: false,
@@ -14,6 +17,10 @@ export const INIT_STATE = {
     isLoading: false,
     data: [],
   },
+  category: {
+    isLoading: false,
+    data: [],
+  },
   topics: {
     isLoading: false,
     data: [],
@@ -23,6 +30,10 @@ export const INIT_STATE = {
     data: [],
   },
   subcomments: {
+    isLoading: false,
+    data: [],
+  },
+  actionslog: {
     isLoading: false,
     data: [],
   },

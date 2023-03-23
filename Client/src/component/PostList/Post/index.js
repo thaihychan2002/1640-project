@@ -11,37 +11,56 @@ import {
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import moment from "moment";
-import React, { useRef, useContext, useState, useEffect } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
-import { commentsState$, departmentsState$, topicsState$ } from "../../../redux/seclectors";
+import { actionslogLoading$, actionslogState$, commentsState$, departmentsState$, topicsState$,categoryState$, } from "../../../redux/seclectors";
 import { Modal, Button, Input, Select, Switch, Dropdown, Space } from "antd";
-import { Store } from "../../../Store";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";
 import { Link, useNavigate } from "react-router-dom";
 import { animalList } from "./anonymousAnimal.js";
 import CommentList from "../../CommentList/index.js";
 import * as actions from "../../../redux/actions";
-import { countViewBySlug } from "../../../api/index.js";
 import ReactQuill from "react-quill";
+import jwtDecode from "jwt-decode";
+import { Store } from "../../../Store.js";
 
 const { Option } = Select;
 
 export default function Post({ post }) {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { state } = useContext(Store);
   const user = state.userInfo;
-  const departments = useSelector(departmentsState$);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const topics = useSelector(topicsState$);
+  const categories = useSelector(categoryState$);
   const comments = useSelector(commentsState$);
+  const actionslog = useSelector(actionslogState$)
+  const actiondata = useRef({
+    _id: '',
+    action: ''
+  })
+  const actionview = useRef({
+    _id: ''
+  })
+  React.useEffect(() => {
+    const token = localStorage.getItem("userInfo");
+    const user = jwtDecode(token)
+    dispatch(actions.filterActionsLog.filterActionsLogRequest({ author: user._id }));
+  }, [dispatch])
+  const checkaction = actionslog.filter((action) => action.postID._id === post._id && action.action !== 'Viewed')
+  checkaction.map((action) => actiondata.current._id = action._id)
+  checkaction.map((action) => actiondata.current.action = action.action)
+  const checkviewed = actionslog.filter((action) => action.postID._id === post._id && action.action === 'Viewed')
+  checkviewed.map((action) => actionview.current._id = action._id)
   const sortedcmt = comments?.filter((comment) => comment?.postID?._id === post._id)
   const [Modalupdate, setModalUpdate] = useState(false);
   const [Modalcomment, setModalcomment] = useState(false);
   const departmentref = useRef(null);
   const caetgoryref = useRef(null);
+  const cateref = useRef(null);
   const [data, setdata] = React.useState({});
   const [defaultValue] = React.useState({
     title: post.title,
@@ -50,20 +69,16 @@ export default function Post({ post }) {
     department: post?.department?.name,
     topic: post?.topic?.name,
     attachment: post.attachment,
+    filePath: post?.filePath,
     isAnonymous: post.isAnonymous,
   });
-  // Anonymous Animals
+  // Anonymous animal.currents
   const getRandomAnimal = () => {
     const randomIndex = Math.floor(Math.random() * animalList.length);
     return animalList[randomIndex];
   };
-  React.useEffect(() => {
-    dispatch(actions.getComments.getCommentsRequest());
-  }, [dispatch])
-  const [animal, setAnimal] = useState("");
-  useEffect(() => {
-    setAnimal(getRandomAnimal());
-  }, []);
+  const animal = useRef("");
+  animal.current = getRandomAnimal()
   const departget = (e) => {
     setdata({ ...data, department: e });
     data.department = departmentref.current.value;
@@ -81,85 +96,101 @@ export default function Post({ post }) {
     setModalcomment(false);
   }, [dispatch]);
   const viewComment = React.useCallback(() => {
-
     setModalcomment(true);
   }, []);
   const viewModal = React.useCallback(() => {
     setModalUpdate(true);
   }, []);
   const classes = useStyles();
-  const [likeActive, setLikeActive] = React.useState(false);
-  const [dislikeActive, setDislikeActive] = React.useState(false);
+  const [likeActive, setLikeActive] = React.useState(actiondata.current.action === 'Like' ? true : false);
+  const [dislikeActive, setDislikeActive] = React.useState(actiondata.current.action === 'Dislike' ? true : false);
   const onLikeBtnClick = React.useCallback(() => {
     if (likeActive) {
       setLikeActive(false);
+      actiondata.current.action = 'Initial_value'
+      dispatch(checkviewed.length > 0 ? actions.updateActionsLog.updateActionsLogRequest({ _id: actionview.current._id, action: 'Viewed' }) : actions.createActionsLog.createActionsLogRequest({ action: 'Viewed', author: user._id, postID: post._id }))
+      dispatch(checkaction.length > 0 ? (actions.updateActionsLog.updateActionsLogRequest(actiondata.current)) : (actions.createActionsLog.createActionsLogRequest({ action: 'Like', author: user._id, postID: post._id })))
       dispatch(
         actions.updatePostsLike.updatePostsLikeRequest({
           ...post,
+          view: checkviewed.length > 0 ? (post.view) : (post.view + 1),
           likeCount: post.likeCount - 1,
         })
       );
     } else {
       setLikeActive(true);
+      actiondata.current.action = 'Like'
+      dispatch(checkviewed.length > 0 ? actions.updateActionsLog.updateActionsLogRequest({ _id: actionview.current._id, action: 'Viewed' }) : actions.createActionsLog.createActionsLogRequest({ action: 'Viewed', author: user._id, postID: post._id }))
+      dispatch(checkaction.length > 0 ? (actions.updateActionsLog.updateActionsLogRequest(actiondata.current)) : (actions.createActionsLog.createActionsLogRequest({ action: 'Like', author: user._id, postID: post._id })))
       dispatch(
         actions.updatePostsLike.updatePostsLikeRequest({
           ...post,
+          view: checkviewed.length > 0 ? (post.view) : (post.view + 1),
           likeCount: post.likeCount + 1,
         })
       );
       if (dislikeActive) {
         setDislikeActive(false);
+        dispatch(checkaction.length > 0 ? (actions.updateActionsLog.updateActionsLogRequest(actiondata.current)) : (actions.createActionsLog.createActionsLogRequest({ action: 'Like', author: user._id, postID: post._id })))
         dispatch(
           actions.updatePostsLike.updatePostsLikeRequest({
             ...post,
-            likeCount: post.likeCount + 2,
+            likeCount: post.likeCount + 1,
+            dislikeCount: post.dislikeCount === 0 ? 0 : post.dislikeCount - 1,
           })
         );
       }
     }
-  }, [dispatch, post, likeActive, dislikeActive]);
+  }, [dispatch, post, likeActive, dislikeActive, user, actiondata, checkaction, checkviewed]);
+  const onDislikeBtnClick = React.useCallback(() => {
+    if (dislikeActive) {
+      setDislikeActive(false);
+      actiondata.current.action = 'Initial_value'
+      dispatch(checkviewed.length > 0 ? actions.updateActionsLog.updateActionsLogRequest({ _id: actionview.current._id, action: 'Viewed' }) : actions.createActionsLog.createActionsLogRequest({ action: 'Viewed', author: user._id, postID: post._id }))
+      dispatch(checkaction.length > 0 ? (actions.updateActionsLog.updateActionsLogRequest(actiondata.current)) : (actions.createActionsLog.createActionsLogRequest({ action: 'Dislike', author: user._id, postID: post._id })))
+      dispatch(
+        actions.updatePostsLike.updatePostsLikeRequest({
+          ...post,
+          view: checkviewed.length > 0 ? (post.view) : (post.view + 1),
+          dislikeCount: post.likeCount + 1,
+        }),
+      );
+    } else {
+      setDislikeActive(true);
+      actiondata.current.action = 'Dislike'
+      dispatch(checkviewed.length > 0 ? actions.updateActionsLog.updateActionsLogRequest({ _id: actionview.current._id, action: 'Viewed' }) : actions.createActionsLog.createActionsLogRequest({ action: 'Viewed', author: user._id, postID: post._id }))
+      dispatch(checkaction.length > 0 ? (actions.updateActionsLog.updateActionsLogRequest(actiondata.current)) : (actions.createActionsLog.createActionsLogRequest({ action: 'Dislike', author: user._id, postID: post._id })))
+      dispatch(
+        actions.updatePostsLike.updatePostsLikeRequest({
+          ...post,
+          view: checkviewed.length > 0 ? (post.view) : (post.view + 1),
+          dislikeCount: post.dislikeCount + 1,
+        })
+      );
+      if (likeActive) {
+        setLikeActive(false);
+        dispatch(checkaction.length > 0 ? (actions.updateActionsLog.updateActionsLogRequest(actiondata.current)) : (actions.createActionsLog.createActionsLogRequest({ action: 'Dislike', author: user._id, postID: post._id })))
+        dispatch(
+          actions.updatePostsLike.updatePostsLikeRequest({
+            ...post,
+            likeCount: post.likeCount === 0 ? 0 : post.likeCount - 1,
+            dislikeCount: post.dislikeCount + 1
+          })
+        );
+      }
+    }
+  }, [dispatch, post, likeActive, dislikeActive, user, checkaction, actiondata, checkviewed]);
   const updatehandler = React.useCallback(() => {
     dispatch(
       actions.updatePosts.updatePostsRequest({
         _id: post._id,
         author: post.author,
+        department: user.department._id,
         ...data,
       })
     );
-
     handleOk();
-  }, [dispatch, data, post, handleOk]);
-  const onDislikeBtnClick = React.useCallback(() => {
-    if (dislikeActive) {
-      setDislikeActive(false);
-      dispatch(
-        actions.updatePostsLike.updatePostsLikeRequest({
-          ...post,
-          likeCount: post.likeCount + 1,
-        })
-      );
-    } else {
-      setDislikeActive(true);
-      dispatch(
-        actions.updatePostsLike.updatePostsLikeRequest({
-          ...post,
-          likeCount: post.likeCount - 1,
-        })
-      );
-      if (likeActive) {
-        setLikeActive(false);
-        dispatch(
-          actions.updatePostsLike.updatePostsLikeRequest({
-            ...post,
-            likeCount: post.likeCount - 2,
-          })
-        );
-      }
-    }
-  }, [dispatch, post, likeActive, dislikeActive]);
-  const countView = async (slug) => {
-    await countViewBySlug(slug);
-  };
+  }, [dispatch, data, post, handleOk,user]);
   const modules = {
     toolbar: [[{ size: [] }], ["bold", "italic", "underline"]],
     clipboard: {
@@ -177,20 +208,29 @@ export default function Post({ post }) {
       label: <div>Save post</div>,
     },
   ];
+  const setviewpostdetail=React.useCallback((slug)=>{
+    dispatch(actions.viewPostsBySlug.viewPostRequestBySlug(slug));
+    dispatch(checkviewed.length > 0 ? actions.updateActionsLog.updateActionsLogRequest({ _id: actionview.current._id, action: 'Viewed' }) : actions.createActionsLog.createActionsLogRequest({ action: 'Viewed', author: user._id, postID: post._id }))
+    dispatch(
+      actions.updatePostsLike.updatePostsLikeRequest({
+        ...post,
+        view: checkviewed.length > 0 ? (post.view) : (post.view + 1),
+      }))
+  },[dispatch,checkviewed,actionview,post,user])
   return (
     <>
       <Card className={classes.card} key={post._id}>
         <CardHeader
           avatar={
             post.isAnonymous ? (
-              <img src={animal.avatar} alt={`${animal.name} Avatar`} />
+              <img src={animal.current.avatar} alt={`${animal.current.name} Avatar`} />
             ) : (
               <img src={post?.author?.avatar} alt={post?.author?.fullName} />
             )
           }
           title={
             post.isAnonymous
-              ? `Anonymous ${animal.name}`
+              ? `Anonymous ${animal.current.name}`
               : post?.author?.fullName
           }
           subheader={moment(post.createdAt).format("LLL")}
@@ -220,7 +260,7 @@ export default function Post({ post }) {
           type="button"
           onClick={() => {
             navigate(`/idea/${post?.slug}`);
-            countView(post.slug);
+            setviewpostdetail(post.slug);
           }}
           style={{
             width: "100%",
@@ -265,16 +305,16 @@ export default function Post({ post }) {
               style={{ color: likeActive ? "red" : "" }}
             >
               <FavoriteIcon />
-              <Typography component="span" color="textSecondary"></Typography>
+              <Typography component="span" color="textSecondary"> {`${post.likeCount} likes`}</Typography>
             </IconButton>
             <IconButton
               onClick={onDislikeBtnClick}
               style={{ color: dislikeActive ? "blue" : "" }}
             >
               -<FavoriteIcon />
-              <Typography component="span" color="textSecondary"></Typography>
+              <Typography component="span" color="textSecondary">{`${post.dislikeCount} dislikes`}</Typography>
             </IconButton>
-            {`${post.likeCount} likes`}
+
           </div>
           <div>{post.view} Views</div>
         </CardActions>
@@ -315,7 +355,7 @@ export default function Post({ post }) {
         style={{ width: "500px", height: "250px" }}
         className="container-comment"
       >
-        <CommentList post={post}></CommentList>
+        <CommentList post={post} user={user}></CommentList>
       </Modal>
       <Modal
         open={Modalupdate}
@@ -408,32 +448,34 @@ export default function Post({ post }) {
               </div>
               <div className="user-mg">
                 <Select
-                  defaultValue={defaultValue.department}
+                  defaultValue={defaultValue.category}
                   style={{ width: "100%" }}
                   size="large"
                   required
                   onChange={(e) => departget(e)}
-                  ref={departmentref}
+                  ref={cateref}
                 >
-                  {departments?.map((department) => (
-                    <Option key={department._id} value={department._id}>
-                      {department.name}
+                  {categories?.map((category) => (
+                    <Option key={category._id} value={category._id}>
+                      {category.name}
                     </Option>
                   ))}
                 </Select>
                 <Select
                   defaultValue={defaultValue.topic}
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", top: "20px" }}
                   size="large"
                   required
                   onChange={(e) => topicget(e)}
                   ref={caetgoryref}
                 >
-                  {topics?.filter((topic) => topic?.status === "Processing")?.map((topic) => (
-                    <Option key={topic._id} value={topic._id}>
-                      {topic.name}
-                    </Option>
-                  ))}
+                  {topics
+                    ?.filter((topic) => topic?.status === "Processing")
+                    ?.map((topic) => (
+                      <Option key={topic._id} value={topic._id}>
+                        {topic.name}
+                      </Option>
+                    ))}
                 </Select>
                 <Switch
                   style={{ width: "100%", top: "35px", marginBottom: 10 }}
@@ -450,8 +492,12 @@ export default function Post({ post }) {
               <Button
                 type="primary"
                 block
-                style={{ bottom: "2%" }}
-                onClick={updatehandler}
+                style={{ bottom: "-7%" }}
+                onClick={() => {
+                  updatehandler();
+                  setdata({ ...data, department: user.department._id });
+                  console.log(data);
+                }}
               >
                 Update
               </Button>

@@ -9,6 +9,9 @@ import {
   updatePostReject,
   deletePostByAdmin,
   updatePostsLike,
+  viewPostsByTopics,
+  viewPostsByDepartment,
+  viewPostsBySlug,
 } from "../actions";
 
 export default function postsReducers(state = INIT_STATE.posts, action) {
@@ -47,6 +50,9 @@ export default function postsReducers(state = INIT_STATE.posts, action) {
         data: state.data?.map((post) =>
           post._id === action.payload._id ? action.payload : post
         ),
+        topicview: state.topicview?.map((post) => post._id === action.payload._id ? action.payload : post),
+        departmentview: state.departmentview?.map((post) => post._id === action.payload._id ? action.payload : post),
+        detailed: state.detailed?.map((post) => post._id === action.payload._id ? action.payload : post)
       };
     case getType(updatePostAccept.updatePostAcceptSuccess):
       const newDataUpdate = state?.data?.filter((post) => {
@@ -80,6 +86,39 @@ export default function postsReducers(state = INIT_STATE.posts, action) {
       return {
         ...state,
         data: newDataDelete,
+      };
+    case getType(viewPostsByTopics.viewPostRequestByTopics):
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case getType(viewPostsByTopics.viewPostSuccessByTopics):
+      return {
+        ...state,
+        isLoading: false,
+        topicview: action.payload,
+      };
+    case getType(viewPostsByDepartment.viewPostRequestByDepartment):
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case getType(viewPostsByDepartment.viewPostSuccessByDepartment):
+      return {
+        ...state,
+        isLoading: false,
+        departmentview: action.payload,
+      };
+    case getType(viewPostsBySlug.viewPostRequestBySlug):
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case getType(viewPostsBySlug.viewPostSuccessBySlug):
+      return {
+        ...state,
+        isLoading: false,
+        detailed: [action.payload],
       };
     default:
       return state;

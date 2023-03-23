@@ -1,57 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container, useMediaQuery } from "@material-ui/core";
 import Header from "../../component/header/index";
-import PostList from "../../component/PostList";
 import { Grid } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
 import { FloatButton } from "antd";
-import IdeaBox from "../../component/IdeaBox";
 import { Select } from "antd";
-import { toast } from "react-toastify";
-import { getError } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
-import { departmentsState$ } from "../../redux/seclectors";
-import { fetchPostsByDepartment } from "../../api";
+import { departmentsState$, postsLoading$, postsdepartmentState$ } from "../../redux/seclectors";
+
 import Post from "../../component/PostList/Post";
 import NoPost from "../../component/NoPost";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
 import Responsive from "../../component/ResponsiveCode/Responsive";
+import jwtDecode from "jwt-decode";
 
 const { Option } = Select;
 export default function DepartmentPage() {
   const dispatch = useDispatch();
-  const departments = useSelector(departmentsState$);
-  const [isLoading, setIsLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
-  const [selectedViewDepartment, setSelectedViewDepartment] = useState("");
-  const changePostsView = (value) => {
-    setSelectedViewDepartment(value);
-  };
-  const { isXs, isMd } = Responsive();
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setIsLoading(true);
-        const { data } = await fetchPostsByDepartment(
-          selectedViewDepartment || departments[0]?._id
-        );
-        setPosts(data);
-        setIsLoading(false);
-      } catch (err) {
-        toast.error(getError(err));
-      }
-    };
-    fetchPosts();
-  }, [departments, selectedViewDepartment]);
   React.useEffect(() => {
-    try {
-      dispatch(actions.getDepartments.getDepartmentsRequest());
-    } catch (err) {
-      toast.error(getError(err));
-    }
+    dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
+  const isLoading = useSelector(postsLoading$)
+  const changePostsView = (value) => {
+    settopicID(value)
+  };
+  const posts = useSelector(postsdepartmentState$);
+  const departments = useSelector(departmentsState$);
+  const [topicID, settopicID] = useState('')
+  React.useEffect(() => {
+    const token = localStorage.getItem("userInfo");
+    const user = jwtDecode(token)
+    dispatch(actions.filterActionsLog.filterActionsLogRequest({ author: user._id }));
+  }, [dispatch])
+  const { isXs, isMd } = Responsive();
+  React.useEffect(() => {
+    dispatch(actions.viewPostsByDepartment.viewPostRequestByDepartment({ _id: topicID || departments[0]?._id }));
+  }, [dispatch, topicID, departments])
   return (
     <Container style={{ maxWidth: "100vw" }} className="{}">
       <Helmet>

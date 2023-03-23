@@ -15,6 +15,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import PostManage from "./PostManage";
 import RoleManage from "./RoleManage";
+import CategoryManage from "./CategoryManage";
 const DashBoard = () => {
   const dispatch = useDispatch();
   React.useEffect(() => {
@@ -24,12 +25,16 @@ const DashBoard = () => {
     dispatch(actions.getDepartments.getDepartmentsRequest());
   }, [dispatch]);
   React.useEffect(() => {
+    dispatch(actions.getCategory.getCategoryRequest());
+  }, [dispatch]);
+  React.useEffect(() => {
     dispatch(actions.getTopics.getTopicsRequest());
   }, [dispatch]);
   const children = [
     <UserManage />,
     <RoleManage />,
     <DepartmentManage />,
+    <CategoryManage />,
     <TopicManage />,
     <PostManage />,
   ];
@@ -37,12 +42,14 @@ const DashBoard = () => {
     <span>User Manage</span>,
     <span>Role Manage</span>,
     <span>Department Manage</span>,
+    <span>Category Manage</span>,
     <span>Topic Manage</span>,
     <span>Post Manage</span>,
   ];
   const icons = [
     <UserOutlined />,
     <SettingOutlined />,
+    <ApartmentOutlined />,
     <ApartmentOutlined />,
     <BarsOutlined />,
     <BulbOutlined />,
@@ -57,7 +64,7 @@ const DashBoard = () => {
       <Tabs
         defaultActiveKey="1"
         centered
-        items={new Array(5).fill(null).map((_, i) => {
+        items={new Array(6).fill(null).map((_, i) => {
           return {
             label: (
               <span>

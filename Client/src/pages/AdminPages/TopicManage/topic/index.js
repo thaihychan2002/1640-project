@@ -5,6 +5,8 @@ import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Modal, Input, DatePicker, Typography } from "antd";
 import moment from "moment";
+import DownloadButton from "../../../../component/DownloadButton";
+import { downloadCSV } from "../../../../api";
 
 const { TextArea } = Input;
 
@@ -13,14 +15,17 @@ export default function Topic({ record_Topic }) {
   const [ModalCatUpdate, setModalCatUpdate] = useState(false);
   const today = useMemo(() => {
     new Date();
-  }, [])
-  const current = moment(today).format("MM:DD:YYYY")
+  }, []);
+  const current = moment(today).format("MM:DD:YYYY");
   const [data, setdata] = React.useState({
     name: record_Topic.name,
     description: record_Topic.description,
     begin: record_Topic.begindate,
     end: record_Topic.enddate,
-    status: moment(record_Topic.enddate).format("MM:DD:YYYY") >= current ? "Processing" : "Ended"
+    status:
+      moment(record_Topic.enddate).format("MM:DD:YYYY") >= current
+        ? "Processing"
+        : "Ended",
   });
   const handleOk = React.useCallback(() => {
     setModalCatUpdate(false);
@@ -88,9 +93,7 @@ export default function Topic({ record_Topic }) {
               placeholder={"CURRENT NAME: " + record_Topic.name}
               size="large"
               value={data.name}
-              onChange={(e) =>
-                setdata({ ...data, name: e.target.value })
-              }
+              onChange={(e) => setdata({ ...data, name: e.target.value })}
               required
             />
             <Typography>Write the description for the collection</Typography>
@@ -108,6 +111,7 @@ export default function Topic({ record_Topic }) {
               }
               required
             />
+
             <Button
               type="primary"
               block
