@@ -18,8 +18,8 @@ import {
 import { isAuth, isAdmin } from '../utils.js'
 const router = express.Router()
 
-router.get('/', getUsers)
-router.get('/refresh', refresh)
+router.get('/', isAuth, getUsers)
+router.get('/refresh', isAuth, refresh)
 router.post('/getUserByID/', isAuth, getUserById)
 router.post('/logout', logout)
 router.post('/login', loginUsers)

@@ -14,6 +14,10 @@ export const INIT_STATE = {
     isLoading: false,
     data: [],
   },
+  category: {
+    isLoading: false,
+    data: [],
+  },
   topics: {
     isLoading: false,
     data: [],

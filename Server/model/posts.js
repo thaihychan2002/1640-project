@@ -27,6 +27,7 @@ const schema = new mongoose.Schema(
       required: true,
     },
     attachment: String,
+    filePath: String,
     likeCount: {
       type: Number,
       default: 0,

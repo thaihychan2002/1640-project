@@ -2,12 +2,21 @@ import { BarChartOutlined, PieChartOutlined } from "@ant-design/icons";
 import { Button, Modal, Tabs } from "antd";
 import { useState } from "react";
 import BarChart from "./BarChart";
+import Contributors from "./Contributor";
 import PieChart from "./PieChart";
 
 export default function Report() {
-  const chartName = [<span>Total ideas</span>, <span>Ideas per day</span>];
-  const childrenReport = [<PieChart />, <BarChart />];
-  const iconsChart = [<PieChartOutlined />, <BarChartOutlined />];
+  const chartName = [
+    <span>Total ideas</span>,
+    <span>Ideas per day</span>,
+    <span>Contributors</span>,
+  ];
+  const childrenReport = [<PieChart />, <BarChart />, <Contributors />];
+  const iconsChart = [
+    <PieChartOutlined />,
+    <BarChartOutlined />,
+    <BarChartOutlined />,
+  ];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -37,7 +46,7 @@ export default function Report() {
         <Tabs
           defaultActiveKey="1"
           centered
-          items={new Array(2).fill(null).map((_, i) => {
+          items={new Array(3).fill(null).map((_, i) => {
             return {
               label: (
                 <span>

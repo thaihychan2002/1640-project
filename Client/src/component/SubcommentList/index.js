@@ -9,17 +9,17 @@ import { Store } from "../../Store";
 import { subcommentsLoading$, subcommentsState$ } from "../../redux/seclectors";
 import LoadingBox from "../LoadingBox/LoadingBox";
 
-
-
 const { TextArea } = Input;
 const { Text } = Typography;
 export default function SubcommentList({ comment }) {
   const dispatch = useDispatch();
   const subcomments = useSelector(subcommentsState$);
-  const sortedcomments =subcomments?.filter((subcomment)=>subcomment?.commentID?._id===comment._id)
+  const sortedcomments = subcomments?.filter(
+    (subcomment) => subcomment?.commentID?._id === comment._id
+  );
   const isLoading = useSelector(subcommentsLoading$);
-  const [reply, setreply] = useState(false)
-  const [viewsubcomment, setviewsubcomment] = useState(false)
+  const [reply, setreply] = useState(false);
+  const [viewsubcomment, setviewsubcomment] = useState(false);
   const { state } = useContext(Store);
 
   React.useEffect(() => {
@@ -39,33 +39,32 @@ export default function SubcommentList({ comment }) {
     setreply(false);
   }, [subcomment, dispatch]);
   const replyhandle = React.useCallback(() => {
-    reply?setreply(false):setreply(true);
-  }, [reply])
+    reply ? setreply(false) : setreply(true);
+  }, [reply]);
   const viewreply = React.useCallback(() => {
-   viewsubcomment?setviewsubcomment(false):setviewsubcomment(true);
-  }, [viewsubcomment])
+    viewsubcomment ? setviewsubcomment(false) : setviewsubcomment(true);
+  }, [viewsubcomment]);
   return (
     <>
-      <Grid container spacing={1}  >
-        <Grid item xs={4} sm={4} ><Button
-          type="primary"
-          block
-          onClick={replyhandle}
-        >
-          Reply
-        </Button>
+      <Grid container spacing={1}>
+        <Grid item xs={4} sm={4}>
+          <Button type="primary" block onClick={replyhandle}>
+            Reply
+          </Button>
         </Grid>
-        <Grid item xs={8} sm={8} >
-          <Button
-            type="link"
-            block
-            onClick={viewreply}
-          >Show {sortedcomments.length} replies
+        <Grid item xs={8} sm={8}>
+          <Button type="link" block onClick={viewreply}>
+            Show {sortedcomments.length} replies
           </Button>
         </Grid>
       </Grid>
-      {reply &&
-        <Grid container spacing={1} alignItems="stretch" style={{ marginTop: 10 }}>
+      {reply && (
+        <Grid
+          container
+          spacing={1}
+          alignItems="stretch"
+          style={{ marginTop: 10 }}
+        >
           <Grid container>
             <Grid item xs={2} sm={2} />
             <Grid
@@ -144,18 +143,18 @@ export default function SubcommentList({ comment }) {
             </Grid>
           </Grid>
         </Grid>
-      }
-        {viewsubcomment &&subcomments.length > 0 && (
-          <Grid style={{ marginTop: "100px" }} item xs={12} sm={12}>
-            {isLoading ? (
-              <LoadingBox />
-            ) : (
-              sortedcomments?.map((subcomment) => (
-                <Subcomment key={subcomment._id} subcomment={subcomment} />
-              ))
-            )}
-          </Grid>
-        )}</>
-
+      )}
+      {viewsubcomment && subcomments.length > 0 && (
+        <Grid style={{ marginTop: "100px" }} item xs={12} sm={12}>
+          {isLoading ? (
+            <LoadingBox />
+          ) : (
+            sortedcomments?.map((subcomment) => (
+              <Subcomment key={subcomment._id} subcomment={subcomment} />
+            ))
+          )}
+        </Grid>
+      )}
+    </>
   );
 }

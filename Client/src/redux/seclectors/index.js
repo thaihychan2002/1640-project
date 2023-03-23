@@ -6,6 +6,8 @@ export const postsLoading$ = (state) => state.posts.isLoading;
 export const modalState$ = (state) => state.modal;
 export const departmentsState$ = (state) => state.departments.data;
 export const departmentsLoading$ = (state) => state.departments.isLoading;
+export const categoryState$ = (state) => state?.category?.data;
+export const categoryLoading$ = (state) => state?.category?.isLoading;
 export const topicsState$ = (state) => state.topics.data;
 export const topicsLoading$ = (state) => state.topics.isLoading;
 export const commentsState$ = (state) => state.comments.data;
