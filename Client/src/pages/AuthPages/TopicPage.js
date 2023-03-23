@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Container } from "@material-ui/core";
 import Header from "../../component/header/index";
-import { Grid } from "@material-ui/core";
+import { Grid, Tabs, Tab } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
-import { FloatButton } from "antd";
+import { Button, FloatButton, Pagination } from "antd";
 import { Select } from "antd";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
@@ -21,6 +21,20 @@ import jwtDecode from "jwt-decode";
 const { Option } = Select;
 export default function TopicPage() {
   const dispatch = useDispatch();
+  // const [selectedViewTopic, setSelectedViewTopic] = useState("");
+  // const [visibleTopics, setVisibleTopics] = useState([]);
+  // const [topicsLimit, setTopicsLimit] = useState(1);
+  // const [loadMore, setLoadMore] = useState(false);
+  // const [value, setValue] = useState(0);
+
+  // useEffect(() => {
+  //   setVisibleTopics(topics.slice(0, topicsLimit));
+  // }, [topics, topicsLimit]);
+
+  // const changePostsView = (value) => {
+  //   setSelectedViewTopic(value);
+  // };
+
   React.useEffect(() => {
     dispatch(actions.getTopics.getTopicsRequest());
   }, [dispatch]);
@@ -49,12 +63,28 @@ export default function TopicPage() {
       <Header />
       <Grid container alignItems="stretch">
         <Grid item xs={2} sm={2} />
-
         <Grid item xs={7} sm={7}>
           <Grid container spacing={2} alignItems="stretch">
             <Grid item xs={12} sm={12}>
             </Grid>
             <Grid item xs={12} sm={12}>
+              {/* <div>
+                <Tabs
+                  value={value}
+                  TabIndicatorProps={{ style: { backgroundColor: "#1677ff" } }}
+                  onChange={(event, newValue) => {
+                    const tabKey = topics[newValue]._id;
+                    setSelectedViewTopic(tabKey);
+                    setValue(newValue);
+                  }}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                >
+                  {topics?.map((topic) => (
+                    <Tab key={topic._id} label={topic.name} />
+                  ))}
+                </Tabs>
+              </div> */}
               <div style={{ display: "flex", justifyContent: "end" }}>
                 <Select
                   defaultValue="View Any Topics"

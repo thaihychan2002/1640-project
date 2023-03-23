@@ -1,17 +1,17 @@
 import { Grid } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  topicsLoading$,
-  topicsState$,
-} from "../../../redux/seclectors";
+import { topicsLoading$, topicsState$ } from "../../../redux/seclectors";
 import * as actions from "../../../redux/actions";
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Space, Table, Button, Modal, Input, Typography } from "antd";
+import { Space, Table, Button, Modal, Input, Typography, Tag } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
 import Topic from "./topic";
 import moment from "moment";
 import { DatePicker } from "antd";
+import { downloadCSV } from "../../../api";
+import DownloadButton from "../../../component/DownloadButton";
+import { CloseCircleOutlined, SyncOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
 export default function TopicManage() {
@@ -25,19 +25,22 @@ export default function TopicManage() {
     description: "",
     begin: "",
     end: "",
-    status: "Processing"
+    status: "Processing",
   });
   const today = useMemo(() => {
     new Date();
-  }, [])
-  const current = moment(today).format("MM:DD:YYYY")
+  }, []);
+  const current = moment(today).format("MM:DD:YYYY");
   const topic = topics?.map((topic) => ({
     key: topic._id,
     name: topic.name,
     description: topic.description,
     begindate: topic.begin,
     enddate: topic.end,
-    status: moment(topic.end).format("MM:DD:YYYY") >= current ? "Processing" : "Ended"
+    status:
+      moment(topic.end).format("MM:DD:YYYY") >= current
+        ? "Processing"
+        : "Ended",
   }));
   const deletedepartHandler = React.useCallback(
     (record_Topic) => {
@@ -47,12 +50,26 @@ export default function TopicManage() {
     },
     [dispatch_Topic]
   );
-  const disabledPassDates = React.useCallback((current) => {
-    return current && current < moment(today);
-  }, [today]);
+  const disabledPassDates = React.useCallback(
+    (current) => {
+      return current && current < moment(today);
+    },
+    [today]
+  );
   React.useEffect(() => {
-    topics.filter((topic) => topic.status === "Processing")?.map((item) => moment(item.end).format("MM:DD:YYYY") < current && dispatch_Topic(actions.updateTopicStatus.updateTopicStatusRequest({ _id: item._id, status: "Ended" })))
-  }, [topics, dispatch_Topic, current])
+    topics
+      .filter((topic) => topic.status === "Processing")
+      ?.map(
+        (item) =>
+          moment(item.end).format("MM:DD:YYYY") < current &&
+          dispatch_Topic(
+            actions.updateTopicStatus.updateTopicStatusRequest({
+              _id: item._id,
+              status: "Ended",
+            })
+          )
+      );
+  }, [topics, dispatch_Topic, current]);
   const columns = [
     {
       title: "Topic",
@@ -84,15 +101,47 @@ export default function TopicManage() {
       dataIndex: "status",
       key: "status",
       width: "10%",
+      render: (_, record) => {
+        let colorType = {
+          Processing: "yellow",
+          Ended: "red",
+        };
+        let iconType = {
+          Processing: <SyncOutlined spin />,
+          Ended: <CloseCircleOutlined />,
+        };
+        let color = colorType[record.status];
+        let icon = iconType[record.status];
+        return (
+          <Tag icon={icon} color={color}>
+            {record.status}
+          </Tag>
+        );
+      },
     },
     {
       title: "Action",
       key: "action",
-      width: "10%",
+      width: "20%",
       render: (_, record_Topic) => (
-        <Space size="middle">
-          <Topic key={record_Topic._id} record_Topic={record_Topic}></Topic>
-          <Link onClick={() => deletedepartHandler(record_Topic)}>Delete</Link>
+        <Space
+          size="middle"
+          style={{ display: "flex", flexDirection: "column", marginBottom: 15 }}
+        >
+          <Button>
+            <Topic key={record_Topic._id} record_Topic={record_Topic}></Topic>
+          </Button>
+          <Button>
+            <Link onClick={() => deletedepartHandler(record_Topic)}>
+              Delete
+            </Link>
+          </Button>
+          {record_Topic.status === "Ended" && (
+            <DownloadButton
+              download={() => downloadPosts(record_Topic)}
+              textDownload={`Download Ideas`}
+            />
+          )}
         </Space>
       ),
     },
@@ -117,6 +166,22 @@ export default function TopicManage() {
   function onSelectEnd(date, dateString) {
     Topic_data.end = dateString;
   }
+  const downloadPosts = async (record) => {
+    try {
+      const topic = record.key;
+      const response = await downloadCSV(topic);
+      const data = response.data;
+      const csvUrl = URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = csvUrl;
+      link.setAttribute("download", "idea.csv");
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Grid container spacing={2} alignItems="stretch">
       <Grid item xs={2} sm={2} />
@@ -138,11 +203,19 @@ export default function TopicManage() {
             </Grid>
             <Grid item xs={6} lg={6} className="row-new-post">
               <Typography>Begin date of the collection</Typography>
-              <DatePicker format="MM-DD-YYYY" disabledDate={disabledPassDates} onChange={onSelectBegin} />
+              <DatePicker
+                format="MM-DD-YYYY"
+                disabledDate={disabledPassDates}
+                onChange={onSelectBegin}
+              />
             </Grid>
             <Grid item xs={6} lg={6} className="row-new-post">
               <Typography>End date of the collection</Typography>
-              <DatePicker format="MM-DD-YYYY" disabledDate={disabledPassDates} onChange={onSelectEnd} />
+              <DatePicker
+                format="MM-DD-YYYY"
+                disabledDate={disabledPassDates}
+                onChange={onSelectEnd}
+              />
             </Grid>
             <Grid item xs={12} lg={12} className="row-new-post">
               <Typography>Write the name of the topic</Typography>

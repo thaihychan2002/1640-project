@@ -7,10 +7,12 @@ import topics from "./topics.js";
 import comments from "./comments.js"
 import subcomments from "./subcomments.js"
 import actionslog from './actionslog.js'
+import category from "./category.js";
 export default combineReducers({
   posts,
   modal,
   departments,
+  category,
   topics,
   allPosts,
   comments,

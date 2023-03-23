@@ -95,11 +95,7 @@ export default function Profile() {
         <Grid item xs={10} sm={9} md={10}>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <div>
-              <Input
-                value={user.fullName}
-                className="profile-name"
-                bordered={false}
-              />
+              <p className="profile-name">{user.fullName}</p>
             </div>
 
             <Form.Item className="edit-profile">

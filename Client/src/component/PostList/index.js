@@ -17,8 +17,8 @@ export default function PostList() {
   const topics = useSelector(topicsState$);
   const today = useMemo(() => {
     new Date();
-  }, [])
-  const current = moment(today).format("MM:DD:YYYY")
+  }, []);
+  const current = moment(today).format("MM:DD:YYYY");
   React.useEffect(() => {
     topics.filter((topic) => topic.status === "Processing")?.map((item) => moment(item.end).format("MM:DD:YYYY") < current && dispatch(actions.updateTopicStatus.updateTopicStatusRequest({ _id: item._id, status: "Ended" })))
   }, [topics, dispatch, current])
@@ -28,7 +28,9 @@ export default function PostList() {
         {isLoading ? (
           <LoadingBox />
         ) : (
-          posts?.filter((post) => post?.status === 'Accepted').map((post) => <Post key={post._id} post={post} />)
+          posts
+            ?.filter((post) => post?.status === "Accepted")
+            .map((post) => <Post key={post._id} post={post} />)
         )}
       </Grid>
     </Grid>

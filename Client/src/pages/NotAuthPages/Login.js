@@ -144,7 +144,7 @@ const Login = () => {
             </p>
           </div>
         </Form.Item> */}
-            <Divider>Or login by Google</Divider>
+            <Divider className="line-divider">Or login by Google</Divider>
             <div id="loginDiv"></div>
             <center>
               <p

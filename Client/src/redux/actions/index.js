@@ -85,6 +85,27 @@ export const deleteDepartments = createActions({
   deleteDepartmentsSuccess: (payload) => payload,
   deleteDepartmentsFailure: (err) => err,
 });
+//category
+export const getCategory = createActions({
+  getCategoryRequest: undefined,
+  getCategorySuccess: (payload) => payload,
+  getCategoryFailure: (err) => err,
+});
+export const createCategory = createActions({
+  createCategoryRequest: (payload) => payload,
+  createCategorySuccess: (payload) => payload,
+  createCategoryFailure: (err) => err,
+});
+export const updateCategory = createActions({
+  updateCategoryRequest: (payload) => payload,
+  updateCategorySuccess: (payload) => payload,
+  updateCategoryFailure: (err) => err,
+});
+export const deleteCategory = createActions({
+  deleteCategoryRequest: (payload) => payload,
+  deleteCategorySuccess: (payload) => payload,
+  deleteCategoryFailure: (err) => err,
+});
 //topic
 export const getTopics = createActions({
   getTopicsRequest: undefined,

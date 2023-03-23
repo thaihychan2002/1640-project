@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
-import { Grid} from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Comment from "./Comment";
 import { Link } from "react-router-dom";
 import { Input, Button, Typography, Switch } from "antd";
@@ -33,7 +33,7 @@ export default function CommentList({ post }) {
   });
   const changeCommentsView = React.useCallback(
     (value) => {
-      dispatch(actions.getConditionCmts.getCmtsRequest({ status: value}));
+      dispatch(actions.getConditionCmts.getCmtsRequest({ status: value }));
     },
     [dispatch]
   );
@@ -120,7 +120,7 @@ export default function CommentList({ post }) {
         </Grid>
       </Grid>
 
-      {comments.length > 0 && (
+      {sortedcomments.length > 0 && (
         <Grid style={{ marginTop: "100px" }} item xs={12} sm={12}>
           <div
             style={{

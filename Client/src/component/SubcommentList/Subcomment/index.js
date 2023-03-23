@@ -119,7 +119,9 @@ export default function Subcomment({ subcomment }) {
     Subcmtoptionclose();
   }, [dispatch, newSubcmt, subcomment, Subcmtoptionclose, handleOk, user]);
   const deletehandler = React.useCallback(() => {
-    dispatch(actions.deleteSubcomments.deleteSubcommentsRequest(subcomment._id));
+    dispatch(
+      actions.deleteSubcomments.deleteSubcommentsRequest(subcomment._id)
+    );
   }, [subcomment, dispatch]);
   const itemsforuser = [
     {
@@ -150,7 +152,10 @@ export default function Subcomment({ subcomment }) {
             subcomment.isAnonymous ? (
               <img src={animal.avatar} alt={`${animal.name} Avatar`} />
             ) : (
-              <img src={subcomment.author.avatar} alt={subcomment.author.fullName} />
+              <img
+                src={subcomment.author.avatar}
+                alt={subcomment.author.fullName}
+              />
             )
           }
           title={
@@ -161,7 +166,14 @@ export default function Subcomment({ subcomment }) {
           subheader={moment(subcomment.createdAt).format("LLL")}
           action={
             <IconButton title="Edit subcomment">
-              <Dropdown menu={subcomment.author.fullName === user.fullName?({ items:itemsforuser }):({items:itemsforother})} trigger={["click"]}>
+              <Dropdown
+                menu={
+                  subcomment.author.fullName === user.fullName
+                    ? { items: itemsforuser }
+                    : { items: itemsforother }
+                }
+                trigger={["click"]}
+              >
                 <MoreVertIcon />
               </Dropdown>
             </IconButton>

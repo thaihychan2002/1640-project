@@ -4,6 +4,7 @@ import cors from 'cors'
 import posts from './routers/posts.js'
 import users from './routers/users.js'
 import departments from './routers/departments.js'
+import category from './routers/category.js'
 import topics from './routers/topics.js'
 import comments from './routers/comments.js'
 import subcomments from './routers/subcomments.js'
@@ -47,6 +48,7 @@ app.use('/posts', posts)
 app.use('/users', users)
 app.use('/roles', roles)
 app.use('/departments', departments)
+app.use('/category', category)
 app.use('/topics', topics)
 app.use('/comments', comments)
 app.use('/subcomments', subcomments)

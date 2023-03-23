@@ -128,6 +128,7 @@ export default function PostManage() {
         department: post?.department?.name,
         status: post.status,
         attachment: post.attachment,
+        filePath: post?.filePath,
       }));
 
   const data = posts?.map((post) => ({
@@ -138,6 +139,7 @@ export default function PostManage() {
     department: post?.department?.name,
     status: post.status,
     attachment: post.attachment,
+    filePath: post?.filePath,
   }));
   const dataPending = filterPostsByStatus(posts, "Pending");
   const dataAccept = filterPostsByStatus(posts, "Accepted");
@@ -225,6 +227,16 @@ export default function PostManage() {
           src={record.attachment}
           alt={record._id}
         />
+      ),
+    },
+    {
+      title: "File Path",
+      dataIndex: "filePath",
+      key: "filePath",
+      width: "10%",
+
+      render: (_, record) => (
+        <div style={{ maxWidth: 140 }}>{record.filePath}</div>
       ),
     },
     {

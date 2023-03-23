@@ -42,6 +42,6 @@ router.get('/search/:keyword', isAuth, searchPostsByKeyword)
 router.put('/accept', isAdmin, updatePostToAccepted)
 router.put('/reject', isAdmin, updatePostToRejected)
 //export posts
-router.get('/export', isAdmin, exportPost)
+router.post('/export', isAdmin, exportPost)
 router.post('/download', isAdmin, downloadPost)
 export default router
