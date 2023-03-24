@@ -77,7 +77,7 @@ export default function Navigation() {
       : ["Home", "Departments", "Topics", "Profile", "Log out"];
   // Hide navbar when route === /login
   const withOutNavbarRoutes = token
-    ? ["/login", "/reset-password", "/test"]
+    ? ["/login", "/reset-password"]
     : ["/login", "/reset-password", "/forgot-password"];
   const { pathname } = useLocation();
   if (withOutNavbarRoutes.some((item) => pathname.includes(item))) return null;

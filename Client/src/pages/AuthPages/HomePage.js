@@ -20,12 +20,15 @@ export default function HomePage() {
   }, [dispatch, selectedView]);
   React.useEffect(() => {
     const token = localStorage.getItem("userInfo");
-    const user = jwtDecode(token)
-    dispatch(actions.filterActionsLog.filterActionsLogRequest({ author: user._id }));
+    const user = jwtDecode(token);
+    dispatch(
+      actions.filterActionsLog.filterActionsLogRequest({ author: user._id })
+    );
     dispatch(actions.getDepartments.getDepartmentsRequest());
+    dispatch(actions.getCategory.getCategoryRequest());
     dispatch(actions.getTopics.getTopicsRequest());
     dispatch(actions.getComments.getCommentsRequest());
-  }, [dispatch])
+  }, [dispatch]);
   const changePostsView = (value) => {
     setSelectedView(value);
   };

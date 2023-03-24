@@ -30,7 +30,6 @@ export default function CategoryManage() {
   }, []);
   const deletecateHandler = React.useCallback(
     (record) => {
-      console.log(record.key);
       dispatch_cate(actions.deleteCategory.deleteCategoryRequest(record.key));
     },
     [dispatch_cate]
@@ -48,7 +47,6 @@ export default function CategoryManage() {
       width: "20%",
       render: (_, record_cat) => (
         <Space size="middle">
-          {console.log(record_cat)}
           <Category key={record_cat._id} record_cat={record_cat}></Category>
           <Link onClick={() => deletecateHandler(record_cat)}>Delete</Link>
         </Space>
