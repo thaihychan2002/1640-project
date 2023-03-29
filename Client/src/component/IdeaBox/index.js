@@ -265,6 +265,17 @@ export default function IdeaBox() {
                   required
                   onChange={(e) => Topicget(e)}
                   ref={Topicref}
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "").includes(input)
+                  }
+                  options={topics
+                    ?.filter((topic) => topic?.status === "Processing")
+                    ?.map((topic) => ({
+                      value: topic._id,
+                      label: topic.name,
+                    }))}
                 >
                   {topics
                     ?.filter((topic) => topic?.status === "Processing")
