@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState} from "react";
+import React, { useRef, useContext, useState } from "react";
 import { Grid } from "@material-ui/core";
 import { Modal, Switch } from "antd";
 import { Store } from "../../Store";
@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import DrawExpand from "./Drawer";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import * as actions from '../../redux/actions'
+import * as actions from "../../redux/actions";
 import Responsive from "../ResponsiveCode/Responsive";
 
 const { Option } = Select;
@@ -155,7 +155,6 @@ export default function IdeaBox() {
             &nbsp; What's on your mind?
           </div>
         </Grid>
-
       </Grid>
       <Modal
         open={isShow}
@@ -266,6 +265,17 @@ export default function IdeaBox() {
                   required
                   onChange={(e) => Topicget(e)}
                   ref={Topicref}
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "").includes(input)
+                  }
+                  options={topics
+                    ?.filter((topic) => topic?.status === "Processing")
+                    ?.map((topic) => ({
+                      value: topic._id,
+                      label: topic.name,
+                    }))}
                 >
                   {topics
                     ?.filter((topic) => topic?.status === "Processing")

@@ -1,4 +1,12 @@
-import { takeLatest, call, put, takeEvery, take, takeMaybe, takeLeading } from "redux-saga/effects";
+import {
+  takeLatest,
+  call,
+  put,
+  takeEvery,
+  take,
+  takeMaybe,
+  takeLeading,
+} from "redux-saga/effects";
 import * as actions from "../actions";
 import * as api from "../../api";
 import { toast } from "react-toastify";
@@ -32,10 +40,10 @@ function* fetchAllPostsSaga(action) {
 }
 function* fetchPostsByTopic(action) {
   try {
-    const PostsbyTopic =  yield call(api.fetchPostsByTopic, action.payload);
-    yield put(actions.viewPostsByTopics.viewPostSuccessByTopics(PostsbyTopic.data));
-    console.log('postbytopic',action.payload)
-    console.log(PostsbyTopic)
+    const PostsbyTopic = yield call(api.fetchPostsByTopic, action.payload);
+    yield put(
+      actions.viewPostsByTopics.viewPostSuccessByTopics(PostsbyTopic.data)
+    );
   } catch (err) {
     yield put(actions.viewPostsByTopics.viewPostFailureByTopics(err));
     toast.error(getError(err));
@@ -43,10 +51,15 @@ function* fetchPostsByTopic(action) {
 }
 function* fetchPostsByDepartment(action) {
   try {
-    const PostsbyDepartment = yield call(api.fetchPostsByDepartment, action.payload);
-    yield put(actions.viewPostsByDepartment.viewPostSuccessByDepartment(PostsbyDepartment.data));
-    console.log('postbydepart',action.payload)
-    console.log(PostsbyDepartment)
+    const PostsbyDepartment = yield call(
+      api.fetchPostsByDepartment,
+      action.payload
+    );
+    yield put(
+      actions.viewPostsByDepartment.viewPostSuccessByDepartment(
+        PostsbyDepartment.data
+      )
+    );
   } catch (err) {
     yield put(actions.viewPostsByDepartment.viewPostFailureByDepartment(err));
     toast.error(getError(err));
@@ -398,7 +411,9 @@ function* fetchActionSaga(action) {
 function* createActionSaga(action) {
   try {
     const createactions = yield call(api.createActionsLog, action.payload);
-    yield put(actions.createActionsLog.createActionsLogSuccess(createactions.data));
+    yield put(
+      actions.createActionsLog.createActionsLogSuccess(createactions.data)
+    );
   } catch (err) {
     yield put(actions.createActionsLog.createActionsLogFailure(err));
     toast.error(getError(err));
@@ -407,7 +422,9 @@ function* createActionSaga(action) {
 function* updateActionSaga(action) {
   try {
     const updatedactions = yield call(api.updateActionsLog, action.payload);
-    yield put(actions.updateActionsLog.updateActionsLogSuccess(updatedactions.data));
+    yield put(
+      actions.updateActionsLog.updateActionsLogSuccess(updatedactions.data)
+    );
   } catch (err) {
     yield put(actions.updateActionsLog.updateActionsLogFailure(err));
     toast.error(getError(err));
@@ -416,7 +433,9 @@ function* updateActionSaga(action) {
 function* filterActionSaga(action) {
   try {
     const filteractions = yield call(api.filterActionsLog, action.payload);
-    yield put(actions.filterActionsLog.filterActionsLogSuccess(filteractions.data));
+    yield put(
+      actions.filterActionsLog.filterActionsLogSuccess(filteractions.data)
+    );
   } catch (err) {
     yield put(actions.filterActionsLog.filterActionsLogFailure(err));
     toast.error(getError(err));
@@ -424,18 +443,9 @@ function* filterActionSaga(action) {
 }
 function* mysaga() {
   //post
-  yield takeLatest(
-    actions.getPosts.getPostsRequest,
-    fetchPostSaga
-  );
-  yield takeLatest(
-    actions.getAllPosts.getAllPostsRequest,
-    fetchAllPostsSaga
-  );
-  yield takeLatest(
-    actions.updatePosts.updatePostsRequest,
-    updatePostSaga
-  );
+  yield takeLatest(actions.getPosts.getPostsRequest, fetchPostSaga);
+  yield takeLatest(actions.getAllPosts.getAllPostsRequest, fetchAllPostsSaga);
+  yield takeLatest(actions.updatePosts.updatePostsRequest, updatePostSaga);
   yield takeLatest(
     actions.updatePostsLike.updatePostsLikeRequest,
     updatePostLikeSaga
@@ -448,14 +458,8 @@ function* mysaga() {
     actions.updatePostReject.updatePostRejectRequest,
     updatePostRejectSaga
   );
-  yield takeLatest(
-    actions.createPosts.createPostsRequest,
-    createPostSaga
-  );
-  yield takeLatest(
-    actions.deletePosts.deletePostsRequest,
-    deletePostSaga
-  );
+  yield takeLatest(actions.createPosts.createPostsRequest, createPostSaga);
+  yield takeLatest(actions.deletePosts.deletePostsRequest, deletePostSaga);
   yield takeLatest(
     actions.deletePostByAdmin.deletePostRequestByAdmin,
     deletePostByAdminSaga
