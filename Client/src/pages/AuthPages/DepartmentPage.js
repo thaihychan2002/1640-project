@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Container, useMediaQuery } from "@material-ui/core";
-import Header from "../../component/header/index";
+
 import { Grid } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
@@ -53,7 +53,6 @@ export default function DepartmentPage() {
       <Helmet>
         <title>Departments</title>
       </Helmet>
-      <Header />
       <Grid container alignItems="stretch">
         <Grid item xs={2} sm={2} />
 

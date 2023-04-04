@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
-const PORT = process.env.port || 5000
+const PORT = process.env.port || 5001
 const URI =
   'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/?retryWrites=true&w=majority'
 app.use(bodyParser.json({ limit: '30mb' }))

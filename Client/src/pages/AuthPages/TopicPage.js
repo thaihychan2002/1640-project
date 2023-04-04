@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Container } from "@material-ui/core";
-import Header from "../../component/header/index";
+
 import { Grid, Tabs, Tab, Typography } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
@@ -69,7 +69,6 @@ export default function TopicPage() {
       <Helmet>
         <title>Topics</title>
       </Helmet>
-      <Header />
       <Grid container alignItems="stretch">
         <Grid item xs={2} sm={2} />
         <Grid item xs={7} sm={7}>

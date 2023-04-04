@@ -120,7 +120,7 @@ export default function Navigation() {
     await logout();
   };
   return (
-    <div>
+    <>
       {!isXs ? (
         <Sider className="sider-style" breakpoint="lg" collapsedWidth="80">
           <Menu
@@ -171,6 +171,6 @@ export default function Navigation() {
           />
         </div>
       )}
-    </div>
+    </>
   );
 }

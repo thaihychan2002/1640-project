@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container } from "@material-ui/core";
-import Header from "../../component/header/index";
+
 import PostList from "../../component/PostList";
 import { Grid } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
@@ -38,7 +38,6 @@ export default function HomePage() {
       <Helmet>
         <title>Homepage</title>
       </Helmet>
-      <Header />
       <Grid container alignItems="stretch">
         <Grid item xs={2} sm={2} />
         <Grid item xs={7} sm={7}>

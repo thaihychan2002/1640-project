@@ -4,12 +4,12 @@
   color: #fff;
   background-color: #3ba0e9;
   position: fixed;
-  margin-top: 52px;
+  /* margin-top: 20px; */
   z-index: 2;
 }
 .menu-style {
   height: 100vh;
-  width: 240px;
+  width: 220px;
   position: fixed;
 }
 .ant-menu-inline-collapsed {
