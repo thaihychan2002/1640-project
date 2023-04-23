@@ -1,13 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Container } from "@material-ui/core";
 
 import { Grid, Tabs, Tab, Typography } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
-import { Button, FloatButton, Pagination } from "antd";
-import { Select } from "antd";
-import { toast } from "react-toastify";
-import { getError } from "../../utils";
+import { FloatButton } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
 import {
@@ -15,21 +12,20 @@ import {
   poststopicState$,
   topicsState$,
 } from "../../redux/seclectors";
-import { fetchPostsByTopic, fetchTopics } from "../../api";
+
 import Post from "../../component/PostList/Post";
 import NoPost from "../../component/NoPost";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
-import Responsive from "../../component/ResponsiveCode/Responsive";
+
 import jwtDecode from "jwt-decode";
 
-const { Option } = Select;
+
 export default function TopicPage() {
   const dispatch = useDispatch();
   const posts = useSelector(poststopicState$);
   const topics = useSelector(topicsState$);
   // const [selectedViewTopic, setSelectedViewTopic] = useState("");
   // const [visibleTopics, setVisibleTopics] = useState([]);
-  const [topicsLimit, setTopicsLimit] = useState(1);
   const [value, setValue] = useState(0);
 
   // useEffect(() => {

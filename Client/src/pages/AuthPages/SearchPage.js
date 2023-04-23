@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Container } from "@material-ui/core";
-import Header from "../../component/header/index";
-import PostList from "../../component/PostList";
 import { Grid } from "@material-ui/core";
 import AccountManage from "../../component/Account/AccountSwitch";
 import { Helmet } from "react-helmet-async";
 import { FloatButton } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { postsLoading$, postsState$ } from "../../redux/seclectors";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
 import Post from "../../component/PostList/Post";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
-import * as actions from "../../redux/actions";
 import { useParams } from "react-router-dom";
 import { searchPostsByKeyword } from "../../api";
 import NoPost from "../../component/NoPost";
@@ -40,7 +35,6 @@ export default function SearchPage() {
       <Helmet>
         <title>Search</title>
       </Helmet>
-      <Header />
       <Grid container alignItems="stretch">
         <Grid item xs={2} sm={2} />
 

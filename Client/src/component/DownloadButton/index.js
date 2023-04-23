@@ -1,4 +1,3 @@
-import { downloadZip } from "../../api";
 import "../assets/css/DownloadButton.css";
 export default function DownloadButton({ download, textDownload }) {
   return (

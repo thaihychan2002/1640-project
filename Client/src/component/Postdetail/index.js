@@ -21,7 +21,6 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import CommentList from "../../component/CommentList";
-import Responsive from "../../component/ResponsiveCode/Responsive";
 import { actionslogState$ } from "../../redux/seclectors";
 import jwtDecode from "jwt-decode";
 import { Store } from "../../Store";
@@ -32,7 +31,7 @@ export default function Postdetail({ post }) {
   const { state } = useContext(Store);
   const user = state.userInfo;
   const actionslog = useSelector(actionslogState$);
-  const { isXs } = Responsive();
+
   const classes = useStyles();
   const actiondata = useRef({
     _id: "",
@@ -76,23 +75,23 @@ export default function Postdetail({ post }) {
       dispatch(
         checkviewed.length > 0
           ? actions.updateActionsLog.updateActionsLogRequest({
-              _id: actionview.current._id,
-              action: "Viewed",
-            })
+            _id: actionview.current._id,
+            action: "Viewed",
+          })
           : actions.createActionsLog.createActionsLogRequest({
-              action: "Viewed",
-              author: user._id,
-              postID: post._id,
-            })
+            action: "Viewed",
+            author: user._id,
+            postID: post._id,
+          })
       );
       dispatch(
         checkaction.length > 0
           ? actions.updateActionsLog.updateActionsLogRequest(actiondata.current)
           : actions.createActionsLog.createActionsLogRequest({
-              action: "Like",
-              author: user._id,
-              postID: post._id,
-            })
+            action: "Like",
+            author: user._id,
+            postID: post._id,
+          })
       );
       dispatch(
         actions.updatePostsLike.updatePostsLikeRequest({
@@ -107,23 +106,23 @@ export default function Postdetail({ post }) {
       dispatch(
         checkviewed.length > 0
           ? actions.updateActionsLog.updateActionsLogRequest({
-              _id: actionview.current._id,
-              action: "Viewed",
-            })
+            _id: actionview.current._id,
+            action: "Viewed",
+          })
           : actions.createActionsLog.createActionsLogRequest({
-              action: "Viewed",
-              author: user._id,
-              postID: post._id,
-            })
+            action: "Viewed",
+            author: user._id,
+            postID: post._id,
+          })
       );
       dispatch(
         checkaction.length > 0
           ? actions.updateActionsLog.updateActionsLogRequest(actiondata.current)
           : actions.createActionsLog.createActionsLogRequest({
-              action: "Like",
-              author: user._id,
-              postID: post._id,
-            })
+            action: "Like",
+            author: user._id,
+            postID: post._id,
+          })
       );
       dispatch(
         actions.updatePostsLike.updatePostsLikeRequest({
@@ -137,13 +136,13 @@ export default function Postdetail({ post }) {
         dispatch(
           checkaction.length > 0
             ? actions.updateActionsLog.updateActionsLogRequest(
-                actiondata.current
-              )
+              actiondata.current
+            )
             : actions.createActionsLog.createActionsLogRequest({
-                action: "Like",
-                author: user._id,
-                postID: post._id,
-              })
+              action: "Like",
+              author: user._id,
+              postID: post._id,
+            })
         );
         dispatch(
           actions.updatePostsLike.updatePostsLikeRequest({
@@ -171,23 +170,23 @@ export default function Postdetail({ post }) {
       dispatch(
         checkviewed.length > 0
           ? actions.updateActionsLog.updateActionsLogRequest({
-              _id: actionview.current._id,
-              action: "Viewed",
-            })
+            _id: actionview.current._id,
+            action: "Viewed",
+          })
           : actions.createActionsLog.createActionsLogRequest({
-              action: "Viewed",
-              author: user._id,
-              postID: post._id,
-            })
+            action: "Viewed",
+            author: user._id,
+            postID: post._id,
+          })
       );
       dispatch(
         checkaction.length > 0
           ? actions.updateActionsLog.updateActionsLogRequest(actiondata.current)
           : actions.createActionsLog.createActionsLogRequest({
-              action: "Dislike",
-              author: user._id,
-              postID: post._id,
-            })
+            action: "Dislike",
+            author: user._id,
+            postID: post._id,
+          })
       );
       dispatch(
         actions.updatePostsLike.updatePostsLikeRequest({
@@ -202,23 +201,23 @@ export default function Postdetail({ post }) {
       dispatch(
         checkviewed.length > 0
           ? actions.updateActionsLog.updateActionsLogRequest({
-              _id: actionview.current._id,
-              action: "Viewed",
-            })
+            _id: actionview.current._id,
+            action: "Viewed",
+          })
           : actions.createActionsLog.createActionsLogRequest({
-              action: "Viewed",
-              author: user._id,
-              postID: post._id,
-            })
+            action: "Viewed",
+            author: user._id,
+            postID: post._id,
+          })
       );
       dispatch(
         checkaction.length > 0
           ? actions.updateActionsLog.updateActionsLogRequest(actiondata.current)
           : actions.createActionsLog.createActionsLogRequest({
-              action: "Dislike",
-              author: user._id,
-              postID: post._id,
-            })
+            action: "Dislike",
+            author: user._id,
+            postID: post._id,
+          })
       );
       dispatch(
         actions.updatePostsLike.updatePostsLikeRequest({
@@ -232,13 +231,13 @@ export default function Postdetail({ post }) {
         dispatch(
           checkaction.length > 0
             ? actions.updateActionsLog.updateActionsLogRequest(
-                actiondata.current
-              )
+              actiondata.current
+            )
             : actions.createActionsLog.createActionsLogRequest({
-                action: "Dislike",
-                author: user._id,
-                postID: post._id,
-              })
+              action: "Dislike",
+              author: user._id,
+              postID: post._id,
+            })
         );
         dispatch(
           actions.updatePostsLike.updatePostsLikeRequest({
@@ -299,7 +298,7 @@ export default function Postdetail({ post }) {
       container
       spacing={2}
       alignItems="stretch"
-      //   style={{ width: "2000px" }}
+    //   style={{ width: "2000px" }}
     >
       <Helmet>
         <title>{post.title}</title>

@@ -1,6 +1,5 @@
 import { Grid } from "@material-ui/core";
 import { useEffect, useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   fetchUsers,
   deleteUser,
@@ -16,8 +15,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { updateUser } from "../../api/index";
 import { Select } from "antd";
-import { useContext } from "react";
-import { Store } from "../../Store";
 import { useSelector } from "react-redux";
 import { departmentsState$ } from "../../redux/seclectors";
 const { Option } = Select;
@@ -56,8 +53,6 @@ const UserManage = () => {
   }, []);
   const departments = useSelector(departmentsState$);
 
-  const [role, setRole] = useState("");
-  const [userID, setUserID] = useState("");
   const [roleID, setRoleID] = useState("");
   const [departmentID, setDepartmentID] = useState("");
   const updateUserHandler = async (record) => {
@@ -176,7 +171,6 @@ const UserManage = () => {
   const [department, setDepartment] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
-  const { state, dispatch: ctxDispatch } = useContext(Store);
 
   const submitHandler = async () => {
     if (password !== rePassword) {

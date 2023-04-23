@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import "../../component/assets/css/NotFound.css";
 import { Helmet } from "react-helmet-async";
-import { Result, Button } from "antd";
+
 import { Grid } from "@material-ui/core";
 
 const NotFound = () => {

@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 import Category from "./category";
 import { Space, Table, Button, Modal, Input } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
-const { TextArea } = Input;
 export default function CategoryManage() {
   const dispatch_cate = useDispatch();
   React.useEffect(() => {

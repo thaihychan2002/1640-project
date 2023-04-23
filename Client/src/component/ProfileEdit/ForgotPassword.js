@@ -1,13 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { Grid } from "@material-ui/core";
 import { Button, Divider, Input } from "antd";
 import { forgotPassword } from "../../api";
-import { Store } from "../../Store";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { Helmet } from "react-helmet-async";
-import Icon, { LockOutlined } from "@ant-design/icons";
+
 import { useNavigate } from "react-router-dom";
 function ForgotPassword() {
   const navigate = useNavigate();

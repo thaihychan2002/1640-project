@@ -8,7 +8,7 @@ import {
 import { isAuth, isAdmin } from '../utils.js'
 
 const router = express.Router()
-router.get('/', getAction)
+router.get('/', isAuth, getAction)
 router.post('/create', isAuth, createAction)
 router.post('/filter', isAuth, filterAction)
 router.put('/update', isAuth, updateAction)

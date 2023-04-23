@@ -1,30 +1,22 @@
 import { Grid } from "@material-ui/core";
 import { useEffect, useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import {
-  fetchUsers,
-  deleteUser,
-  registerUser,
   fetchRoles,
-  updateRole,
   deleteRole,
   createRole,
 } from "../../api/index";
-import { Button, Form, Input, Modal, Space, Table } from "antd";
+import { Button, Input, Modal, Space, Table } from "antd";
 import reducer from "../../component/Reducer/Reducer.js";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
-import LoadingBox from "../../component/LoadingBox/LoadingBox";
+
 import React from "react";
 import { Link } from "react-router-dom";
-import { updateUser } from "../../api/index";
-import { Select } from "antd";
-import { useContext } from "react";
-import { Store } from "../../Store";
-const { Option } = Select;
+
 const RoleManage = () => {
   const [role, setRole] = useState("");
-  const [{ loading, roles }, dispatch] = useReducer(reducer, {
+  const [{ roles }, dispatch] = useReducer(reducer, {
     loading: true,
   });
   useEffect(() => {

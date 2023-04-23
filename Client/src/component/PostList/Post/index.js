@@ -15,7 +15,7 @@ import React, { useContext, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useStyles from "./styles.js";
 
-import { actionslogLoading$, actionslogState$, commentsState$, departmentsState$, topicsState$,categoryState$, } from "../../../redux/seclectors";
+import {  actionslogState$, commentsState$, topicsState$,categoryState$, } from "../../../redux/seclectors";
 import { Modal, Button, Input, Select, Switch, Dropdown, Space } from "antd";
 import { PictureOutlined } from "@ant-design/icons";
 import FileBase64 from "react-file-base64";

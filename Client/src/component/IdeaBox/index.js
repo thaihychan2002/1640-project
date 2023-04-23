@@ -32,7 +32,6 @@ export default function IdeaBox() {
     setIsChecked(isChecked);
   };
 
-  const departmentref = useRef(null);
   const cateref = useRef(null);
   const Topicref = useRef(null);
   const { isShow } = useSelector(modalState$);
@@ -52,10 +51,6 @@ export default function IdeaBox() {
     isAnonymous: false,
   });
 
-  const departget = (e) => {
-    setdata({ ...data, department: e });
-    data.department = departmentref.current.value;
-  };
   const categet = (e) => {
     setdata({ ...data, category: e });
     data.category = cateref.current.value;
@@ -111,7 +106,7 @@ export default function IdeaBox() {
     };
   };
 
-  const [filePathInputState, setFilePathInputState] = useState("");
+  const [setFilePathInputState] = useState("");
   const handleFilePathInputChange = (e) => {
     const file = e.target.files[0];
     if (file.type.startsWith("image/")) {

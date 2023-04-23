@@ -7,7 +7,6 @@ import { postsdetailState$, postsLoading$ } from "../../redux/seclectors";
 import jwtDecode from "jwt-decode";
 import Postdetail from "../../component/Postdetail";
 import LoadingBox from "../../component/LoadingBox/LoadingBox";
-import NotFound from "../../pages/NotAuthPages/NotFound.js";
 const PostDetails = () => {
 
   const params = useParams();

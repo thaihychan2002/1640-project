@@ -1,28 +1,22 @@
 import Icon, {
-  UserOutlined,
   HomeOutlined,
   ApartmentOutlined,
   BarsOutlined,
   LineChartOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import "../assets/css/Navigation.css";
-import { Layout, Menu } from "antd";
+import { Menu } from "antd";
 import { useLocation, Link } from "react-router-dom";
 import { Store } from "../../Store";
 import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { fetchUserByID } from "../../api";
-const { Sider } = Layout;
+
 
 export default function NavMobile() {
-  const [current, setCurrent] = useState("mail");
-  const onClick = (e) => {
-    console.log("click ", e);
-    setCurrent(e.key);
-  };
   const { state, dispatch: ctxDispatch } = useContext(Store);
   React.useEffect(() => {
     const fetchUser = async () => {
@@ -48,24 +42,24 @@ export default function NavMobile() {
   const linkRoutes =
     role === "Admin"
       ? [
-          "/",
-          "/departments",
-          "/categories",
-          "/dashboard",
-          "/profile",
-          "#signout",
-        ]
+        "/",
+        "/departments",
+        "/categories",
+        "/dashboard",
+        "/profile",
+        "#signout",
+      ]
       : ["/", "/departments", "/categories", "/profile", "#signout"];
   const navName =
     role === "Admin"
       ? [
-          "Home",
-          "Departments",
-          "Categories",
-          "Admin Dashboard",
-          "Profile",
-          "Log out",
-        ]
+        "Home",
+        "Departments",
+        "Categories",
+        "Admin Dashboard",
+        "Profile",
+        "Log out",
+      ]
       : ["Home", "Departments", "Categories", "Profile", "Log out"];
   // Hide navbar when route === /login
   const withOutNavbarRoutes = ["/login"];
@@ -88,20 +82,20 @@ export default function NavMobile() {
   const icons =
     role === "Admin"
       ? [
-          HomeOutlined,
-          ApartmentOutlined,
-          BarsOutlined,
-          LineChartOutlined,
-          ProfileOutlined,
-          LogoutOutlined,
-        ]
+        HomeOutlined,
+        ApartmentOutlined,
+        BarsOutlined,
+        LineChartOutlined,
+        ProfileOutlined,
+        LogoutOutlined,
+      ]
       : [
-          HomeOutlined,
-          ApartmentOutlined,
-          BarsOutlined,
-          ProfileOutlined,
-          LogoutOutlined,
-        ];
+        HomeOutlined,
+        ApartmentOutlined,
+        BarsOutlined,
+        ProfileOutlined,
+        LogoutOutlined,
+      ];
 
   const logoutHandler = () => {
     ctxDispatch({ type: "USER_LOGOUT" });

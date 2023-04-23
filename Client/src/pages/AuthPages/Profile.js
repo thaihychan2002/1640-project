@@ -1,14 +1,11 @@
 import { Store } from "../../Store";
 import React, { useContext, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Grid, Card, CardMedia, useMediaQuery } from "@material-ui/core";
+import { Grid, Card, CardMedia} from "@material-ui/core";
 import { Helmet } from "react-helmet-async";
-import { Form, Input, Button, Divider } from "antd";
+import { Form, Button, Divider } from "antd";
 import * as actions from "../../redux/actions";
 import "../../component/assets/css/Profile.css";
-import { toast } from "react-toastify";
-import { getError } from "../../utils";
-import { updateUserProfile } from "../../api/index";
 import { allPostsState$, allPostsLoading$ } from "../../redux/seclectors";
 import { token } from "../../api/config";
 import jwtDecode from "jwt-decode";
@@ -50,17 +47,6 @@ export default function Profile() {
     reader.onloadend = () => {
       setPreviewSource(reader.result);
     };
-  };
-
-  const updateUserProfileHandler = async (e) => {
-    e.preventDefault();
-    let data = previewSource;
-    try {
-      await updateUserProfile(userID, fullName, data);
-      toast.success("User updated successfully");
-    } catch (err) {
-      toast.error(getError(err));
-    }
   };
   React.useEffect(() => {
     dispatch(actions.getAllPosts.getAllPostsRequest());

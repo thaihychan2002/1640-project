@@ -1,5 +1,4 @@
 import Icon, {
-  UserOutlined,
   HomeOutlined,
   ApartmentOutlined,
   BarsOutlined,
@@ -9,14 +8,12 @@ import Icon, {
 import "../assets/css/Navigation.css";
 import { Layout, Menu } from "antd";
 import React, { useContext } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Store } from "../../Store";
 import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { fetchUserByID, logout, refresh } from "../../api";
-import NavMobile from "./NavMobile";
-import { useMediaQuery } from "@material-ui/core";
 import Responsive from "../ResponsiveCode/Responsive";
 import { token } from "../../api/config";
 const { Sider } = Layout;
@@ -24,7 +21,7 @@ const { Sider } = Layout;
 export default function Navigation() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { isXs } = Responsive();
-  const navigate = useNavigate();
+
 
   const role = state.userInfo.role;
 
@@ -67,13 +64,13 @@ export default function Navigation() {
   const navName =
     role === "Admin"
       ? [
-          "Home",
-          "Departments",
-          "Topics",
-          "Admin Dashboard",
-          "Profile",
-          "Log out",
-        ]
+        "Home",
+        "Departments",
+        "Topics",
+        "Admin Dashboard",
+        "Profile",
+        "Log out",
+      ]
       : ["Home", "Departments", "Topics", "Profile", "Log out"];
   // Hide navbar when route === /login
   const withOutNavbarRoutes = token
@@ -98,21 +95,21 @@ export default function Navigation() {
   const icons =
     role === "Admin"
       ? [
-          HomeOutlined,
-          ApartmentOutlined,
-          BarsOutlined,
-          LineChartOutlined,
-          ProfileOutlined,
-          LogoutOutlined,
-        ]
+        HomeOutlined,
+        ApartmentOutlined,
+        BarsOutlined,
+        LineChartOutlined,
+        ProfileOutlined,
+        LogoutOutlined,
+      ]
       : [
-          HomeOutlined,
-          ApartmentOutlined,
-          BarsOutlined,
-          ProfileOutlined,
+        HomeOutlined,
+        ApartmentOutlined,
+        BarsOutlined,
+        ProfileOutlined,
 
-          LogoutOutlined,
-        ];
+        LogoutOutlined,
+      ];
   const logoutHandler = async () => {
     ctxDispatch({ type: "USER_LOGOUT" });
     localStorage.removeItem("userInfo");

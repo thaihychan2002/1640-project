@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import Department from "./department";
 import { Space, Table, Button, Modal, Input } from "antd";
 import LoadingBox from "../../../component/LoadingBox/LoadingBox";
-const { TextArea } = Input;
 export default function DepartmentManage() {
   const dispatch_de = useDispatch();
   const departments = useSelector(departmentsState$);

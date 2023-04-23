@@ -7,11 +7,13 @@
   /* margin-top: 20px; */
   z-index: 2;
 }
+
 .menu-style {
   height: 100vh;
-  width: 220px;
+  width: 240px;
   position: fixed;
 }
+
 .ant-menu-inline-collapsed {
   width: 80px !important;
 }
@@ -56,6 +58,7 @@
 .menu-item .label {
   margin-top: 2px;
 }
+
 @media screen and (max-width: 400px) {
   .ant-menu-item {
     padding: 0 24px !important;
@@ -64,14 +67,13 @@
   .ant-menu-item.icon {
     padding-right: 5px !important;
   }
+
   span.ant-menu-title-content {
     width: 0 !important;
     height: 0 !important;
   }
-  :where(
-      .css-dev-only-do-not-override-ixblex
-    ).ant-menu-light.ant-menu-horizontal
-    > .ant-menu-item-active::after {
+
+  :where(.css-dev-only-do-not-override-ixblex).ant-menu-light.ant-menu-horizontal>.ant-menu-item-active::after {
     width: 35px !important;
   }
 }

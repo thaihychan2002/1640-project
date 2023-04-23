@@ -1,20 +1,15 @@
 import { Store } from "../../Store";
 import React, { useContext, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Grid, Card, CardMedia, useMediaQuery } from "@material-ui/core";
-import { Helmet } from "react-helmet-async";
-import { Form, Input, Button, Divider, Tabs } from "antd";
-import * as actions from "../../redux/actions";
+import { Grid } from "@material-ui/core";
+import { Input, Button } from "antd";
 import "../../component/assets/css/Profile.css";
 import { toast } from "react-toastify";
 import { getError } from "../../utils";
 import { updateUserProfile } from "../../api/index";
-import { allPostsState$, allPostsLoading$ } from "../../redux/seclectors";
+
 import { token } from "../../api/config";
 import jwtDecode from "jwt-decode";
-import LoadingBox from "../../component/LoadingBox/LoadingBox";
-import { useNavigate } from "react-router-dom";
-import { SettingOutlined, UserOutlined } from "@ant-design/icons";
+
 import Responsive from "../ResponsiveCode/Responsive";
 export default function EditProfile() {
   const { state } = useContext(Store);
@@ -132,7 +127,7 @@ export default function EditProfile() {
             style={{ width: isMd ? "90%" : "60%" }}
             value={email}
             disabled
-            // onChange={(e) => setEmail(e.target.value)}
+          // onChange={(e) => setEmail(e.target.value)}
           />
         </Grid>
       </Grid>

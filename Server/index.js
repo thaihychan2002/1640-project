@@ -16,18 +16,19 @@ import { v2 as cloudinary } from 'cloudinary'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import cookieParser from 'cookie-parser'
+import dotenv from 'dotenv'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
+dotenv.config();
 const app = express()
-const PORT = process.env.port || 5001
-const URI =
-  'mongodb+srv://admin:NwDpWtA8h7d0GpMH@cluster1.yp9solp.mongodb.net/?retryWrites=true&w=majority'
+const PORT = process.env.PORT || 5000
+const URI = process.env.DATABASE_URL
 app.use(bodyParser.json({ limit: '30mb' }))
 app.use(bodyParser.urlencoded({ limit: '30mb' }))
 app.use(morgan('combined'))
 app.use(cookieParser())
-const allowOrigin = ['http://localhost:3000']
+// change the link below to localhost when on deve screen
+const allowOrigin = ['https://majestic-monstera-8c6f6c.netlify.app']
 const corsOptions = {
   credentials: true,
   origin: allowOrigin,
@@ -53,6 +54,7 @@ app.use('/topics', topics)
 app.use('/comments', comments)
 app.use('/subcomments', subcomments)
 app.use('/actions', actions)
+app.use((req, res) => { res.status(404).send('routes not found') })
 app.get('/', (req, res) => {
   res.send('SUCCESS')
   console.log('SUCCESS')

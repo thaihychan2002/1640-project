@@ -2,9 +2,6 @@ import {
   takeLatest,
   call,
   put,
-  takeEvery,
-  take,
-  takeMaybe,
   takeLeading,
 } from "redux-saga/effects";
 import * as actions from "../actions";
